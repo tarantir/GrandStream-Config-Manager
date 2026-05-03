@@ -272,10 +272,10 @@ async def generate_phone_xml(phone_id: int, db: Session = Depends(get_db)):
         return JSONResponse({"error": "Phone not found"}, status_code=404)
 
     output_dir = get_output_dir(db)
-    filename, filepath = write_xml(phone, output_dir)
+    files = write_xml(phone, output_dir)
     xml_content = generate_xml(phone)
 
-    return JSONResponse({"filename": filename, "path": filepath, "xml": xml_content})
+    return JSONResponse({"files": files, "xml": xml_content})
 
 
 @app.post("/generate-selected")
@@ -292,8 +292,8 @@ async def generate_selected(request: Request, db: Session = Depends(get_db)):
             errors.append(f"{phone.extension}: no config")
             continue
         try:
-            filename, _ = write_xml(phone, output_dir)
-            generated.append(filename)
+            files = write_xml(phone, output_dir)
+            generated.extend([f[0] for f in files])  # filenames
         except Exception as e:
             errors.append(f"{phone.extension}: {e}")
 

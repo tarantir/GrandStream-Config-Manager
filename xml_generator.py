@@ -157,11 +157,33 @@ def generate_xml(phone: Phone) -> str:
     return declaration + ET.tostring(root, encoding="unicode")
 
 
-def write_xml(phone: Phone, output_dir: str) -> tuple[str, str]:
+def write_xml(phone: Phone, output_dir: str) -> list[tuple[str, str]]:
     xml_content = generate_xml(phone)
     os.makedirs(output_dir, exist_ok=True)
-    filename = f"{phone.extension}.xml"
-    filepath = os.path.abspath(os.path.join(output_dir, filename))
-    with open(filepath, "w", encoding="utf-8") as f:
-        f.write(xml_content)
-    return filename, filepath
+    files = []
+    
+    # Generate file for SIP ID (extension)
+    if phone.extension:
+        filename = f"cfg{phone.extension}.xml"
+        filepath = os.path.abspath(os.path.join(output_dir, filename))
+        with open(filepath, "w", encoding="utf-8") as f:
+            f.write(xml_content)
+        files.append((filename, filepath))
+    
+    # Generate file for eth0 MAC address
+    if phone.mac_eth0:
+        eth0_filename = f"cfg{phone.mac_eth0}.xml"
+        eth0_filepath = os.path.abspath(os.path.join(output_dir, eth0_filename))
+        with open(eth0_filepath, "w", encoding="utf-8") as f:
+            f.write(xml_content)
+        files.append((eth0_filename, eth0_filepath))
+    
+    # Generate file for wlan MAC address
+    if phone.mac_wlan:
+        wlan_filename = f"cfg{phone.mac_wlan}.xml"
+        wlan_filepath = os.path.abspath(os.path.join(output_dir, wlan_filename))
+        with open(wlan_filepath, "w", encoding="utf-8") as f:
+            f.write(xml_content)
+        files.append((wlan_filename, wlan_filepath))
+    
+    return files
