@@ -24,6 +24,7 @@ This tool **generates XML configuration files only**. It does not include a TFTP
 
 - **Phone inventory** — import phones via CSV or existing XML config files
 - **Per-phone configuration** — SIP accounts (up to 6), WiFi SSIDs (up to 4), virtual programmable keys, phonebook, display/screensaver, and provisioning settings
+- **CSV export** — download the current phone inventory in the same import-compatible CSV format
 - **XML generation** — generate delta provisioning XML per phone, selectable from the inventory, with files named `cfg{SIP_ID}.xml`, `cfg{ETH0_MAC}.xml`, and `cfg{WLAN_MAC}.xml` (where applicable), plus archived copies under `archive/<timestamp>/`
 - **Phone Book** — auto-generated from the phone inventory, with support for additional custom entries, with `phonebook.xml` archived under `archive/<timestamp>/`
 - **Settings** — configurable output directory and default SIP/phonebook server addresses

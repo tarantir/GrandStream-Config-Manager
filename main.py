@@ -12,7 +12,7 @@ from sqlalchemy.orm import Session
 from database import get_db, init_db
 from models import AppSetting, Phone, PhoneConfig, PhonebookEntry, SipAccount, VpkKey, WifiSsid
 from xml_generator import generate_xml, write_xml
-from csv_importer import import_csv
+from csv_importer import import_csv, export_csv
 from xml_importer import import_xml_bulk, import_xml_for_phone, parse_xml
 from phonebook_generator import generate_phonebook_xml, write_phonebook
 
@@ -74,6 +74,17 @@ async def import_phones(request: Request, file: UploadFile = File(...), db: Sess
     response = RedirectResponse(url="/", status_code=303)
     set_flash(response, msg, category)
     return response
+
+
+@app.get("/export")
+async def export_phones(db: Session = Depends(get_db)):
+    phones = db.query(Phone).order_by(Phone.extension).all()
+    csv_bytes = export_csv(phones)
+    return Response(
+        content=csv_bytes,
+        media_type="text/csv",
+        headers={"Content-Disposition": "attachment; filename=phones.csv"},
+    )
 
 
 # ── XML Import ────────────────────────────────────────────────────────────────

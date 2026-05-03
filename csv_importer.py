@@ -116,3 +116,33 @@ def import_csv(content: bytes, db: Session) -> dict:
 
     db.commit()
     return {"imported": imported, "updated": updated, "errors": errors}
+
+
+def export_csv(phones: list[Phone]) -> bytes:
+    fieldnames = [
+        "account",
+        "subscriber_name",
+        "subscriber_id",
+        "model",
+        "serial",
+        "hw_passwd",
+        "eth0",
+        "wlan",
+    ]
+    output = io.StringIO()
+    writer = csv.DictWriter(output, fieldnames=fieldnames)
+    writer.writeheader()
+
+    for phone in phones:
+        writer.writerow({
+            "account": phone.group_name or "",
+            "subscriber_name": phone.display_name or "",
+            "subscriber_id": phone.extension or "",
+            "model": phone.model or "",
+            "serial": phone.serial or "",
+            "hw_passwd": phone.factory_password or "",
+            "eth0": phone.mac_eth0 or "",
+            "wlan": phone.mac_wlan or "",
+        })
+
+    return output.getvalue().encode("utf-8-sig")
