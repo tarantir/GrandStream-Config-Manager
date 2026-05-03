@@ -63,30 +63,19 @@ Office,Alice,1000,GRP2612W,aabbcc001122,admin123,aabbcc001122,aabbcc001133
 
 ## XML Output
 
-Generated files are written to the configured output directory (default `./output`). Files are named by extension, e.g. `1000.xml`. The phonebook is written as `phonebook.xml`.
+Generated files are written to the configured output directory (default `./output`). Three files are written per phone — named by SIP extension, Ethernet MAC, and WiFi MAC (where applicable):
+
+```
+cfg1000.xml          # by SIP extension
+cfgaabbcc001122.xml  # by eth0 MAC
+cfgaabbcc001133.xml  # by wlan MAC (GRP2612W only)
+```
+
+Archived copies are also written to `archive/<timestamp>/` on each generation run. The phonebook is written as `phonebook.xml`.
 
 ### Serving via TFTP
 
-Grandstream phones fetch their config by MAC address — they request `cfg<mac>.xml` (lowercase, no separators). Create symbolic links from each phone's generated XML to its MAC-based filenames:
-
-```bash
-# For a phone with extension 1000, eth0 mac aabbcc001122, wlan mac aabbcc001133
-ln -s 1000.xml cfgaabbcc001122.xml   # ethernet MAC
-ln -s 1000.xml cfgaabbcc001133.xml   # wifi MAC
-```
-
-If you have many phones, you can script it from the CSV:
-
-```bash
-# Using the example CSV row: Office,Alice,1000,GRP2612W,aabbcc001122,admin123,aabbcc001122,aabbcc001133
-while IFS=, read -r account name ext model serial passwd eth0 wlan; do
-    [ "$account" = "account" ] && continue   # skip header
-    ln -sf "${ext}.xml" "cfg${eth0}.xml"
-    [ -n "$wlan" ] && ln -sf "${ext}.xml" "cfg${wlan}.xml"
-done < phones.csv
-```
-
-Run both the symlink commands and the script from within the TFTP server root directory — that is the directory your TFTP server serves files from. The symlinks and the generated XML files must all reside there together.
+Grandstream phones fetch their config by MAC address — they request `cfg<mac>.xml` (lowercase, no separators). Because the tool already generates files with those exact names, no symlinks are needed. Copy the contents of the output directory to your TFTP server root and phones will find their configs automatically.
 
 ## Phone Models
 
@@ -101,11 +90,12 @@ Run both the symlink commands and the script from within the TFTP server root di
 main.py                 FastAPI routes
 models.py               SQLAlchemy models
 database.py             DB init and migrations
-csv_importer.py         CSV import logic
+csv_importer.py         CSV import/export logic
 xml_generator.py        Provisioning XML generation
 xml_importer.py         XML config import/parsing
 phonebook_generator.py  Phonebook XML generation
 templates/              Jinja2 HTML templates
+start-script.sh         Convenience launcher
 output/                 Generated XML files (gitignored)
 ```
 
