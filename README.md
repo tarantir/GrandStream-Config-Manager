@@ -4,7 +4,9 @@ A local web app for managing provisioning XML configurations for GrandStream GRP
 
 **Security Warning:** This software is intended to run locally and has not been hardened for security. You have been warned, use at your own discretion.
 
-## Screenshots
+![GS Config Manager Screenshot](mockups/GS-Config-Manager.png)
+
+## Mockups
 
 Static HTML mockups are in the [mockups/](mockups/) folder:
 
