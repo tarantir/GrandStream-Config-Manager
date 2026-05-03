@@ -1,5 +1,13 @@
 import os
+from datetime import datetime
 import xml.etree.ElementTree as ET
+
+
+def _timestamped_archive_dir(output_dir: str) -> str:
+    timestamp = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
+    archive_dir = os.path.join(output_dir, "archive", timestamp)
+    os.makedirs(archive_dir, exist_ok=True)
+    return archive_dir
 
 
 def generate_phonebook_xml(phones: list, entries: list) -> str:
@@ -50,7 +58,11 @@ def generate_phonebook_xml(phones: list, entries: list) -> str:
 def write_phonebook(phones: list, entries: list, output_dir: str) -> tuple[str, str]:
     xml_content = generate_phonebook_xml(phones, entries)
     os.makedirs(output_dir, exist_ok=True)
+    archive_dir = _timestamped_archive_dir(output_dir)
     filepath = os.path.abspath(os.path.join(output_dir, "phonebook.xml"))
+    archive_filepath = os.path.abspath(os.path.join(archive_dir, "phonebook.xml"))
     with open(filepath, "w", encoding="utf-8") as f:
+        f.write(xml_content)
+    with open(archive_filepath, "w", encoding="utf-8") as f:
         f.write(xml_content)
     return "phonebook.xml", filepath

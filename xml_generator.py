@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 import xml.etree.ElementTree as ET
 from models import Phone, PhoneConfig, VpkKey
 
@@ -157,33 +158,41 @@ def generate_xml(phone: Phone) -> str:
     return declaration + ET.tostring(root, encoding="unicode")
 
 
+def _timestamped_archive_dir(output_dir: str) -> str:
+    timestamp = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
+    archive_dir = os.path.join(output_dir, "archive", timestamp)
+    os.makedirs(archive_dir, exist_ok=True)
+    return archive_dir
+
+
 def write_xml(phone: Phone, output_dir: str) -> list[tuple[str, str]]:
     xml_content = generate_xml(phone)
     os.makedirs(output_dir, exist_ok=True)
+    archive_dir = _timestamped_archive_dir(output_dir)
     files = []
-    
+
+    def _write(name: str, directory: str) -> tuple[str, str]:
+        filepath = os.path.abspath(os.path.join(directory, name))
+        with open(filepath, "w", encoding="utf-8") as f:
+            f.write(xml_content)
+        return name, filepath
+
     # Generate file for SIP ID (extension)
     if phone.extension:
         filename = f"cfg{phone.extension}.xml"
-        filepath = os.path.abspath(os.path.join(output_dir, filename))
-        with open(filepath, "w", encoding="utf-8") as f:
-            f.write(xml_content)
-        files.append((filename, filepath))
-    
+        files.append(_write(filename, output_dir))
+        _write(filename, archive_dir)
+
     # Generate file for eth0 MAC address
     if phone.mac_eth0:
         eth0_filename = f"cfg{phone.mac_eth0}.xml"
-        eth0_filepath = os.path.abspath(os.path.join(output_dir, eth0_filename))
-        with open(eth0_filepath, "w", encoding="utf-8") as f:
-            f.write(xml_content)
-        files.append((eth0_filename, eth0_filepath))
-    
+        files.append(_write(eth0_filename, output_dir))
+        _write(eth0_filename, archive_dir)
+
     # Generate file for wlan MAC address
     if phone.mac_wlan:
         wlan_filename = f"cfg{phone.mac_wlan}.xml"
-        wlan_filepath = os.path.abspath(os.path.join(output_dir, wlan_filename))
-        with open(wlan_filepath, "w", encoding="utf-8") as f:
-            f.write(xml_content)
-        files.append((wlan_filename, wlan_filepath))
-    
+        files.append(_write(wlan_filename, output_dir))
+        _write(wlan_filename, archive_dir)
+
     return files
