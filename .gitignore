@@ -1,0 +1,22 @@
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Generated XML output
+output/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+
+# OS
+.DS_Store
+Thumbs.db

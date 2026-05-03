@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}GS Config Manager{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/xml.min.js"></script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    .hljs { background: #0d1117 !important; border-radius: 0.5rem; }
+  </style>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navy: { 900: '#0f172a', 800: '#1e293b', 700: '#334155' }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-full">
+
+  <!-- Top nav -->
+  <nav class="bg-slate-800 border-b border-slate-700 px-6 py-3 flex items-center gap-8">
+    <a href="/" class="text-sky-400 font-semibold text-lg tracking-tight mono">GS Config Manager</a>
+    <div class="flex gap-6 text-sm text-slate-400">
+      <a href="/" class="hover:text-white transition-colors {% if request.url.path == '/' %}text-white{% endif %}">Phones</a>
+      <a href="/phonebook" class="hover:text-white transition-colors {% if request.url.path == '/phonebook' %}text-white{% endif %}">Phone Book</a>
+      <a href="/settings" class="hover:text-white transition-colors {% if request.url.path == '/settings' %}text-white{% endif %}">Settings</a>
+    </div>
+  </nav>
+
+  <!-- Flash message -->
+  {% if flash %}
+  <div id="flash-banner" class="px-6 py-3 text-sm font-medium
+    {% if flash.cat == 'success' %}bg-emerald-900/60 border-b border-emerald-700 text-emerald-300
+    {% elif flash.cat == 'error' %}bg-red-900/60 border-b border-red-700 text-red-300
+    {% else %}bg-sky-900/60 border-b border-sky-700 text-sky-300{% endif %}
+    flex items-center justify-between">
+    <span>{{ flash.msg }}</span>
+    <button onclick="document.getElementById('flash-banner').remove()" class="ml-4 opacity-60 hover:opacity-100">✕</button>
+  </div>
+  {% endif %}
+
+  <main class="px-6 py-8 max-w-7xl mx-auto">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- XML Preview Modal -->
+  <div id="xml-modal" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
+    <div class="bg-slate-800 border border-slate-600 rounded-xl shadow-2xl w-full max-w-4xl flex flex-col max-h-[90vh]">
+      <div class="flex items-center justify-between px-5 py-4 border-b border-slate-700">
+        <div>
+          <h2 class="text-white font-semibold">Generated XML</h2>
+          <p id="xml-modal-filename" class="text-slate-400 text-sm mono mt-0.5"></p>
+        </div>
+        <div class="flex gap-3">
+          <button onclick="copyXml()" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-sm rounded-lg transition-colors" id="copy-btn">Copy</button>
+          <button onclick="closeModal()" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-sm rounded-lg transition-colors">✕ Close</button>
+        </div>
+      </div>
+      <div class="overflow-auto flex-1 p-4">
+        <pre class="text-xs"><code id="xml-preview" class="language-xml"></code></pre>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function openXmlModal(filename, xml) {
+      document.getElementById('xml-modal-filename').textContent = filename;
+      const codeEl = document.getElementById('xml-preview');
+      codeEl.textContent = xml;
+      hljs.highlightElement(codeEl);
+      document.getElementById('xml-modal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+      document.getElementById('xml-modal').classList.add('hidden');
+    }
+
+    function copyXml() {
+      const text = document.getElementById('xml-preview').textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = document.getElementById('copy-btn');
+        btn.textContent = 'Copied!';
+        setTimeout(() => btn.textContent = 'Copy', 2000);
+      });
+    }
+
+    document.getElementById('xml-modal').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeModal();
+    });
+
+    function showToast(msg, type='info') {
+      const toast = document.createElement('div');
+      const colors = { success: 'bg-emerald-800 border-emerald-600 text-emerald-200',
+                       error: 'bg-red-800 border-red-600 text-red-200',
+                       info: 'bg-sky-800 border-sky-600 text-sky-200' };
+      toast.className = `fixed bottom-6 right-6 z-50 px-4 py-3 rounded-lg border text-sm font-medium shadow-xl transition-all ${colors[type] || colors.info}`;
+      toast.textContent = msg;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 4000);
+    }
+  </script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

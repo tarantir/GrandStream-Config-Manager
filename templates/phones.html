@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+{% block title %}Phones — GS Config Manager{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-6">
+  <div>
+    <h1 class="text-xl font-semibold text-white">Phone Inventory</h1>
+    <p class="text-slate-400 text-sm mt-1">{{ phones|length }} phone{% if phones|length != 1 %}s{% endif %} configured</p>
+  </div>
+  <div class="flex gap-3">
+    <button onclick="document.getElementById('csv-input').click()"
+      class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-sm rounded-lg border border-slate-600 transition-colors">
+      Import CSV
+    </button>
+    <form id="csv-form" action="/import" method="post" enctype="multipart/form-data" class="hidden">
+      <input id="csv-input" type="file" name="file" accept=".csv" onchange="document.getElementById('csv-form').submit()">
+    </form>
+    <button onclick="document.getElementById('xml-bulk-input').click()"
+      class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-sm rounded-lg border border-slate-600 transition-colors">
+      Import XML
+    </button>
+    <form id="xml-bulk-form" action="/import-xml" method="post" enctype="multipart/form-data" class="hidden">
+      <input id="xml-bulk-input" type="file" name="files" accept=".xml" multiple onchange="document.getElementById('xml-bulk-form').submit()">
+    </form>
+    <button onclick="generateSelected()" id="gen-sel-btn" disabled
+      class="px-4 py-2 bg-emerald-700 hover:bg-emerald-600 text-sm rounded-lg border border-emerald-600 transition-colors font-medium disabled:opacity-40 disabled:cursor-not-allowed">
+      Generate XML
+    </button>
+  </div>
+</div>
+
+{% if phones %}
+<div class="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden">
+  <table class="w-full text-sm">
+    <thead>
+      <tr class="border-b border-slate-700 text-slate-400 text-xs uppercase tracking-wider">
+        <th class="px-4 py-3 w-8">
+          <input type="checkbox" id="select-all" onchange="toggleAll(this)"
+            class="rounded border-slate-600 bg-slate-700 text-sky-500 cursor-pointer">
+        </th>
+        <th class="px-4 py-3 text-left">Extension</th>
+        <th class="px-4 py-3 text-left">Display</th>
+        <th class="px-4 py-3 text-left">Model</th>
+        <th class="px-4 py-3 text-left">Serial</th>
+        <th class="px-4 py-3 text-left">Eth0</th>
+        <th class="px-4 py-3 text-left">Wlan</th>
+        <th class="px-4 py-3 text-left">HW Passwd</th>
+        <th class="px-4 py-3 text-right">Actions</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-slate-700/50">
+      {% for phone in phones %}
+      <tr class="hover:bg-slate-700/30 transition-colors" id="phone-row-{{ phone.id }}">
+        <td class="px-4 py-3">
+          <input type="checkbox" value="{{ phone.id }}" onchange="updateSelection()"
+            class="phone-check rounded border-slate-600 bg-slate-700 text-sky-500 cursor-pointer">
+        </td>
+        <td class="px-4 py-3 mono font-medium text-sky-300">{{ phone.extension }}</td>
+        <td class="px-4 py-3 text-slate-200">{{ phone.subscriber_name or phone.extension }}</td>
+        <td class="px-4 py-3">
+          {% if phone.model == 'GRP2613' %}
+            <span class="px-2 py-0.5 bg-amber-900/50 border border-amber-700/50 text-amber-300 text-xs rounded-md font-medium mono">{{ phone.model }}</span>
+          {% else %}
+            <span class="px-2 py-0.5 bg-sky-900/50 border border-sky-700/50 text-sky-300 text-xs rounded-md font-medium mono">{{ phone.model }}</span>
+          {% endif %}
+        </td>
+        <td class="px-4 py-3 mono text-slate-400 text-xs">{{ phone.serial }}</td>
+        <td class="px-4 py-3 mono text-slate-400 text-xs">{{ phone.mac_eth0 }}</td>
+        <td class="px-4 py-3 mono text-slate-400 text-xs">{{ phone.mac_wlan or '—' }}</td>
+        <td class="px-4 py-3">
+          <button onclick="revealAndCopy('{{ phone.factory_password }}', this)"
+            class="mono text-xs text-slate-500 hover:text-slate-200 transition-colors tracking-wider">
+            ••••••••
+          </button>
+        </td>
+        <td class="px-4 py-3">
+          <div class="flex gap-2 justify-end">
+            <a href="/phones/{{ phone.id }}/edit"
+              class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 rounded-md text-xs transition-colors">Edit</a>
+            <button onclick="generateOne({{ phone.id }}, '{{ phone.extension }}')"
+              class="px-3 py-1.5 bg-emerald-900/60 hover:bg-emerald-800 border border-emerald-700/50 text-emerald-300 rounded-md text-xs transition-colors">Generate</button>
+            <button onclick="deletePhone({{ phone.id }}, '{{ phone.extension }}')"
+              class="px-3 py-1.5 bg-red-900/40 hover:bg-red-800/60 border border-red-700/40 text-red-400 rounded-md text-xs transition-colors">Delete</button>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% else %}
+<div class="bg-slate-800 border border-slate-700 border-dashed rounded-xl p-16 text-center">
+  <div class="text-4xl mb-4">📞</div>
+  <h2 class="text-white font-medium mb-2">No phones imported yet</h2>
+  <p class="text-slate-400 text-sm mb-6">Import a CSV file with your GrandStream phone inventory to get started.</p>
+  <button onclick="document.getElementById('csv-input').click()"
+    class="px-5 py-2.5 bg-sky-700 hover:bg-sky-600 rounded-lg text-sm font-medium transition-colors">
+    Import CSV
+  </button>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+  function getChecked() {
+    return [...document.querySelectorAll('.phone-check:checked')].map(cb => parseInt(cb.value));
+  }
+
+  function updateSelection() {
+    const checked = getChecked();
+    const total = document.querySelectorAll('.phone-check').length;
+    const btn = document.getElementById('gen-sel-btn');
+    const selectAll = document.getElementById('select-all');
+
+    btn.disabled = checked.length === 0;
+    btn.textContent = checked.length > 0 ? `Generate XML (${checked.length})` : 'Generate XML';
+
+    selectAll.indeterminate = checked.length > 0 && checked.length < total;
+    selectAll.checked = checked.length === total;
+  }
+
+  function toggleAll(cb) {
+    document.querySelectorAll('.phone-check').forEach(el => el.checked = cb.checked);
+    updateSelection();
+  }
+
+  function revealAndCopy(pw, btn) {
+    navigator.clipboard.writeText(pw);
+    btn.textContent = 'copied!';
+    btn.classList.add('text-emerald-400');
+    setTimeout(() => {
+      btn.textContent = pw;
+      btn.classList.remove('text-emerald-400');
+      btn.classList.add('text-slate-300');
+    }, 1000);
+  }
+
+  async function generateOne(phoneId, ext) {
+    const btn = event.target;
+    btn.disabled = true;
+    btn.textContent = '...';
+    try {
+      const res = await fetch(`/phones/${phoneId}/generate`, { method: 'POST' });
+      const data = await res.json();
+      if (data.xml) {
+        openXmlModal(data.filename, data.xml);
+      } else {
+        showToast(data.error || 'Generation failed', 'error');
+      }
+    } catch(e) {
+      showToast('Request failed', 'error');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Generate';
+    }
+  }
+
+  async function generateSelected() {
+    const ids = getChecked();
+    if (!ids.length) return;
+    const btn = document.getElementById('gen-sel-btn');
+    btn.disabled = true;
+    btn.textContent = 'Generating...';
+    try {
+      const res = await fetch('/generate-selected', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({phone_ids: ids}),
+      });
+      const data = await res.json();
+      const count = data.generated.length;
+      const errCount = data.errors.length;
+      let msg = `Generated ${count} file${count !== 1 ? 's' : ''}`;
+      if (errCount > 0) msg += `, ${errCount} error${errCount !== 1 ? 's' : ''}`;
+      showToast(msg, errCount > 0 ? 'error' : 'success');
+    } catch(e) {
+      showToast('Request failed', 'error');
+    } finally {
+      updateSelection();
+    }
+  }
+
+  async function deletePhone(phoneId, ext) {
+    if (!confirm(`Delete phone ${ext}? This cannot be undone.`)) return;
+    const res = await fetch(`/phones/${phoneId}`, { method: 'DELETE' });
+    const data = await res.json();
+    if (data.ok) {
+      const row = document.getElementById(`phone-row-${phoneId}`);
+      row && row.remove();
+      updateSelection();
+      showToast(`Deleted ${ext}`, 'info');
+    }
+  }
+</script>
+{% endblock %}

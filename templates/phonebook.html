@@ -1,0 +1,322 @@
+{% extends "base.html" %}
+{% block title %}Phone Book — GS Config Manager{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-6">
+  <div>
+    <h1 class="text-xl font-semibold text-white">Phone Book</h1>
+    <p class="text-slate-400 text-sm mt-1">{{ phones|length + entries|length }} entr{% if phones|length + entries|length != 1 %}ies{% else %}y{% endif %} total</p>
+  </div>
+  <div class="flex gap-3">
+    <button onclick="previewPhonebook()"
+      class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-sm rounded-lg border border-slate-600 transition-colors">
+      Preview XML
+    </button>
+    <button onclick="generatePhonebook()" id="gen-btn"
+      class="px-4 py-2 bg-emerald-700 hover:bg-emerald-600 text-sm rounded-lg border border-emerald-600 transition-colors font-medium">
+      Generate phonebook.xml
+    </button>
+  </div>
+</div>
+
+<!-- Phone Inventory Contacts -->
+<div class="mb-6">
+  <h2 class="text-sm font-medium text-slate-400 uppercase tracking-wider mb-3">From Phone Inventory</h2>
+  {% if phones %}
+  <div class="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden">
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="border-b border-slate-700 text-slate-400 text-xs uppercase tracking-wider">
+          <th class="px-4 py-3 text-left">Name</th>
+          <th class="px-4 py-3 text-left">Extension</th>
+          <th class="px-4 py-3 text-left">Account</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-700/50">
+        {% for phone in phones | sort(attribute='subscriber_name') %}
+        <tr class="hover:bg-slate-700/30 transition-colors">
+          <td class="px-4 py-3 text-slate-200">{{ phone.subscriber_name or phone.display_name or phone.extension }}</td>
+          <td class="px-4 py-3 mono text-sky-300 font-medium">{{ phone.extension }}</td>
+          <td class="px-4 py-3 text-slate-400 text-xs">1</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="bg-slate-800 border border-slate-700 border-dashed rounded-xl p-8 text-center text-slate-500 text-sm">
+    No phones in inventory.
+  </div>
+  {% endif %}
+</div>
+
+<!-- Additional Entries -->
+<div>
+  <div class="flex items-center justify-between mb-3">
+    <h2 class="text-sm font-medium text-slate-400 uppercase tracking-wider">Additional Entries</h2>
+    <button onclick="toggleAddForm()"
+      class="px-3 py-1.5 bg-sky-800 hover:bg-sky-700 border border-sky-700 text-sky-200 text-xs rounded-lg transition-colors">
+      + Add Entry
+    </button>
+  </div>
+
+  <!-- Add Entry Form -->
+  <div id="add-form" class="hidden mb-4 bg-slate-800 border border-slate-600 rounded-xl p-4">
+    <div class="grid grid-cols-4 gap-3 items-end">
+      <div>
+        <label class="block text-xs text-slate-400 mb-1">Name</label>
+        <input id="f-name" type="text" placeholder="e.g. Front Desk"
+          class="w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-sky-500">
+      </div>
+      <div>
+        <label class="block text-xs text-slate-400 mb-1">Phone Number</label>
+        <input id="f-number" type="text" placeholder="e.g. 9001"
+          class="w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white mono focus:outline-none focus:border-sky-500">
+      </div>
+      <div>
+        <label class="block text-xs text-slate-400 mb-1">Account</label>
+        <select id="f-account"
+          class="w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-sky-500">
+          {% for n in range(1, 7) %}
+          <option value="{{ n }}" {% if n == 1 %}selected{% endif %}>Account {{ n }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="flex gap-2">
+        <button onclick="submitEntry()"
+          class="flex-1 px-4 py-2 bg-sky-700 hover:bg-sky-600 text-sm rounded-lg transition-colors font-medium">
+          Add
+        </button>
+        <button onclick="toggleAddForm()"
+          class="px-3 py-2 bg-slate-700 hover:bg-slate-600 text-sm rounded-lg transition-colors">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+
+  {% if entries %}
+  <div class="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden" id="entries-table-wrap">
+    <table class="w-full text-sm" id="entries-table">
+      <thead>
+        <tr class="border-b border-slate-700 text-slate-400 text-xs uppercase tracking-wider">
+          <th class="px-4 py-3 text-left">Name</th>
+          <th class="px-4 py-3 text-left">Phone Number</th>
+          <th class="px-4 py-3 text-left">Account</th>
+          <th class="px-4 py-3 text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-700/50" id="entries-tbody">
+        {% for entry in entries %}
+        <tr id="entry-row-{{ entry.id }}">
+          <td class="px-4 py-3 text-slate-200" data-field="first_name">{{ entry.first_name }}</td>
+          <td class="px-4 py-3 mono text-sky-300 font-medium" data-field="phone_number">{{ entry.phone_number }}</td>
+          <td class="px-4 py-3 text-slate-400 text-xs" data-field="account_index">{{ entry.account_index }}</td>
+          <td class="px-4 py-3 text-right">
+            <div class="flex gap-2 justify-end">
+              <button onclick="editEntry({{ entry.id }})"
+                class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 rounded-md text-xs transition-colors">Edit</button>
+              <button onclick="deleteEntry({{ entry.id }}, '{{ entry.first_name | replace("'", "\\'") }}')"
+                class="px-3 py-1.5 bg-red-900/40 hover:bg-red-800/60 border border-red-700/40 text-red-400 rounded-md text-xs transition-colors">Delete</button>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="bg-slate-800 border border-slate-700 border-dashed rounded-xl p-8 text-center text-slate-500 text-sm" id="entries-empty">
+    No additional entries yet.
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  function toggleAddForm() {
+    const f = document.getElementById('add-form');
+    f.classList.toggle('hidden');
+    if (!f.classList.contains('hidden')) {
+      document.getElementById('f-name').focus();
+    }
+  }
+
+  async function submitEntry() {
+    const name = document.getElementById('f-name').value.trim();
+    const number = document.getElementById('f-number').value.trim();
+    const account = parseInt(document.getElementById('f-account').value);
+    if (!name || !number) {
+      showToast('Name and phone number are required', 'error');
+      return;
+    }
+    const res = await fetch('/phonebook/entries', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({first_name: name, phone_number: number, account_index: account}),
+    });
+    const data = await res.json();
+    if (!data.ok) {
+      showToast(data.error || 'Failed to add entry', 'error');
+      return;
+    }
+    appendEntryRow(data);
+    document.getElementById('f-name').value = '';
+    document.getElementById('f-number').value = '';
+    document.getElementById('f-account').value = '1';
+    toggleAddForm();
+    showToast(`Added ${data.first_name}`, 'success');
+  }
+
+  function entryRowHTML(d) {
+    const esc = s => s.replace(/'/g, "\\'");
+    return `
+      <td class="px-4 py-3 text-slate-200" data-field="first_name">${d.first_name}</td>
+      <td class="px-4 py-3 mono text-sky-300 font-medium" data-field="phone_number">${d.phone_number}</td>
+      <td class="px-4 py-3 text-slate-400 text-xs" data-field="account_index">${d.account_index}</td>
+      <td class="px-4 py-3 text-right">
+        <div class="flex gap-2 justify-end">
+          <button onclick="editEntry(${d.id})"
+            class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 rounded-md text-xs transition-colors">Edit</button>
+          <button onclick="deleteEntry(${d.id}, '${esc(d.first_name)}')"
+            class="px-3 py-1.5 bg-red-900/40 hover:bg-red-800/60 border border-red-700/40 text-red-400 rounded-md text-xs transition-colors">Delete</button>
+        </div>
+      </td>`;
+  }
+
+  function appendEntryRow(data) {
+    const empty = document.getElementById('entries-empty');
+    if (empty) empty.remove();
+
+    let wrap = document.getElementById('entries-table-wrap');
+    if (!wrap) {
+      wrap = document.createElement('div');
+      wrap.id = 'entries-table-wrap';
+      wrap.className = 'bg-slate-800 border border-slate-700 rounded-xl overflow-hidden';
+      wrap.innerHTML = `<table class="w-full text-sm" id="entries-table">
+        <thead><tr class="border-b border-slate-700 text-slate-400 text-xs uppercase tracking-wider">
+          <th class="px-4 py-3 text-left">Name</th>
+          <th class="px-4 py-3 text-left">Phone Number</th>
+          <th class="px-4 py-3 text-left">Account</th>
+          <th class="px-4 py-3 text-right">Actions</th>
+        </tr></thead>
+        <tbody class="divide-y divide-slate-700/50" id="entries-tbody"></tbody>
+      </table>`;
+      document.getElementById('add-form').insertAdjacentElement('afterend', wrap);
+    }
+
+    const tr = document.createElement('tr');
+    tr.id = `entry-row-${data.id}`;
+    tr.innerHTML = entryRowHTML(data);
+    document.getElementById('entries-tbody').appendChild(tr);
+  }
+
+  function editEntry(id) {
+    const row = document.getElementById(`entry-row-${id}`);
+    const name    = row.querySelector('[data-field="first_name"]').textContent.trim();
+    const number  = row.querySelector('[data-field="phone_number"]').textContent.trim();
+    const account = row.querySelector('[data-field="account_index"]').textContent.trim();
+
+    const accountOptions = [1,2,3,4,5,6].map(n =>
+      `<option value="${n}" ${n == account ? 'selected' : ''}>Account ${n}</option>`
+    ).join('');
+
+    row.innerHTML = `
+      <td class="px-3 py-2"><input id="edit-name-${id}" value="${name.replace(/"/g, '&quot;')}"
+        class="w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-sky-500"></td>
+      <td class="px-3 py-2"><input id="edit-number-${id}" value="${number.replace(/"/g, '&quot;')}"
+        class="w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-1.5 text-sm text-white mono focus:outline-none focus:border-sky-500"></td>
+      <td class="px-3 py-2"><select id="edit-account-${id}"
+        class="bg-slate-900 border border-slate-600 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-sky-500">
+        ${accountOptions}</select></td>
+      <td class="px-3 py-2 text-right">
+        <div class="flex gap-2 justify-end">
+          <button onclick="saveEntry(${id})"
+            class="px-3 py-1.5 bg-sky-700 hover:bg-sky-600 rounded-md text-xs transition-colors font-medium">Save</button>
+          <button onclick="cancelEdit(${id}, '${name.replace(/'/g, "\\'")}', '${number.replace(/'/g, "\\'")}', ${account})"
+            class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 rounded-md text-xs transition-colors">Cancel</button>
+        </div>
+      </td>`;
+    document.getElementById(`edit-name-${id}`).focus();
+  }
+
+  function cancelEdit(id, name, number, account) {
+    const row = document.getElementById(`entry-row-${id}`);
+    row.innerHTML = entryRowHTML({id, first_name: name, phone_number: number, account_index: account});
+  }
+
+  async function saveEntry(id) {
+    const name    = document.getElementById(`edit-name-${id}`).value.trim();
+    const number  = document.getElementById(`edit-number-${id}`).value.trim();
+    const account = parseInt(document.getElementById(`edit-account-${id}`).value);
+    if (!name || !number) {
+      showToast('Name and phone number are required', 'error');
+      return;
+    }
+    const res = await fetch(`/phonebook/entries/${id}`, {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({first_name: name, phone_number: number, account_index: account}),
+    });
+    const data = await res.json();
+    if (!data.ok) {
+      showToast(data.error || 'Save failed', 'error');
+      return;
+    }
+    const row = document.getElementById(`entry-row-${id}`);
+    row.innerHTML = entryRowHTML(data);
+    showToast('Saved', 'success');
+  }
+
+  async function deleteEntry(id, name) {
+    if (!confirm(`Delete "${name}"?`)) return;
+    const res = await fetch(`/phonebook/entries/${id}`, {method: 'DELETE'});
+    const data = await res.json();
+    if (data.ok) {
+      document.getElementById(`entry-row-${id}`)?.remove();
+      showToast(`Deleted ${name}`, 'info');
+    }
+  }
+
+  async function previewPhonebook() {
+    try {
+      const res = await fetch('/phonebook/xml');
+      const xml = await res.text();
+      openXmlModal('phonebook.xml', xml);
+    } catch(e) {
+      showToast('Request failed', 'error');
+    }
+  }
+
+  async function generatePhonebook() {
+    const btn = document.getElementById('gen-btn');
+    btn.disabled = true;
+    btn.textContent = 'Generating...';
+    try {
+      const res = await fetch('/phonebook/generate', {method: 'POST'});
+      const data = await res.json();
+      if (data.filename) {
+        showToast(`Saved ${data.filename}`, 'success');
+      } else {
+        showToast(data.error || 'Generation failed', 'error');
+      }
+    } catch(e) {
+      showToast('Request failed', 'error');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Generate phonebook.xml';
+    }
+  }
+
+  // Submit add form on Enter
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !document.getElementById('add-form').classList.contains('hidden')) {
+      const active = document.activeElement;
+      if (['f-name', 'f-number', 'f-account'].includes(active?.id)) {
+        submitEntry();
+      }
+    }
+  });
+</script>
+{% endblock %}

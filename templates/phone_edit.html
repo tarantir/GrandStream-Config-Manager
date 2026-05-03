@@ -1,0 +1,557 @@
+{% extends "base.html" %}
+{% block title %}Edit {{ phone.extension }} — GS Config Manager{% endblock %}
+
+{% block content %}
+<!-- Phone header -->
+<div class="flex items-start justify-between mb-6">
+  <div class="flex items-center gap-4">
+    <a href="/" class="text-slate-500 hover:text-slate-300 text-sm transition-colors">← Phones</a>
+    <div>
+      <div class="flex items-center gap-3">
+        <h1 class="text-xl font-semibold text-white mono">{{ phone.extension }}</h1>
+        {% if phone.model == 'GRP2613' %}
+          <span class="px-2 py-0.5 bg-amber-900/50 border border-amber-700/50 text-amber-300 text-xs rounded-md font-medium mono">{{ phone.model }}</span>
+        {% else %}
+          <span class="px-2 py-0.5 bg-sky-900/50 border border-sky-700/50 text-sky-300 text-xs rounded-md font-medium mono">{{ phone.model }}</span>
+        {% endif %}
+      </div>
+      <div class="flex gap-4 mt-1 text-xs text-slate-500 mono">
+        <span>S/N: {{ phone.serial }}</span>
+        <span>eth0: {{ phone.mac_eth0 }}</span>
+        {% if phone.mac_wlan %}<span>wlan: {{ phone.mac_wlan }}</span>{% endif %}
+      </div>
+    </div>
+  </div>
+  <div class="flex gap-3 items-center">
+    <button onclick="document.getElementById('xml-import-input').click()"
+      class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-sm rounded-lg border border-slate-600 transition-colors" id="import-xml-btn">
+      Import XML
+    </button>
+    <form id="xml-import-form" action="/phones/{{ phone.id }}/import-xml" method="post" enctype="multipart/form-data" class="hidden">
+      <input id="xml-import-input" type="file" name="file" accept=".xml" onchange="importXml({{ phone.id }})">
+    </form>
+    <button onclick="generateXml({{ phone.id }})"
+      class="px-4 py-2 bg-emerald-700 hover:bg-emerald-600 text-sm rounded-lg font-medium transition-colors" id="gen-btn">
+      Generate XML
+    </button>
+  </div>
+</div>
+
+<form action="/phones/{{ phone.id }}/config" method="post" id="config-form">
+  <!-- Tab bar -->
+  <div class="flex gap-1 border-b border-slate-700 mb-6" id="tab-bar">
+    <button type="button" class="tab-btn px-4 py-2 text-sm rounded-t-lg transition-colors" data-tab="sip">SIP</button>
+    {% if phone.model != 'GRP2613' %}
+    <button type="button" class="tab-btn px-4 py-2 text-sm rounded-t-lg transition-colors" data-tab="wifi">WiFi</button>
+    {% endif %}
+    <button type="button" class="tab-btn px-4 py-2 text-sm rounded-t-lg transition-colors" data-tab="keys">Keys</button>
+    <button type="button" class="tab-btn px-4 py-2 text-sm rounded-t-lg transition-colors" data-tab="phonebook">Phonebook</button>
+    <button type="button" class="tab-btn px-4 py-2 text-sm rounded-t-lg transition-colors" data-tab="display">Display</button>
+    <button type="button" class="tab-btn px-4 py-2 text-sm rounded-t-lg transition-colors" data-tab="provisioning">Provisioning</button>
+  </div>
+
+  <!-- SIP Tab -->
+  <div class="tab-pane" id="tab-sip">
+    {% set cfg = config %}
+
+    <!-- Account sub-tabs -->
+    <div class="flex gap-1 mb-5" id="acct-tab-bar">
+      {% for n in range(1, 7) %}
+      {% set acct = sip_accounts.get(n) %}
+      <button type="button" class="acct-tab-btn px-3 py-1.5 text-xs rounded-lg transition-colors" data-acct="{{ n }}">
+        Acct {{ n }}{% if acct and acct.enabled %} <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 ml-1 mb-0.5"></span>{% endif %}
+      </button>
+      {% endfor %}
+    </div>
+
+    {% for n in range(1, 7) %}
+    {% set acct = sip_accounts.get(n) %}
+    <div class="acct-pane hidden" id="acct-pane-{{ n }}">
+      <div class="grid grid-cols-2 gap-5">
+        <div class="col-span-2 flex items-center gap-3 pb-3 border-b border-slate-700">
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" name="acct_{{ n }}_enabled" value="on"
+              class="sr-only peer" {% if acct and acct.enabled %}checked{% endif %}>
+            <div class="w-11 h-6 bg-slate-700 peer-focus:ring-2 peer-focus:ring-sky-500 rounded-full peer
+              peer-checked:after:translate-x-full peer-checked:bg-sky-600
+              after:content-[''] after:absolute after:top-0.5 after:left-[2px]
+              after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+          </label>
+          <span class="text-sm text-slate-300">Account {{ n }} Enabled</span>
+        </div>
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">Account Name <span class="text-slate-600 normal-case">(account.{{ n }}.name)</span></label>
+          <input type="text" name="acct_{{ n }}_display_name" value="{{ acct.display_name if acct else '' }}"
+            placeholder="e.g. Office"
+            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none">
+        </div>
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">Subscriber Name <span class="text-slate-600 normal-case">(subscriber.name)</span></label>
+          <input type="text" name="acct_{{ n }}_subscriber_name" value="{{ acct.subscriber_name if acct else '' }}"
+            placeholder="e.g. Study"
+            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none">
+        </div>
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">Extension <span class="text-slate-600 normal-case">(SIP user ID)</span></label>
+          <input type="text" name="acct_{{ n }}_extension" value="{{ acct.extension if acct else '' }}"
+            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none">
+        </div>
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">SIP Server 1</label>
+          <input type="text" name="acct_{{ n }}_sip_server_1" value="{{ acct.sip_server_1 if acct else '192.168.4.1' }}"
+            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none">
+        </div>
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">SIP Server 1 Port</label>
+          <input type="number" name="acct_{{ n }}_sip_server_1_port" value="{{ acct.sip_server_1_port if acct else 5060 }}"
+            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none">
+        </div>
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">SIP Server 2</label>
+          <input type="text" name="acct_{{ n }}_sip_server_2" value="{{ acct.sip_server_2 if acct else 'pbx.example.com' }}"
+            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none">
+        </div>
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">SIP Server 2 Port</label>
+          <input type="number" name="acct_{{ n }}_sip_server_2_port" value="{{ acct.sip_server_2_port if acct else 5060 }}"
+            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none">
+        </div>
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">Voicemail Number</label>
+          <input type="text" name="acct_{{ n }}_voicemail_number" value="{{ acct.voicemail_number if acct else '*97' }}"
+            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none">
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+
+    <!-- Hotdesking (phone-level, not per-account) -->
+    <div class="mt-6 pt-5 border-t border-slate-700">
+      <h3 class="text-xs text-slate-400 uppercase tracking-wider mb-4">Hotdesking</h3>
+      <div class="grid grid-cols-2 gap-5 max-w-lg">
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">Server</label>
+          <input type="text" name="hotdesking_server" value="{{ cfg.hotdesking_server }}"
+            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none">
+        </div>
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">Type</label>
+          <select name="hotdesking_type" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200">
+            {% for opt in ['TFTP', 'HTTP', 'HTTPS'] %}
+            <option value="{{ opt }}" {% if cfg.hotdesking_type == opt %}selected{% endif %}>{{ opt }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WiFi Tab -->
+  {% if phone.model != 'GRP2613' %}
+  <div class="tab-pane hidden" id="tab-wifi">
+
+    <!-- Phone-level WiFi controls -->
+    <div class="flex items-center gap-6 mb-6">
+      <div class="flex items-center gap-3">
+        <label class="relative inline-flex items-center cursor-pointer">
+          <input type="checkbox" name="wifi_enabled" value="on"
+            class="sr-only peer" {% if cfg.wifi_enabled %}checked{% endif %}>
+          <div class="w-11 h-6 bg-slate-700 peer-focus:ring-2 peer-focus:ring-sky-500 rounded-full peer
+            peer-checked:after:translate-x-full peer-checked:bg-sky-600
+            after:content-[''] after:absolute after:top-0.5 after:left-[2px]
+            after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+        </label>
+        <span class="text-sm text-slate-300">WiFi Enabled</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <label class="text-xs text-slate-400">Band</label>
+        <select name="wifi_band" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm text-slate-200">
+          {% for opt in ['Auto', '2.4GHz', '5GHz'] %}
+          <option value="{{ opt }}" {% if cfg.wifi_band == opt %}selected{% endif %}>{{ opt }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <!-- SSID table -->
+    <div class="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b border-slate-700 text-slate-400 text-xs uppercase tracking-wider">
+            <th class="px-4 py-3 text-left w-10">#</th>
+            <th class="px-4 py-3 text-left w-16">On</th>
+            <th class="px-4 py-3 text-left">SSID</th>
+            <th class="px-4 py-3 text-left">Password</th>
+            <th class="px-4 py-3 text-left w-36">Key Mgmt</th>
+            <th class="px-4 py-3 text-left w-16">Hidden</th>
+            <th class="px-4 py-3 text-left w-20">Priority</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-700/50">
+          {% for n in range(1, 5) %}
+          {% set s = wifi_ssids.get(n) %}
+          <tr>
+            <td class="px-4 py-2 text-slate-400 mono text-xs font-medium">{{ n }}</td>
+            <td class="px-4 py-2">
+              <input type="checkbox" name="ssid_{{ n }}_enabled" value="on"
+                class="w-4 h-4 rounded accent-sky-500" {% if s and s.enabled %}checked{% endif %}>
+            </td>
+            <td class="px-4 py-2">
+              <input type="text" name="ssid_{{ n }}_essid" value="{{ s.essid if s else '' }}"
+                placeholder="Network name"
+                class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs mono text-slate-200">
+            </td>
+            <td class="px-4 py-2">
+              <div class="relative">
+                <input type="password" name="ssid_{{ n }}_psk" value="{{ s.psk if s else '' }}"
+                  id="ssid-psk-{{ n }}"
+                  class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs mono text-slate-200 pr-10">
+                <button type="button" onclick="toggleSsidPsk({{ n }})"
+                  class="absolute right-2 top-1.5 text-slate-500 hover:text-slate-300 text-xs" id="ssid-psk-btn-{{ n }}">show</button>
+              </div>
+            </td>
+            <td class="px-4 py-2">
+              <select name="ssid_{{ n }}_key_mgmt"
+                class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-slate-200">
+                {% for opt in ['WPA_PSK', 'WPA2_PSK', 'WPA_EAP', 'OPEN'] %}
+                <option value="{{ opt }}" {% if s and s.key_mgmt == opt %}selected{% endif %}>{{ opt }}</option>
+                {% endfor %}
+              </select>
+            </td>
+            <td class="px-4 py-2 text-center">
+              <input type="checkbox" name="ssid_{{ n }}_hidden" value="on"
+                class="w-4 h-4 rounded accent-sky-500" {% if s and s.hidden %}checked{% endif %}>
+            </td>
+            <td class="px-4 py-2">
+              <input type="number" name="ssid_{{ n }}_priority" value="{{ s.priority if s else 0 }}" min="0" max="255"
+                class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs mono text-slate-200">
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Keys Tab -->
+  <div class="tab-pane hidden" id="tab-keys">
+    {% set max_slots = 6 if phone.model == 'GRP2613' else 4 %}
+    {% set vpk_map = {} %}
+    {% for vpk in vpk_keys %}{% set _ = vpk_map.update({vpk.slot: vpk}) %}{% endfor %}
+    <div class="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b border-slate-700 text-slate-400 text-xs uppercase tracking-wider">
+            <th class="px-4 py-3 text-left w-12">Slot</th>
+            <th class="px-4 py-3 text-left w-40">Mode</th>
+            <th class="px-4 py-3 text-left">Description</th>
+            <th class="px-4 py-3 text-left">Value / Ext</th>
+            <th class="px-4 py-3 text-left w-36">Account</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-700/50">
+          {% for slot in range(1, max_slots + 1) %}
+          {% set vpk = vpk_map.get(slot) %}
+          <tr>
+            <td class="px-4 py-2 text-slate-400 mono text-xs font-medium">{{ slot }}</td>
+            <td class="px-4 py-2">
+              <select name="vpk_{{ slot }}_keymode" onchange="updateVpkRow(this, {{ slot }})"
+                class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-slate-200">
+                {% for mode in ['Line', 'BLF', 'SpeedDial', 'None'] %}
+                <option value="{{ mode }}" {% if vpk and vpk.keymode == mode %}selected{% endif %}
+                  {% if not vpk and mode == ('Line' if slot == 1 else 'None') %}selected{% endif %}>{{ mode }}</option>
+                {% endfor %}
+              </select>
+            </td>
+            <td class="px-4 py-2">
+              <input type="text" name="vpk_{{ slot }}_description"
+                value="{{ vpk.description if vpk else '' }}"
+                class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-slate-200">
+            </td>
+            <td class="px-4 py-2">
+              <input type="text" name="vpk_{{ slot }}_value"
+                value="{{ vpk.value if vpk else '' }}"
+                id="vpk-value-{{ slot }}"
+                class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-slate-200 disabled:opacity-40 disabled:cursor-not-allowed">
+            </td>
+            <td class="px-4 py-2">
+              <select name="vpk_{{ slot }}_account"
+                class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-slate-200">
+                {% for acc in ['Account1', 'Account2', 'Account3'] %}
+                <option value="{{ acc }}" {% if vpk and vpk.account == acc %}selected{% endif %}>{{ acc }}</option>
+                {% endfor %}
+              </select>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Phonebook Tab -->
+  <div class="tab-pane hidden" id="tab-phonebook">
+    <div class="mb-4 flex items-center gap-2 px-3 py-2 bg-slate-700/40 border border-slate-600/50 rounded-lg text-xs text-slate-400 w-fit">
+      <span class="text-slate-500">📖</span>
+      The phonebook file on your TFTP server must be named <span class="mono text-slate-200 mx-1">phonebook.xml</span>
+    </div>
+    <div class="grid grid-cols-2 gap-5">
+      {{ field("Phonebook Server", "phonebook_server", cfg.phonebook_server) }}
+      <div>
+        <label class="block text-xs text-slate-400 mb-1">Mode</label>
+        <select name="phonebook_mode" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200">
+          {% for opt in ['EnabledUseTFTP', 'EnabledUseHTTP', 'EnabledUseHTTPS', 'Disabled'] %}
+          <option value="{{ opt }}" {% if cfg.phonebook_mode == opt %}selected{% endif %}>{{ opt }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      {{ field("Sync Interval (minutes)", "phonebook_interval", cfg.phonebook_interval, "number") }}
+      <div>
+        <label class="block text-xs text-slate-400 mb-1">Protocol</label>
+        <select name="phonebook_protocol" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200">
+          {% for opt in ['TFTP', 'HTTP', 'HTTPS'] %}
+          <option value="{{ opt }}" {% if cfg.phonebook_protocol == opt %}selected{% endif %}>{{ opt }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Display Tab -->
+  <div class="tab-pane hidden" id="tab-display">
+    <div class="grid grid-cols-2 gap-5 max-w-lg">
+      <div>
+        <label class="block text-xs text-slate-400 mb-1">Wallpaper Color</label>
+        <div class="flex gap-2 items-center">
+          <input type="color" name="wallpaper_color" value="{{ cfg.wallpaper_color }}" id="color-picker"
+            class="w-10 h-10 rounded cursor-pointer bg-transparent border-0 p-0">
+          <input type="text" id="color-hex" value="{{ cfg.wallpaper_color }}"
+            class="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200"
+            oninput="syncColor(this.value)">
+        </div>
+      </div>
+      <div>
+        <label class="block text-xs text-slate-400 mb-1">Wallpaper Source</label>
+        <select name="wallpaper_source" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200">
+          {% for opt in ['ColorBackground', 'DefaultBackground', 'DownloadFromServer'] %}
+          <option value="{{ opt }}" {% if cfg.wallpaper_source == opt %}selected{% endif %}>{{ opt }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <div class="mt-6 pt-5 border-t border-slate-700">
+      <h3 class="text-xs text-slate-400 uppercase tracking-wider mb-4">Screensaver</h3>
+      <div class="grid grid-cols-2 gap-5 max-w-lg">
+        <div class="col-span-2 flex items-center gap-3">
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" name="screensaver_enabled" value="on" id="ss-toggle"
+              class="sr-only peer" {% if cfg.screensaver_enabled %}checked{% endif %}>
+            <div class="w-11 h-6 bg-slate-700 peer-focus:ring-2 peer-focus:ring-sky-500 rounded-full peer
+              peer-checked:after:translate-x-full peer-checked:bg-sky-600
+              after:content-[''] after:absolute after:top-0.5 after:left-[2px]
+              after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+          </label>
+          <span class="text-sm text-slate-300">Screensaver Enabled</span>
+        </div>
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">Source</label>
+          <select name="screensaver_source" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200">
+            {% for opt in ['Default', 'DownloadFromServer'] %}
+            <option value="{{ opt }}" {% if cfg.screensaver_source == opt %}selected{% endif %}>{{ opt }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        {{ field("Timeout (minutes)", "screensaver_timeout", cfg.screensaver_timeout, "number") }}
+        <div class="col-span-2 flex items-center gap-3">
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" name="screensaver_showdatetime" value="on"
+              class="sr-only peer" {% if cfg.screensaver_showdatetime %}checked{% endif %}>
+            <div class="w-11 h-6 bg-slate-700 peer-focus:ring-2 peer-focus:ring-sky-500 rounded-full peer
+              peer-checked:after:translate-x-full peer-checked:bg-sky-600
+              after:content-[''] after:absolute after:top-0.5 after:left-[2px]
+              after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+          </label>
+          <span class="text-sm text-slate-300">Show Date &amp; Time</span>
+        </div>
+        <div class="col-span-2 flex items-center gap-3">
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" name="screensaver_useprogrammablekeys" value="on"
+              class="sr-only peer" {% if cfg.screensaver_useprogrammablekeys %}checked{% endif %}>
+            <div class="w-11 h-6 bg-slate-700 peer-focus:ring-2 peer-focus:ring-sky-500 rounded-full peer
+              peer-checked:after:translate-x-full peer-checked:bg-sky-600
+              after:content-[''] after:absolute after:top-0.5 after:left-[2px]
+              after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+          </label>
+          <span class="text-sm text-slate-300">Use Programmable Keys</span>
+        </div>
+        {{ field("Server Path", "screensaver_serverpath", cfg.screensaver_serverpath or "") }}
+        {{ field("Download XML Interval (s)", "screensaver_downloadxmlinterval", cfg.screensaver_downloadxmlinterval if cfg.screensaver_downloadxmlinterval is not none else 0, "number") }}
+      </div>
+    </div>
+  </div>
+
+  <!-- Provisioning Tab -->
+  <div class="tab-pane hidden" id="tab-provisioning">
+    <div class="max-w-lg">
+      <h3 class="text-xs text-slate-400 uppercase tracking-wider mb-4">SIP</h3>
+      <div class="space-y-4">
+        <div class="flex items-center justify-between py-3 border-b border-slate-700">
+          <div>
+            <p class="text-sm text-slate-200">Notify Challenge</p>
+            <p class="text-xs text-slate-500 mono mt-0.5">sip.notify → challenge</p>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" name="sip_notify_challenge" value="on"
+              class="sr-only peer" {% if config.sip_notify_challenge %}checked{% endif %}>
+            <div class="w-11 h-6 bg-slate-700 peer-focus:ring-2 peer-focus:ring-sky-500 rounded-full peer
+              peer-checked:after:translate-x-full peer-checked:bg-sky-600
+              after:content-[''] after:absolute after:top-0.5 after:left-[2px]
+              after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Save bar -->
+  <div class="mt-6 flex gap-3 pt-4 border-t border-slate-700">
+    <button type="submit" class="px-5 py-2 bg-sky-700 hover:bg-sky-600 rounded-lg text-sm font-medium transition-colors">
+      Save Configuration
+    </button>
+    <a href="/" class="px-5 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-sm transition-colors">Cancel</a>
+  </div>
+</form>
+{% endblock %}
+
+{% macro field(label, name, value, type="text") %}
+<div>
+  <label class="block text-xs text-slate-400 mb-1">{{ label }}</label>
+  <input type="{{ type }}" name="{{ name }}" value="{{ value }}"
+    class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none transition-colors">
+</div>
+{% endmacro %}
+
+{% block scripts %}
+<script>
+  // Tab system
+  const tabs = document.querySelectorAll('.tab-btn');
+  const panes = document.querySelectorAll('.tab-pane');
+
+  function activateTab(name) {
+    tabs.forEach(t => {
+      const active = t.dataset.tab === name;
+      t.className = `tab-btn px-4 py-2 text-sm rounded-t-lg transition-colors ${active
+        ? 'bg-slate-800 text-white border border-slate-700 border-b-slate-800 -mb-px z-10'
+        : 'text-slate-400 hover:text-slate-200'}`;
+    });
+    panes.forEach(p => p.classList.toggle('hidden', p.id !== `tab-${name}`));
+    localStorage.setItem('gs-tab-{{ phone.id }}', name);
+  }
+
+  tabs.forEach(t => t.addEventListener('click', () => activateTab(t.dataset.tab)));
+
+  const savedTab = localStorage.getItem('gs-tab-{{ phone.id }}') || 'sip';
+  activateTab(savedTab);
+
+  // Account sub-tab system
+  const acctBtns = document.querySelectorAll('.acct-tab-btn');
+  const acctPanes = document.querySelectorAll('.acct-pane');
+
+  function activateAcct(n) {
+    acctBtns.forEach(b => {
+      const active = parseInt(b.dataset.acct) === n;
+      b.className = `acct-tab-btn px-3 py-1.5 text-xs rounded-lg transition-colors ${active
+        ? 'bg-slate-700 text-white'
+        : 'text-slate-400 hover:text-slate-200'}`;
+    });
+    acctPanes.forEach(p => p.classList.toggle('hidden', p.id !== `acct-pane-${n}`));
+    localStorage.setItem('gs-acct-{{ phone.id }}', n);
+  }
+
+  acctBtns.forEach(b => b.addEventListener('click', () => activateAcct(parseInt(b.dataset.acct))));
+  activateAcct(parseInt(localStorage.getItem('gs-acct-{{ phone.id }}') || '1'));
+
+  // VPK value field disable logic
+  function updateVpkRow(select, slot) {
+    const mode = select.value;
+    const valInput = document.getElementById(`vpk-value-${slot}`);
+    if (valInput) valInput.disabled = (mode === 'Line' || mode === 'None');
+  }
+
+  // Init on load
+  document.querySelectorAll('[name^="vpk_"][name$="_keymode"]').forEach(sel => {
+    const slot = sel.name.split('_')[1];
+    updateVpkRow(sel, parseInt(slot));
+  });
+
+  // Per-SSID PSK show/hide
+  function toggleSsidPsk(n) {
+    const inp = document.getElementById(`ssid-psk-${n}`);
+    const btn = document.getElementById(`ssid-psk-btn-${n}`);
+    if (inp.type === 'password') { inp.type = 'text'; btn.textContent = 'hide'; }
+    else { inp.type = 'password'; btn.textContent = 'show'; }
+  }
+
+  // Color picker sync
+  const picker = document.getElementById('color-picker');
+  const hexInput = document.getElementById('color-hex');
+  if (picker) {
+    picker.addEventListener('input', () => {
+      hexInput.value = picker.value;
+      document.querySelector('[name="wallpaper_color"]').value = picker.value;
+    });
+  }
+  function syncColor(val) {
+    if (/^#[0-9a-fA-F]{6}$/.test(val) && picker) picker.value = val;
+  }
+
+  // Generate XML
+  async function generateXml(phoneId) {
+    const btn = document.getElementById('gen-btn');
+    btn.disabled = true;
+    btn.textContent = '...';
+    try {
+      const res = await fetch(`/phones/${phoneId}/generate`, { method: 'POST' });
+      const data = await res.json();
+      if (data.xml) openXmlModal(data.filename, data.xml);
+      else showToast(data.error || 'Failed', 'error');
+    } catch(e) {
+      showToast('Request failed', 'error');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Generate XML';
+    }
+  }
+
+  // Import XML — upload file, apply to this phone, then reload so form reflects new values
+  async function importXml(phoneId) {
+    const input = document.getElementById('xml-import-input');
+    if (!input.files.length) return;
+    const btn = document.getElementById('import-xml-btn');
+    btn.disabled = true;
+    btn.textContent = 'Importing...';
+    const fd = new FormData();
+    fd.append('file', input.files[0]);
+    try {
+      const res = await fetch(`/phones/${phoneId}/import-xml`, { method: 'POST', body: fd });
+      const data = await res.json();
+      if (data.ok) {
+        showToast(`Imported: ${data.fields_updated.length} fields, ${data.vpk_slots_updated} VPK slots updated.`, 'success');
+        setTimeout(() => location.reload(), 1200);
+      } else {
+        showToast(data.error || 'Import failed', 'error');
+        btn.disabled = false;
+        btn.textContent = 'Import XML';
+      }
+    } catch(e) {
+      showToast('Request failed', 'error');
+      btn.disabled = false;
+      btn.textContent = 'Import XML';
+    }
+    // reset so re-selecting same file triggers onchange again
+    input.value = '';
+  }
+</script>
+{% endblock %}

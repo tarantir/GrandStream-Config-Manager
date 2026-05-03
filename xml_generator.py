@@ -1,0 +1,167 @@
+import os
+import xml.etree.ElementTree as ET
+from models import Phone, PhoneConfig, VpkKey
+
+
+def _sub(parent: ET.Element, tag: str, text: str = "") -> ET.Element:
+    el = ET.SubElement(parent, tag)
+    if text:
+        el.text = text
+    return el
+
+
+def _part(item: ET.Element, name: str, text: str = "") -> ET.Element:
+    part = ET.SubElement(item, "part")
+    part.set("name", name)
+    if text:
+        part.text = text
+    return part
+
+
+def _emit_account(config: ET.Element, n: int, acct) -> None:
+    display = acct.display_name or acct.extension or ""
+    ext = acct.extension or ""
+
+    acc = ET.SubElement(config, "item")
+    acc.set("name", f"account.{n}")
+    _part(acc, "name", display)
+    _part(acc, "enable", "Yes")
+    _part(acc, "imageid", "-1")
+
+    sip = ET.SubElement(config, "item")
+    sip.set("name", f"account.{n}.sip")
+    _part(sip, "userid", ext)
+
+    sub = ET.SubElement(config, "item")
+    sub.set("name", f"account.{n}.sip.subscriber")
+    _part(sub, "name", acct.subscriber_name or display)
+    _part(sub, "userid", ext)
+
+    vm = ET.SubElement(config, "item")
+    vm.set("name", f"account.{n}.sip.voicemail")
+    _part(vm, "number", acct.voicemail_number or "*97")
+    ET.SubElement(vm, "part").set("name", "monitorednumber")
+
+    srv1 = ET.SubElement(config, "item")
+    srv1.set("name", f"account.{n}.sip.server.1")
+    _part(srv1, "address", acct.sip_server_1 or "")
+
+    srv2 = ET.SubElement(config, "item")
+    srv2.set("name", f"account.{n}.sip.server.2")
+    _part(srv2, "address", acct.sip_server_2 or "")
+
+
+def generate_xml(phone: Phone) -> str:
+    cfg: PhoneConfig = phone.config
+
+    root = ET.Element("gs_provision")
+    config = ET.SubElement(root, "config")
+    config.set("version", "2")
+
+    # SIP accounts (emit only enabled ones)
+    acct_map = {a.account_num: a for a in phone.sip_accounts}
+    for n in range(1, 7):
+        acct = acct_map.get(n)
+        if acct and acct.enabled:
+            _emit_account(config, n, acct)
+
+    # Hotdesking
+    hd = ET.SubElement(config, "item")
+    hd.set("name", "hotdesking.server")
+    _part(hd, "type", cfg.hotdesking_type or "TFTP")
+    _part(hd, "path", cfg.hotdesking_server or "")
+
+    # WiFi — skip for GRP2613 or if disabled
+    if phone.model != "GRP2613" and cfg.wifi_enabled:
+        wifi = ET.SubElement(config, "item")
+        wifi.set("name", "network.wifi")
+        _part(wifi, "band", cfg.wifi_band or "Auto")
+        _part(wifi, "enable", "On")
+
+        ssid_map = {s.ssid_num: s for s in phone.wifi_ssids}
+        for n in range(1, 5):
+            s = ssid_map.get(n)
+            if not s or not s.essid:
+                continue
+            ssid = ET.SubElement(config, "item")
+            ssid.set("name", f"network.wifi.ssid.{n}")
+            _part(ssid, "hidden", "Yes" if s.hidden else "No")
+            _part(ssid, "essid", s.essid)
+            _part(ssid, "enabled", "Yes" if s.enabled else "No")
+            _part(ssid, "key_management", s.key_mgmt or "WPA_PSK")
+            _part(ssid, "psk", s.psk or "")
+            _part(ssid, "eap_method", "EAP-PWD")
+            _part(ssid, "80211r", "No")
+            _part(ssid, "priority", str(s.priority or 0))
+
+    # VPK keys — emit only non-None slots
+    for vpk in sorted(phone.vpk_keys, key=lambda k: k.slot):
+        if vpk.keymode == "None":
+            continue
+        item = ET.SubElement(config, "item")
+        item.set("name", f"pks.vpk.{vpk.slot}")
+        _part(item, "lockmode", "No")
+        _part(item, "description", vpk.description or "")
+        if vpk.keymode != "Line":
+            _part(item, "value", vpk.value or "")
+        _part(item, "keymode", vpk.keymode)
+        _part(item, "account", vpk.account or "Account1")
+
+    # SIP notify challenge
+    notify = ET.SubElement(config, "item")
+    notify.set("name", "sip.notify")
+    _part(notify, "challenge", "Yes" if cfg.sip_notify_challenge else "No")
+
+    # Phonebook
+    pb = ET.SubElement(config, "item")
+    pb.set("name", "phonebook.download")
+    _part(pb, "interval", str(cfg.phonebook_interval or 720))
+    _part(pb, "mode", cfg.phonebook_mode or "EnabledUseTFTP")
+    _part(pb, "removeeditedentries", "Yes")
+    _part(pb, "server", cfg.phonebook_server or "")
+    ET.SubElement(pb, "part").set("name", "username")
+
+    pbg = ET.SubElement(config, "item")
+    pbg.set("name", "phonebook.import.group")
+    _part(pbg, "method", "Replace")
+
+    pbs = ET.SubElement(config, "item")
+    pbs.set("name", "phonebook")
+    _part(pbs, "defaultsearchmode", "QuickMatch")
+    _part(pbs, "keyfunction", "Default")
+    _part(pbs, "sortby", "FirstName")
+
+    # Wallpaper
+    wp = ET.SubElement(config, "item")
+    wp.set("name", "lcd.wallpaper")
+    _part(wp, "color", cfg.wallpaper_color or "#000000")
+    ET.SubElement(wp, "part").set("name", "serverpath")
+    _part(wp, "source", cfg.wallpaper_source or "ColorBackground")
+
+    # Screensaver
+    ss = ET.SubElement(config, "item")
+    ss.set("name", "lcd.screensaver")
+    _part(ss, "downloadxmlinterval", str(cfg.screensaver_downloadxmlinterval if cfg.screensaver_downloadxmlinterval is not None else 0))
+    _part(ss, "enable", "Yes" if cfg.screensaver_enabled else "No")
+    p = ET.SubElement(ss, "part")
+    p.set("name", "serverpath")
+    if cfg.screensaver_serverpath:
+        p.text = cfg.screensaver_serverpath
+    _part(ss, "showdatetime", "Yes" if cfg.screensaver_showdatetime else "No")
+    _part(ss, "source", cfg.screensaver_source or "Default")
+    _part(ss, "timeout", str(cfg.screensaver_timeout if cfg.screensaver_timeout is not None else 3))
+    _part(ss, "useprogrammablekeys", "Yes" if cfg.screensaver_useprogrammablekeys else "No")
+
+    ET.indent(root, space="    ")
+    declaration = '<?xml version="1.0" encoding="UTF-8"?>\n'
+    return declaration + ET.tostring(root, encoding="unicode")
+
+
+def write_xml(phone: Phone, output_dir: str) -> tuple[str, str]:
+    xml_content = generate_xml(phone)
+    os.makedirs(output_dir, exist_ok=True)
+    filename = f"{phone.extension}.xml"
+    filepath = os.path.abspath(os.path.join(output_dir, filename))
+    with open(filepath, "w", encoding="utf-8") as f:
+        f.write(xml_content)
+    return filename, filepath

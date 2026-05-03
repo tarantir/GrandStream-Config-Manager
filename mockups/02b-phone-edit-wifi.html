@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit 1001 WiFi — GS Config Manager</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+  </style>
+  <script>
+    tailwind.config = {
+      theme: { extend: { colors: { navy: { 900: '#0f172a', 800: '#1e293b', 700: '#334155' } } } }
+    }
+  </script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-full">
+
+  <nav class="bg-slate-800 border-b border-slate-700 px-6 py-3 flex items-center gap-8">
+    <a href="#" class="text-sky-400 font-semibold text-lg tracking-tight mono">GS Config Manager</a>
+    <div class="flex gap-6 text-sm text-slate-400">
+      <a href="#" class="text-white">Phones</a>
+      <a href="#" class="hover:text-white">Phone Book</a>
+      <a href="#" class="hover:text-white">Settings</a>
+    </div>
+  </nav>
+
+  <main class="px-6 py-8 max-w-7xl mx-auto">
+
+    <div class="flex items-start justify-between mb-6">
+      <div class="flex items-center gap-4">
+        <a href="#" class="text-slate-500 text-sm">← Phones</a>
+        <div>
+          <div class="flex items-center gap-3">
+            <h1 class="text-xl font-semibold text-white mono">1001</h1>
+            <span class="px-2 py-0.5 bg-sky-900/50 border border-sky-700/50 text-sky-300 text-xs rounded-md font-medium mono">GRP2612W</span>
+          </div>
+          <div class="flex gap-4 mt-1 text-xs text-slate-500 mono">
+            <span>S/N: C0BADDCAFE01</span>
+            <span>eth0: c0baddcafe01</span>
+            <span>wlan: c0baddcafe02</span>
+          </div>
+        </div>
+      </div>
+      <div class="flex gap-3">
+        <button class="px-4 py-2 bg-slate-700 text-sm rounded-lg border border-slate-600">Import XML</button>
+        <button class="px-4 py-2 bg-emerald-700 text-sm rounded-lg font-medium">Generate XML</button>
+      </div>
+    </div>
+
+    <!-- Tab bar — WiFi active -->
+    <div class="flex gap-1 border-b border-slate-700 mb-6">
+      <button class="px-4 py-2 text-sm rounded-t-lg text-slate-400">SIP</button>
+      <button class="px-4 py-2 text-sm rounded-t-lg bg-slate-800 text-white border border-slate-700 border-b-slate-800 -mb-px z-10">WiFi</button>
+      <button class="px-4 py-2 text-sm rounded-t-lg text-slate-400">Keys</button>
+      <button class="px-4 py-2 text-sm rounded-t-lg text-slate-400">Phonebook</button>
+      <button class="px-4 py-2 text-sm rounded-t-lg text-slate-400">Display</button>
+      <button class="px-4 py-2 text-sm rounded-t-lg text-slate-400">Provisioning</button>
+    </div>
+
+    <!-- WiFi controls -->
+    <div class="flex items-center gap-6 mb-6">
+      <div class="flex items-center gap-3">
+        <label class="relative inline-flex items-center cursor-pointer">
+          <input type="checkbox" checked class="sr-only peer">
+          <div class="w-11 h-6 bg-sky-600 rounded-full peer after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:translate-x-full"></div>
+        </label>
+        <span class="text-sm text-slate-300">WiFi Enabled</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <label class="text-xs text-slate-400">Band</label>
+        <select class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm text-slate-200">
+          <option selected>Auto</option>
+          <option>2.4GHz</option>
+          <option>5GHz</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- SSID table -->
+    <div class="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b border-slate-700 text-slate-400 text-xs uppercase tracking-wider">
+            <th class="px-4 py-3 text-left w-10">#</th>
+            <th class="px-4 py-3 text-left w-16">On</th>
+            <th class="px-4 py-3 text-left">SSID</th>
+            <th class="px-4 py-3 text-left">Password</th>
+            <th class="px-4 py-3 text-left w-36">Key Mgmt</th>
+            <th class="px-4 py-3 text-left w-16">Hidden</th>
+            <th class="px-4 py-3 text-left w-20">Priority</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-700/50">
+          <tr>
+            <td class="px-4 py-2 text-slate-400 mono text-xs font-medium">1</td>
+            <td class="px-4 py-2"><input type="checkbox" checked class="w-4 h-4 rounded accent-sky-500"></td>
+            <td class="px-4 py-2"><input type="text" value="OfficeWifi" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs mono text-slate-200"></td>
+            <td class="px-4 py-2"><input type="password" value="••••••••••" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs mono text-slate-200"></td>
+            <td class="px-4 py-2">
+              <select class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-slate-200">
+                <option>WPA_PSK</option><option selected>WPA2_PSK</option><option>WPA_EAP</option><option>OPEN</option>
+              </select>
+            </td>
+            <td class="px-4 py-2 text-center"><input type="checkbox" class="w-4 h-4 rounded accent-sky-500"></td>
+            <td class="px-4 py-2"><input type="number" value="10" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs mono text-slate-200"></td>
+          </tr>
+          <tr>
+            <td class="px-4 py-2 text-slate-400 mono text-xs font-medium">2</td>
+            <td class="px-4 py-2"><input type="checkbox" class="w-4 h-4 rounded accent-sky-500"></td>
+            <td class="px-4 py-2"><input type="text" value="" placeholder="Network name" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs mono text-slate-400 placeholder-slate-600"></td>
+            <td class="px-4 py-2"><input type="password" value="" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs mono text-slate-200"></td>
+            <td class="px-4 py-2">
+              <select class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-slate-200">
+                <option selected>WPA_PSK</option><option>WPA2_PSK</option><option>WPA_EAP</option><option>OPEN</option>
+              </select>
+            </td>
+            <td class="px-4 py-2 text-center"><input type="checkbox" class="w-4 h-4 rounded accent-sky-500"></td>
+            <td class="px-4 py-2"><input type="number" value="0" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs mono text-slate-200"></td>
+          </tr>
+          <tr>
+            <td class="px-4 py-2 text-slate-400 mono text-xs font-medium">3</td>
+            <td class="px-4 py-2"><input type="checkbox" class="w-4 h-4 rounded accent-sky-500"></td>
+            <td class="px-4 py-2"><input type="text" value="" placeholder="Network name" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs mono text-slate-400 placeholder-slate-600"></td>
+            <td class="px-4 py-2"><input type="password" value="" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs mono text-slate-200"></td>
+            <td class="px-4 py-2">
+              <select class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-slate-200">
+                <option selected>WPA_PSK</option><option>WPA2_PSK</option><option>WPA_EAP</option><option>OPEN</option>
+              </select>
+            </td>
+            <td class="px-4 py-2 text-center"><input type="checkbox" class="w-4 h-4 rounded accent-sky-500"></td>
+            <td class="px-4 py-2"><input type="number" value="0" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs mono text-slate-200"></td>
+          </tr>
+          <tr>
+            <td class="px-4 py-2 text-slate-400 mono text-xs font-medium">4</td>
+            <td class="px-4 py-2"><input type="checkbox" class="w-4 h-4 rounded accent-sky-500"></td>
+            <td class="px-4 py-2"><input type="text" value="" placeholder="Network name" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs mono text-slate-400 placeholder-slate-600"></td>
+            <td class="px-4 py-2"><input type="password" value="" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs mono text-slate-200"></td>
+            <td class="px-4 py-2">
+              <select class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-slate-200">
+                <option selected>WPA_PSK</option><option>WPA2_PSK</option><option>WPA_EAP</option><option>OPEN</option>
+              </select>
+            </td>
+            <td class="px-4 py-2 text-center"><input type="checkbox" class="w-4 h-4 rounded accent-sky-500"></td>
+            <td class="px-4 py-2"><input type="number" value="0" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs mono text-slate-200"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="mt-6 flex gap-3 pt-4 border-t border-slate-700">
+      <button class="px-5 py-2 bg-sky-700 rounded-lg text-sm font-medium">Save Configuration</button>
+      <a href="#" class="px-5 py-2 bg-slate-700 rounded-lg text-sm">Cancel</a>
+    </div>
+
+  </main>
+</body>
+</html>

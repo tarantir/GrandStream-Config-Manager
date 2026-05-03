@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit 1001 — GS Config Manager</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+  </style>
+  <script>
+    tailwind.config = {
+      theme: { extend: { colors: { navy: { 900: '#0f172a', 800: '#1e293b', 700: '#334155' } } } }
+    }
+  </script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-full">
+
+  <nav class="bg-slate-800 border-b border-slate-700 px-6 py-3 flex items-center gap-8">
+    <a href="#" class="text-sky-400 font-semibold text-lg tracking-tight mono">GS Config Manager</a>
+    <div class="flex gap-6 text-sm text-slate-400">
+      <a href="#" class="text-white transition-colors">Phones</a>
+      <a href="#" class="hover:text-white transition-colors">Phone Book</a>
+      <a href="#" class="hover:text-white transition-colors">Settings</a>
+    </div>
+  </nav>
+
+  <main class="px-6 py-8 max-w-7xl mx-auto">
+
+    <!-- Phone header -->
+    <div class="flex items-start justify-between mb-6">
+      <div class="flex items-center gap-4">
+        <a href="#" class="text-slate-500 hover:text-slate-300 text-sm">← Phones</a>
+        <div>
+          <div class="flex items-center gap-3">
+            <h1 class="text-xl font-semibold text-white mono">1001</h1>
+            <span class="px-2 py-0.5 bg-sky-900/50 border border-sky-700/50 text-sky-300 text-xs rounded-md font-medium mono">GRP2612W</span>
+          </div>
+          <div class="flex gap-4 mt-1 text-xs text-slate-500 mono">
+            <span>S/N: C0BADDCAFE01</span>
+            <span>eth0: c0baddcafe01</span>
+            <span>wlan: c0baddcafe02</span>
+          </div>
+        </div>
+      </div>
+      <div class="flex gap-3 items-center">
+        <button class="px-4 py-2 bg-slate-700 text-sm rounded-lg border border-slate-600">Import XML</button>
+        <button class="px-4 py-2 bg-emerald-700 text-sm rounded-lg font-medium">Generate XML</button>
+      </div>
+    </div>
+
+    <!-- Tab bar -->
+    <div class="flex gap-1 border-b border-slate-700 mb-6">
+      <button class="px-4 py-2 text-sm rounded-t-lg bg-slate-800 text-white border border-slate-700 border-b-slate-800 -mb-px z-10">SIP</button>
+      <button class="px-4 py-2 text-sm rounded-t-lg text-slate-400 hover:text-slate-200">WiFi</button>
+      <button class="px-4 py-2 text-sm rounded-t-lg text-slate-400 hover:text-slate-200">Keys</button>
+      <button class="px-4 py-2 text-sm rounded-t-lg text-slate-400 hover:text-slate-200">Phonebook</button>
+      <button class="px-4 py-2 text-sm rounded-t-lg text-slate-400 hover:text-slate-200">Display</button>
+      <button class="px-4 py-2 text-sm rounded-t-lg text-slate-400 hover:text-slate-200">Provisioning</button>
+    </div>
+
+    <!-- SIP Tab content -->
+    <div>
+      <!-- Account sub-tabs -->
+      <div class="flex gap-1 mb-5">
+        <button class="px-3 py-1.5 text-xs rounded-lg bg-slate-700 text-white">
+          Acct 1 <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 ml-1 mb-0.5"></span>
+        </button>
+        <button class="px-3 py-1.5 text-xs rounded-lg text-slate-400">Acct 2</button>
+        <button class="px-3 py-1.5 text-xs rounded-lg text-slate-400">Acct 3</button>
+        <button class="px-3 py-1.5 text-xs rounded-lg text-slate-400">Acct 4</button>
+        <button class="px-3 py-1.5 text-xs rounded-lg text-slate-400">Acct 5</button>
+        <button class="px-3 py-1.5 text-xs rounded-lg text-slate-400">Acct 6</button>
+      </div>
+
+      <!-- Account 1 fields -->
+      <div class="grid grid-cols-2 gap-5">
+        <div class="col-span-2 flex items-center gap-3 pb-3 border-b border-slate-700">
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" checked class="sr-only peer">
+            <div class="w-11 h-6 bg-sky-600 rounded-full peer
+              peer-checked:after:translate-x-full
+              after:content-[''] after:absolute after:top-0.5 after:left-[2px]
+              after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all after:translate-x-full"></div>
+          </label>
+          <span class="text-sm text-slate-300">Account 1 Enabled</span>
+        </div>
+
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">Account Name <span class="text-slate-600 normal-case">(account.1.name)</span></label>
+          <input type="text" value="Office" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:ring-1 focus:ring-sky-500 outline-none">
+        </div>
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">Subscriber Name <span class="text-slate-600 normal-case">(subscriber.name)</span></label>
+          <input type="text" value="Alice Chen" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:ring-1 focus:ring-sky-500 outline-none">
+        </div>
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">Extension <span class="text-slate-600 normal-case">(SIP user ID)</span></label>
+          <input type="text" value="1001" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 outline-none">
+        </div>
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">SIP Server 1</label>
+          <input type="text" value="192.168.4.1" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 outline-none">
+        </div>
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">SIP Server 1 Port</label>
+          <input type="number" value="5060" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 outline-none">
+        </div>
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">SIP Server 2</label>
+          <input type="text" value="pbx.example.com" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 outline-none">
+        </div>
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">SIP Server 2 Port</label>
+          <input type="number" value="5060" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 outline-none">
+        </div>
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">Voicemail Number</label>
+          <input type="text" value="*97" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 outline-none">
+        </div>
+      </div>
+
+      <!-- Hotdesking -->
+      <div class="mt-6 pt-5 border-t border-slate-700">
+        <h3 class="text-xs text-slate-400 uppercase tracking-wider mb-4">Hotdesking</h3>
+        <div class="grid grid-cols-2 gap-5 max-w-lg">
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Server</label>
+            <input type="text" value="" placeholder="e.g. 192.168.4.1" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 outline-none">
+          </div>
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Type</label>
+            <select class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200">
+              <option selected>TFTP</option>
+              <option>HTTP</option>
+              <option>HTTPS</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Save bar -->
+    <div class="mt-6 flex gap-3 pt-4 border-t border-slate-700">
+      <button type="button" class="px-5 py-2 bg-sky-700 rounded-lg text-sm font-medium">Save Configuration</button>
+      <a href="#" class="px-5 py-2 bg-slate-700 rounded-lg text-sm">Cancel</a>
+    </div>
+
+  </main>
+</body>
+</html>
