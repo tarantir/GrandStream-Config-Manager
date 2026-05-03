@@ -2,6 +2,8 @@
 
 A local web app for managing provisioning XML configurations for GrandStream GRP2612W and GRP2613 VoIP phones, aimed at simplifying deployments for small office and residential environments.
 
+**Security Warning:** This software is intended to run locally and has not been hardened for security. You have been warned, use at your own discretion.
+
 ## Screenshots
 
 Static HTML mockups are in the [mockups/](mockups/) folder:
