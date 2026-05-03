@@ -342,6 +342,36 @@
     </div>
 
     <div class="mt-6 pt-5 border-t border-slate-700">
+      <h3 class="text-xs text-slate-400 uppercase tracking-wider mb-4">Date &amp; Time</h3>
+      <div class="grid grid-cols-2 gap-5 max-w-lg">
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">Date Format <span class="text-slate-600 normal-case">(datetime.format → date)</span></label>
+          <select name="datetime_date_format" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200">
+            {% for opt in ['yyyy-mm-dd', 'mm/dd/yyyy', 'dd/mm/yyyy', 'mm-dd-yyyy', 'dd-mm-yyyy', 'yyyy/mm/dd'] %}
+            <option value="{{ opt }}" {% if cfg.datetime_date_format == opt %}selected{% endif %}>{{ opt }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">Time Format <span class="text-slate-600 normal-case">(datetime.format → time)</span></label>
+          <select name="datetime_time_format" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200">
+            {% for opt in ['24Hour', '12Hour'] %}
+            <option value="{{ opt }}" {% if cfg.datetime_time_format == opt %}selected{% endif %}>{{ opt }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">Show on Status Bar <span class="text-slate-600 normal-case">(datetime → showonstatusbar)</span></label>
+          <select name="datetime_show_on_statusbar" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200">
+            {% for val, label in [('noDate', 'No Date'), ('shortDate', 'Short Date'), ('fullDate', 'Full Date')] %}
+            <option value="{{ val }}" {% if cfg.datetime_show_on_statusbar == val %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-6 pt-5 border-t border-slate-700">
       <h3 class="text-xs text-slate-400 uppercase tracking-wider mb-4">Screensaver</h3>
       <div class="grid grid-cols-2 gap-5 max-w-lg">
         <div class="col-span-2 flex items-center gap-3">

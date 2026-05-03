@@ -132,6 +132,16 @@ def generate_xml(phone: Phone) -> str:
     _part(pbs, "keyfunction", "Default")
     _part(pbs, "sortby", "FirstName")
 
+    # Date/time
+    dtfmt = ET.SubElement(config, "item")
+    dtfmt.set("name", "datetime.format")
+    _part(dtfmt, "date", cfg.datetime_date_format or "yyyy-mm-dd")
+    _part(dtfmt, "time", cfg.datetime_time_format or "24Hour")
+
+    dt = ET.SubElement(config, "item")
+    dt.set("name", "datetime")
+    _part(dt, "showonstatusbar", cfg.datetime_show_on_statusbar or "fullDate")
+
     # Wallpaper
     wp = ET.SubElement(config, "item")
     wp.set("name", "lcd.wallpaper")
@@ -179,7 +189,7 @@ def write_xml(phone: Phone, output_dir: str) -> list[tuple[str, str]]:
 
     # Generate file for SIP ID (extension)
     if phone.extension:
-        filename = f"cfg{phone.extension}.xml"
+        filename = f"{phone.extension}.xml"
         files.append(_write(filename, output_dir))
         _write(filename, archive_dir)
 

@@ -173,6 +173,17 @@ def parse_xml(content: bytes) -> dict:
                 except ValueError:
                     pass
 
+        # ── Date/time format ─────────────────────────────────────────────────
+        elif name == "datetime.format":
+            if "date" in parts:
+                result["datetime_date_format"] = parts["date"]
+            if "time" in parts:
+                result["datetime_time_format"] = parts["time"]
+
+        # ── Date/time display ─────────────────────────────────────────────────
+        elif name == "datetime":
+            if "showonstatusbar" in parts:
+                result["datetime_show_on_statusbar"] = parts["showonstatusbar"]
         # ── Wallpaper ─────────────────────────────────────────────────────────
         elif name == "lcd.wallpaper":
             if "color" in parts:
@@ -218,6 +229,8 @@ PHONE_CONFIG_FIELDS = [
     "screensaver_showdatetime", "screensaver_serverpath",
     "screensaver_downloadxmlinterval", "screensaver_useprogrammablekeys",
     "sip_notify_challenge",
+    "datetime_date_format", "datetime_time_format",
+    "datetime_show_on_statusbar",
 ]
 
 WIFI_SSID_FIELDS = ["essid", "psk", "key_mgmt", "enabled", "hidden", "priority"]

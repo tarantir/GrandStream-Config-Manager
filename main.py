@@ -205,6 +205,9 @@ async def save_phone_config(request: Request, phone_id: int, db: Session = Depen
     cfg.screensaver_serverpath = form_data.get("screensaver_serverpath", "")
     cfg.screensaver_useprogrammablekeys = "screensaver_useprogrammablekeys" in form_data
     cfg.sip_notify_challenge = "sip_notify_challenge" in form_data
+    cfg.datetime_date_format = form_data.get("datetime_date_format", "yyyy-mm-dd")
+    cfg.datetime_time_format = form_data.get("datetime_time_format", "24Hour")
+    cfg.datetime_show_on_statusbar = form_data.get("datetime_show_on_statusbar", "fullDate")
 
     if phone.model == "GRP2613":
         cfg.wifi_enabled = False

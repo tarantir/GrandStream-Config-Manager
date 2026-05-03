@@ -49,6 +49,9 @@ def init_db():
         _add_column_if_missing(conn, "phone_configs", "screensaver_useprogrammablekeys", "BOOLEAN DEFAULT 0")
         _add_column_if_missing(conn, "sip_accounts",  "subscriber_name",                  "TEXT DEFAULT ''")
         _add_column_if_missing(conn, "phone_configs", "sip_notify_challenge",             "BOOLEAN DEFAULT 1")
+        _add_column_if_missing(conn, "phone_configs", "datetime_date_format",            "TEXT DEFAULT 'yyyy-mm-dd'")
+        _add_column_if_missing(conn, "phone_configs", "datetime_time_format",            "TEXT DEFAULT '24Hour'")
+        _add_column_if_missing(conn, "phone_configs", "datetime_show_on_statusbar",      "TEXT DEFAULT 'fullDate'")
 
         for table in ("phones", "sip_accounts", "wifi_ssids", "phone_configs",
                       "vpk_keys", "phonebook_entries", "app_settings"):
