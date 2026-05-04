@@ -347,7 +347,7 @@
         <div>
           <label class="block text-xs text-slate-400 mb-1">Date Format <span class="text-slate-600 normal-case">(datetime.format → date)</span></label>
           <select name="datetime_date_format" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200">
-            {% for opt in ['yyyy-mm-dd', 'mm/dd/yyyy', 'dd/mm/yyyy', 'mm-dd-yyyy', 'dd-mm-yyyy', 'yyyy/mm/dd'] %}
+            {% for opt in ['yyyy-mm-dd', 'mm-dd-yyyy', 'dd-mm-yyyy', 'dddd, MMMM dd', 'MMMM dd, dddd'] %}
             <option value="{{ opt }}" {% if cfg.datetime_date_format == opt %}selected{% endif %}>{{ opt }}</option>
             {% endfor %}
           </select>
