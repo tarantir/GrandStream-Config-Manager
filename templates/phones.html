@@ -81,8 +81,8 @@
           <div class="flex gap-2 justify-end">
             <a href="/phones/{{ phone.id }}/edit"
               class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 rounded-md text-xs transition-colors">Edit</a>
-            <button onclick="generateOne({{ phone.id }}, '{{ phone.extension }}')"
-              class="px-3 py-1.5 bg-emerald-900/60 hover:bg-emerald-800 border border-emerald-700/50 text-emerald-300 rounded-md text-xs transition-colors">Generate</button>
+            <button onclick="previewOne({{ phone.id }})"
+              class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 border border-slate-600/50 text-slate-300 rounded-md text-xs transition-colors">Preview</button>
             <button onclick="deletePhone({{ phone.id }}, '{{ phone.extension }}')"
               class="px-3 py-1.5 bg-red-900/40 hover:bg-red-800/60 border border-red-700/40 text-red-400 rounded-md text-xs transition-colors">Delete</button>
           </div>
@@ -141,23 +141,23 @@
     }, 1000);
   }
 
-  async function generateOne(phoneId, ext) {
+  async function previewOne(phoneId) {
     const btn = event.target;
     btn.disabled = true;
     btn.textContent = '...';
     try {
-      const res = await fetch(`/phones/${phoneId}/generate`, { method: 'POST' });
+      const res = await fetch(`/phones/${phoneId}/preview`);
       const data = await res.json();
       if (data.xml) {
         openXmlModal(data.filename, data.xml);
       } else {
-        showToast(data.error || 'Generation failed', 'error');
+        showToast(data.error || 'Preview failed', 'error');
       }
     } catch(e) {
       showToast('Request failed', 'error');
     } finally {
       btn.disabled = false;
-      btn.textContent = 'Generate';
+      btn.textContent = 'Preview';
     }
   }
 

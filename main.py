@@ -275,6 +275,16 @@ async def delete_phone(phone_id: int, db: Session = Depends(get_db)):
 
 # ── XML generation ────────────────────────────────────────────────────────────
 
+@app.get("/phones/{phone_id}/preview")
+async def preview_phone_xml(phone_id: int, db: Session = Depends(get_db)):
+    phone = db.query(Phone).filter(Phone.id == phone_id).first()
+    if not phone or not phone.config:
+        return JSONResponse({"error": "Phone not found"}, status_code=404)
+    xml_content = generate_xml(phone)
+    filename = f"cfg{phone.mac_eth0}.xml" if phone.mac_eth0 else f"{phone.extension}.xml"
+    return JSONResponse({"xml": xml_content, "filename": filename})
+
+
 @app.post("/phones/{phone_id}/generate")
 async def generate_phone_xml(phone_id: int, db: Session = Depends(get_db)):
     phone = db.query(Phone).filter(Phone.id == phone_id).first()
