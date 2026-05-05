@@ -50,6 +50,7 @@ class SipAccount(Base):
     extension = Column(Text, default="")
     sip_server_1 = Column(Text, default="192.168.1.1")
     sip_server_2 = Column(Text, default="pbx.example.com")
+    sip_server_3 = Column(Text, default="")
     sip_server_1_port = Column(Integer, default=5060)
     sip_server_2_port = Column(Integer, default=5060)
     voicemail_number = Column(Text, default="*97")

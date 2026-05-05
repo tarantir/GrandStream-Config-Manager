@@ -88,8 +88,7 @@ def init_db():
         from models import Phone, SipAccount
         for phone in db.query(Phone).filter(~Phone.sip_accounts.any()).all():
             row = db.execute(
-                text("SELECT sip_server_1, sip_server_2, sip_server_1_port, "
-                     "sip_server_2_port, voicemail_number "
+                text("SELECT sip_server_1, sip_server_2, voicemail_number "
                      "FROM phone_configs WHERE phone_id = :pid"),
                 {"pid": phone.id}
             ).fetchone()
@@ -99,9 +98,7 @@ def init_db():
                 extension=phone.extension or "",
                 sip_server_1=row[0] if row and row[0] else "192.168.1.1",
                 sip_server_2=row[1] if row and row[1] else "pbx.example.com",
-                sip_server_1_port=row[2] if row and row[2] else 5060,
-                sip_server_2_port=row[3] if row and row[3] else 5060,
-                voicemail_number=row[4] if row and row[4] else "*97",
+                voicemail_number=row[2] if row and row[2] else "*97",
             ))
             for n in range(2, 7):
                 db.add(SipAccount(phone_id=phone.id, account_num=n, enabled=False,

@@ -161,11 +161,7 @@ async def save_phone_config(request: Request, phone_id: int, db: Session = Depen
         acct.extension = form_data.get(f"acct_{n}_extension", "")
         acct.sip_server_1 = form_data.get(f"acct_{n}_sip_server_1", "192.168.1.1")
         acct.sip_server_2 = form_data.get(f"acct_{n}_sip_server_2", "pbx.example.com")
-        try:
-            acct.sip_server_1_port = int(form_data.get(f"acct_{n}_sip_server_1_port", 5060))
-            acct.sip_server_2_port = int(form_data.get(f"acct_{n}_sip_server_2_port", 5060))
-        except (ValueError, TypeError):
-            pass
+        acct.sip_server_3 = form_data.get(f"acct_{n}_sip_server_3", "")
         acct.voicemail_number = form_data.get(f"acct_{n}_voicemail_number", "*97")
 
     # Sync Phone.display_name from account 1 subscriber_name for the dashboard

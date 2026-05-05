@@ -102,18 +102,13 @@
             class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none">
         </div>
         <div>
-          <label class="block text-xs text-slate-400 mb-1">SIP Server 1 Port</label>
-          <input type="number" name="acct_{{ n }}_sip_server_1_port" value="{{ acct.sip_server_1_port if acct else 5060 }}"
-            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none">
-        </div>
-        <div>
           <label class="block text-xs text-slate-400 mb-1">SIP Server 2</label>
           <input type="text" name="acct_{{ n }}_sip_server_2" value="{{ acct.sip_server_2 if acct else 'pbx.example.com' }}"
             class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none">
         </div>
         <div>
-          <label class="block text-xs text-slate-400 mb-1">SIP Server 2 Port</label>
-          <input type="number" name="acct_{{ n }}_sip_server_2_port" value="{{ acct.sip_server_2_port if acct else 5060 }}"
+          <label class="block text-xs text-slate-400 mb-1">SIP Server 3</label>
+          <input type="text" name="acct_{{ n }}_sip_server_3" value="{{ acct.sip_server_3 if acct else '' }}"
             class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none">
         </div>
         <div>

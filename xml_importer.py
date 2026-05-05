@@ -237,7 +237,7 @@ WIFI_SSID_FIELDS = ["essid", "psk", "key_mgmt", "enabled", "hidden", "priority"]
 
 ACCOUNT_FIELDS = [
     "display_name", "subscriber_name", "extension", "enabled",
-    "sip_server_1", "sip_server_2", "sip_server_1_port", "sip_server_2_port",
+    "sip_server_1", "sip_server_2", "sip_server_3",
     "voicemail_number",
 ]
 

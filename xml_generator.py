@@ -51,6 +51,10 @@ def _emit_account(config: ET.Element, n: int, acct) -> None:
     srv2.set("name", f"account.{n}.sip.server.2")
     _part(srv2, "address", acct.sip_server_2 or "")
 
+    srv3 = ET.SubElement(config, "item")
+    srv3.set("name", f"account.{n}.sip.server.3")
+    _part(srv3, "address", acct.sip_server_3 or "")
+
 
 def generate_xml(phone: Phone) -> str:
     cfg: PhoneConfig = phone.config
