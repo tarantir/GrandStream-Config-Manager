@@ -92,6 +92,16 @@
             class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none">
         </div>
         <div>
+          <label class="block text-xs text-slate-400 mb-1">Password <span class="text-slate-600 normal-case">(subscriber.password)</span></label>
+          <div class="relative">
+            <input type="password" name="acct_{{ n }}_password" value="{{ acct.password if acct else '' }}"
+              id="acct-password-{{ n }}"
+              class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none pr-10">
+            <button type="button" onclick="toggleAcctPassword({{ n }})"
+              class="absolute right-2 top-2 text-slate-500 hover:text-slate-300 text-xs" id="acct-password-btn-{{ n }}">show</button>
+          </div>
+        </div>
+        <div>
           <label class="block text-xs text-slate-400 mb-1">Extension <span class="text-slate-600 normal-case">(SIP user ID)</span></label>
           <input type="text" name="acct_{{ n }}_extension" value="{{ acct.extension if acct else '' }}"
             class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none">
@@ -515,6 +525,14 @@
   function toggleSsidPsk(n) {
     const inp = document.getElementById(`ssid-psk-${n}`);
     const btn = document.getElementById(`ssid-psk-btn-${n}`);
+    if (inp.type === 'password') { inp.type = 'text'; btn.textContent = 'hide'; }
+    else { inp.type = 'password'; btn.textContent = 'show'; }
+  }
+
+  // Per-account SIP password show/hide
+  function toggleAcctPassword(n) {
+    const inp = document.getElementById(`acct-password-${n}`);
+    const btn = document.getElementById(`acct-password-btn-${n}`);
     if (inp.type === 'password') { inp.type = 'text'; btn.textContent = 'hide'; }
     else { inp.type = 'password'; btn.textContent = 'show'; }
   }

@@ -48,6 +48,7 @@ def init_db():
         _add_column_if_missing(conn, "phone_configs", "screensaver_downloadxmlinterval", "INTEGER DEFAULT 0")
         _add_column_if_missing(conn, "phone_configs", "screensaver_useprogrammablekeys", "BOOLEAN DEFAULT 0")
         _add_column_if_missing(conn, "sip_accounts",  "subscriber_name",                  "TEXT DEFAULT ''")
+        _add_column_if_missing(conn, "sip_accounts",  "password",                         "TEXT DEFAULT ''")
         _add_column_if_missing(conn, "sip_accounts",  "sip_server_3",                     "TEXT DEFAULT ''")
         _add_column_if_missing(conn, "phone_configs", "sip_notify_challenge",             "BOOLEAN DEFAULT 1")
         _add_column_if_missing(conn, "phone_configs", "datetime_date_format",            "TEXT DEFAULT 'yyyy-mm-dd'")

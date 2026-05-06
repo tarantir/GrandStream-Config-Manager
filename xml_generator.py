@@ -37,6 +37,7 @@ def _emit_account(config: ET.Element, n: int, acct) -> None:
     sub.set("name", f"account.{n}.sip.subscriber")
     _part(sub, "name", acct.subscriber_name or display)
     _part(sub, "userid", ext)
+    _part(sub, "password", acct.password or "")
 
     vm = ET.SubElement(config, "item")
     vm.set("name", f"account.{n}.sip.voicemail")

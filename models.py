@@ -47,6 +47,7 @@ class SipAccount(Base):
     enabled = Column(Boolean, default=False)
     display_name = Column(Text, default="")
     subscriber_name = Column(Text, default="")
+    password = Column(Text, default="")
     extension = Column(Text, default="")
     sip_server_1 = Column(Text, default="192.168.1.1")
     sip_server_2 = Column(Text, default="pbx.example.com")

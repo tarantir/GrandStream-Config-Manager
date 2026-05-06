@@ -79,8 +79,11 @@ def parse_xml(content: bytes) -> dict:
         m = re.fullmatch(r"account\.(\d+)\.sip\.subscriber", name)
         if m:
             n = int(m.group(1))
-            if 1 <= n <= 6 and "name" in parts:
-                _acct(n)["subscriber_name"] = parts["name"]
+            if 1 <= n <= 6:
+                if "name" in parts:
+                    _acct(n)["subscriber_name"] = parts["name"]
+                if "password" in parts:
+                    _acct(n)["password"] = parts["password"]
             continue
 
         # ── Voicemail: account.N.sip.voicemail ───────────────────────────────
@@ -236,7 +239,7 @@ PHONE_CONFIG_FIELDS = [
 WIFI_SSID_FIELDS = ["essid", "psk", "key_mgmt", "enabled", "hidden", "priority"]
 
 ACCOUNT_FIELDS = [
-    "display_name", "subscriber_name", "extension", "enabled",
+    "display_name", "subscriber_name", "password", "extension", "enabled",
     "sip_server_1", "sip_server_2", "sip_server_3",
     "voicemail_number",
 ]
