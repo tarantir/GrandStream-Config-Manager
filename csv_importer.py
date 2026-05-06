@@ -45,7 +45,6 @@ def import_csv(content: bytes, db: Session) -> dict:
                 existing.mac_eth0        = mac_eth0
                 existing.mac_wlan        = mac_wlan
                 existing.factory_password = password
-                existing.display_name    = subscriber_name
                 existing.updated_at      = datetime.utcnow()
                 phone = existing
                 updated += 1
@@ -66,7 +65,6 @@ def import_csv(content: bytes, db: Session) -> dict:
                     mac_eth0=mac_eth0,
                     mac_wlan=mac_wlan,
                     factory_password=password,
-                    display_name=subscriber_name,
                 )
                 db.add(phone)
                 db.flush()
@@ -136,7 +134,7 @@ def export_csv(phones: list[Phone]) -> bytes:
     for phone in phones:
         writer.writerow({
             "account": phone.group_name or "",
-            "subscriber_name": phone.display_name or "",
+            "subscriber_name": phone.subscriber_name or phone.display_name or "",
             "subscriber_id": phone.extension or "",
             "model": phone.model or "",
             "serial": phone.serial or "",

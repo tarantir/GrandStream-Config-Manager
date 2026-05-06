@@ -287,9 +287,9 @@ def apply_parsed(phone: Phone, parsed: dict, db: Session) -> None:
             if field in data:
                 setattr(acct, field, data[field])
 
-    # Sync Phone.display_name from account 1 if present
-    if 1 in incoming_accounts and "display_name" in incoming_accounts[1]:
-        phone.display_name = incoming_accounts[1]["display_name"]
+    # Sync Phone.display_name from account 1 subscriber_name if present
+    if 1 in incoming_accounts and "subscriber_name" in incoming_accounts[1]:
+        phone.display_name = incoming_accounts[1]["subscriber_name"]
 
     # VPK keys
     if parsed.get("vpk_keys"):
