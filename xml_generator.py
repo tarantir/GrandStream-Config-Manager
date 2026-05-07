@@ -27,7 +27,6 @@ def _emit_account(config: ET.Element, n: int, acct) -> None:
     acc.set("name", f"account.{n}")
     _part(acc, "name", display)
     _part(acc, "enable", "Yes")
-    _part(acc, "imageid", "-1")
 
     sip = ET.SubElement(config, "item")
     sip.set("name", f"account.{n}.sip")
@@ -42,7 +41,6 @@ def _emit_account(config: ET.Element, n: int, acct) -> None:
     vm = ET.SubElement(config, "item")
     vm.set("name", f"account.{n}.sip.voicemail")
     _part(vm, "number", acct.voicemail_number or "*97")
-    ET.SubElement(vm, "part").set("name", "monitorednumber")
 
     srv1 = ET.SubElement(config, "item")
     srv1.set("name", f"account.{n}.sip.server.1")
