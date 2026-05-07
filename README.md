@@ -15,6 +15,7 @@ Static HTML mockups are in the [mockups/](mockups/) folder:
 | [01-phones.html](mockups/01-phones.html) | Phone Inventory |
 | [02-phone-edit.html](mockups/02-phone-edit.html) | Phone Edit — Display tab |
 | [02b-phone-edit-wifi.html](mockups/02b-phone-edit-wifi.html) | Phone Edit — WiFi tab |
+| [02c-phone-edit-vpn.html](mockups/02c-phone-edit-vpn.html) | Phone Edit — VPN tab |
 | [03-phonebook.html](mockups/03-phonebook.html) | Phone Book |
 | [04-settings.html](mockups/04-settings.html) | Settings |
 
@@ -25,7 +26,9 @@ This tool **generates XML configuration files only**. It does not include a TFTP
 ## Features
 
 - **Phone inventory** — import phones via CSV or existing XML config files
-- **Per-phone configuration** — SIP accounts (up to 6), WiFi SSIDs (up to 4), virtual programmable keys, phonebook, display/screensaver/date-time, and provisioning settings
+- **Per-phone configuration** — SIP accounts (up to 6), WiFi SSIDs (up to 4), virtual programmable keys, phonebook, display/screensaver/date-time, provisioning settings, and OpenVPN
+- **SIP account passwords** — per-account SIP password stored and emitted in the provisioning XML
+- **OpenVPN** — per-phone VPN configuration (server, port, transport, cipher, CA, cert, client key)
 - **CSV export** — download the current phone inventory in the same import-compatible CSV format
 - **XML generation** — generate delta provisioning XML per phone, selectable from the inventory, with files named `{SIP_ID}.xml`, `cfg{ETH0_MAC}.xml`, and `cfg{WLAN_MAC}.xml` (where applicable), plus archived copies under `archive/<timestamp>/`
 - **Phone Book** — auto-generated from the phone inventory, with support for additional custom entries, with `phonebook.xml` archived under `archive/<timestamp>/`
