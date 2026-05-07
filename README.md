@@ -14,6 +14,7 @@ Static HTML mockups are in the [mockups/](mockups/) folder:
 |---|---|
 | [01-phones.html](mockups/01-phones.html) | Phone Inventory |
 | [02-phone-edit.html](mockups/02-phone-edit.html) | Phone Edit — Display tab |
+| [02a-phone-edit-sip.html](mockups/02a-phone-edit-sip.html) | Phone Edit — SIP tab |
 | [02b-phone-edit-wifi.html](mockups/02b-phone-edit-wifi.html) | Phone Edit — WiFi tab |
 | [02c-phone-edit-vpn.html](mockups/02c-phone-edit-vpn.html) | Phone Edit — VPN tab |
 | [03-phonebook.html](mockups/03-phonebook.html) | Phone Book |
