@@ -202,6 +202,17 @@ async def save_phone_config(request: Request, phone_id: int, db: Session = Depen
     cfg.screensaver_serverpath = form_data.get("screensaver_serverpath", "")
     cfg.screensaver_useprogrammablekeys = "screensaver_useprogrammablekeys" in form_data
     cfg.sip_notify_challenge = "sip_notify_challenge" in form_data
+    cfg.vpn_enabled    = "vpn_enabled" in form_data
+    cfg.vpn_server     = form_data.get("vpn_server", "")
+    try:
+        cfg.vpn_port   = int(form_data.get("vpn_port", 1194))
+    except (ValueError, TypeError):
+        pass
+    cfg.vpn_transport  = form_data.get("vpn_transport", "udp")
+    cfg.vpn_cipher     = form_data.get("vpn_cipher", "AES256GCM")
+    cfg.vpn_ca         = form_data.get("vpn_ca", "")
+    cfg.vpn_cert       = form_data.get("vpn_cert", "")
+    cfg.vpn_client_key = form_data.get("vpn_client_key", "")
     cfg.datetime_date_format = form_data.get("datetime_date_format", "yyyy-mm-dd")
     cfg.datetime_time_format = form_data.get("datetime_time_format", "24Hour")
     cfg.datetime_show_on_statusbar = form_data.get("datetime_show_on_statusbar", "fullDate")

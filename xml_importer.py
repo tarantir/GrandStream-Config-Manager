@@ -110,8 +110,29 @@ def parse_xml(content: bytes) -> dict:
                 _acct(n)["sip_server_2"] = parts["address"]
             continue
 
+        # ── OpenVPN ───────────────────────────────────────────────────────────
+        if name == "network.openvpn":
+            result["vpn_enabled"] = parts.get("enable", "").lower() == "yes"
+            if "server" in parts:
+                result["vpn_server"] = parts["server"]
+            if "port" in parts:
+                try:
+                    result["vpn_port"] = int(parts["port"])
+                except (ValueError, TypeError):
+                    pass
+            if "transport" in parts:
+                result["vpn_transport"] = parts["transport"]
+            if "cipermethod" in parts:
+                result["vpn_cipher"] = parts["cipermethod"]
+            if "ca" in parts:
+                result["vpn_ca"] = parts["ca"]
+            if "cert" in parts:
+                result["vpn_cert"] = parts["cert"]
+            if "clientKey" in parts:
+                result["vpn_client_key"] = parts["clientKey"]
+
         # ── SIP notify ────────────────────────────────────────────────────────
-        if name == "sip.notify":
+        elif name == "sip.notify":
             if "challenge" in parts:
                 result["sip_notify_challenge"] = parts["challenge"].lower() == "yes"
 
@@ -232,6 +253,8 @@ PHONE_CONFIG_FIELDS = [
     "screensaver_showdatetime", "screensaver_serverpath",
     "screensaver_downloadxmlinterval", "screensaver_useprogrammablekeys",
     "sip_notify_challenge",
+    "vpn_enabled", "vpn_server", "vpn_port", "vpn_transport",
+    "vpn_cipher", "vpn_ca", "vpn_cert", "vpn_client_key",
     "datetime_date_format", "datetime_time_format",
     "datetime_show_on_statusbar",
 ]

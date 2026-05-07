@@ -48,6 +48,7 @@
     <button type="button" class="tab-btn px-4 py-2 text-sm rounded-t-lg transition-colors" data-tab="phonebook">Phonebook</button>
     <button type="button" class="tab-btn px-4 py-2 text-sm rounded-t-lg transition-colors" data-tab="display">Display</button>
     <button type="button" class="tab-btn px-4 py-2 text-sm rounded-t-lg transition-colors" data-tab="provisioning">Provisioning</button>
+    <button type="button" class="tab-btn px-4 py-2 text-sm rounded-t-lg transition-colors" data-tab="vpn">VPN</button>
   </div>
 
   <!-- SIP Tab -->
@@ -445,6 +446,71 @@
               after:content-[''] after:absolute after:top-0.5 after:left-[2px]
               after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
           </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VPN Tab -->
+  <div class="tab-pane hidden" id="tab-vpn">
+    <div class="max-w-lg space-y-5">
+      <div class="flex items-center justify-between py-3 border-b border-slate-700">
+        <div>
+          <p class="text-sm text-slate-200">OpenVPN Enabled</p>
+          <p class="text-xs text-slate-500 mono mt-0.5">network.openvpn → enable</p>
+        </div>
+        <label class="relative inline-flex items-center cursor-pointer">
+          <input type="checkbox" name="vpn_enabled" value="on"
+            class="sr-only peer" {% if config.vpn_enabled %}checked{% endif %}>
+          <div class="w-11 h-6 bg-slate-700 peer-focus:ring-2 peer-focus:ring-sky-500 rounded-full peer
+            peer-checked:after:translate-x-full peer-checked:bg-sky-600
+            after:content-[''] after:absolute after:top-0.5 after:left-[2px]
+            after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+        </label>
+      </div>
+      <div class="grid grid-cols-2 gap-5">
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">Server <span class="text-slate-600 normal-case">(server)</span></label>
+          <input type="text" name="vpn_server" value="{{ config.vpn_server or '' }}"
+            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none">
+        </div>
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">Port <span class="text-slate-600 normal-case">(port)</span></label>
+          <input type="number" name="vpn_port" value="{{ config.vpn_port or 1194 }}"
+            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none">
+        </div>
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">Transport <span class="text-slate-600 normal-case">(transport)</span></label>
+          <select name="vpn_transport" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200">
+            {% for opt in ['udp', 'tcp'] %}
+            <option value="{{ opt }}" {% if config.vpn_transport == opt %}selected{% endif %}>{{ opt }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">Cipher <span class="text-slate-600 normal-case">(cipermethod)</span></label>
+          <select name="vpn_cipher" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200">
+            {% for opt in ['AES256GCM', 'AES128GCM', 'AES256CBC', 'AES128CBC'] %}
+            <option value="{{ opt }}" {% if config.vpn_cipher == opt %}selected{% endif %}>{{ opt }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+      <div class="space-y-4 pt-2">
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">CA Certificate <span class="text-slate-600 normal-case">(ca)</span></label>
+          <textarea name="vpn_ca" rows="3"
+            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none resize-none">{{ config.vpn_ca or '' }}</textarea>
+        </div>
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">Certificate <span class="text-slate-600 normal-case">(cert)</span></label>
+          <textarea name="vpn_cert" rows="3"
+            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none resize-none">{{ config.vpn_cert or '' }}</textarea>
+        </div>
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">Client Key <span class="text-slate-600 normal-case">(clientKey)</span></label>
+          <textarea name="vpn_client_key" rows="3"
+            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none resize-none">{{ config.vpn_client_key or '' }}</textarea>
         </div>
       </div>
     </div>

@@ -98,6 +98,20 @@ def generate_xml(phone: Phone) -> str:
             _part(ssid, "80211r", "No")
             _part(ssid, "priority", str(s.priority or 0))
 
+    # VPN
+    if cfg.vpn_enabled:
+        vpn = ET.SubElement(config, "item")
+        vpn.set("name", "network.openvpn")
+        _part(vpn, "enable", "Yes")
+        _part(vpn, "mode", "0")
+        _part(vpn, "server", cfg.vpn_server or "")
+        _part(vpn, "port", str(cfg.vpn_port or 1194))
+        _part(vpn, "transport", cfg.vpn_transport or "udp")
+        _part(vpn, "cipermethod", cfg.vpn_cipher or "AES256GCM")
+        _part(vpn, "ca", cfg.vpn_ca or "")
+        _part(vpn, "cert", cfg.vpn_cert or "")
+        _part(vpn, "clientKey", cfg.vpn_client_key or "")
+
     # VPK keys — emit only non-None slots
     for vpk in sorted(phone.vpk_keys, key=lambda k: k.slot):
         if vpk.keymode == "None":
