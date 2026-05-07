@@ -60,7 +60,7 @@ def parse_xml(content: bytes) -> dict:
         m = re.fullmatch(r"account\.(\d+)", name)
         if m:
             n = int(m.group(1))
-            if 1 <= n <= 6:
+            if 1 <= n <= 4:
                 if "name" in parts:
                     _acct(n)["display_name"] = parts["name"]
                 if "enable" in parts:
@@ -71,7 +71,7 @@ def parse_xml(content: bytes) -> dict:
         m = re.fullmatch(r"account\.(\d+)\.sip", name)
         if m:
             n = int(m.group(1))
-            if 1 <= n <= 6 and "userid" in parts:
+            if 1 <= n <= 4 and "userid" in parts:
                 _acct(n)["extension"] = parts["userid"]
             continue
 
@@ -79,7 +79,7 @@ def parse_xml(content: bytes) -> dict:
         m = re.fullmatch(r"account\.(\d+)\.sip\.subscriber", name)
         if m:
             n = int(m.group(1))
-            if 1 <= n <= 6:
+            if 1 <= n <= 4:
                 if "name" in parts:
                     _acct(n)["subscriber_name"] = parts["name"]
                 if "password" in parts:
@@ -90,7 +90,7 @@ def parse_xml(content: bytes) -> dict:
         m = re.fullmatch(r"account\.(\d+)\.sip\.voicemail", name)
         if m:
             n = int(m.group(1))
-            if 1 <= n <= 6 and "number" in parts:
+            if 1 <= n <= 4 and "number" in parts:
                 _acct(n)["voicemail_number"] = parts["number"]
             continue
 
@@ -98,7 +98,7 @@ def parse_xml(content: bytes) -> dict:
         m = re.fullmatch(r"account\.(\d+)\.sip\.server\.1", name)
         if m:
             n = int(m.group(1))
-            if 1 <= n <= 6 and "address" in parts:
+            if 1 <= n <= 4 and "address" in parts:
                 _acct(n)["sip_server_1"] = parts["address"]
             continue
 
@@ -106,7 +106,7 @@ def parse_xml(content: bytes) -> dict:
         m = re.fullmatch(r"account\.(\d+)\.sip\.server\.2", name)
         if m:
             n = int(m.group(1))
-            if 1 <= n <= 6 and "address" in parts:
+            if 1 <= n <= 4 and "address" in parts:
                 _acct(n)["sip_server_2"] = parts["address"]
             continue
 
@@ -303,7 +303,7 @@ def apply_parsed(phone: Phone, parsed: dict, db: Session) -> None:
     existing_accounts = {a.account_num: a for a in phone.sip_accounts}
 
     for n, data in incoming_accounts.items():
-        if not (1 <= n <= 6):
+        if not (1 <= n <= 4):
             continue
         acct = existing_accounts.get(n)
         if acct is None:

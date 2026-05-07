@@ -91,7 +91,7 @@ def import_csv(content: bytes, db: Session) -> dict:
                     subscriber_name=subscriber_name,
                     extension=extension,
                 ))
-                for n in range(2, 7):
+                for n in range(2, 5):
                     db.add(SipAccount(
                         phone_id=phone.id, account_num=n, enabled=False,
                     ))

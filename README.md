@@ -26,7 +26,7 @@ This tool **generates XML configuration files only**. It does not include a TFTP
 ## Features
 
 - **Phone inventory** — import phones via CSV or existing XML config files
-- **Per-phone configuration** — SIP accounts (up to 6), WiFi SSIDs (up to 4), virtual programmable keys, phonebook, display/screensaver/date-time, provisioning settings, and OpenVPN
+- **Per-phone configuration** — SIP accounts (up to 4), WiFi SSIDs (up to 4), virtual programmable keys, phonebook, display/screensaver/date-time, provisioning settings, and OpenVPN
 - **SIP account passwords** — per-account SIP password stored and emitted in the provisioning XML
 - **OpenVPN** — per-phone VPN configuration (server, port, transport, cipher, CA, cert, client key)
 - **CSV export** — download the current phone inventory in the same import-compatible CSV format

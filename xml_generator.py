@@ -64,7 +64,7 @@ def generate_xml(phone: Phone) -> str:
 
     # SIP accounts (emit only enabled ones)
     acct_map = {a.account_num: a for a in phone.sip_accounts}
-    for n in range(1, 7):
+    for n in range(1, 5):
         acct = acct_map.get(n)
         if acct and acct.enabled:
             _emit_account(config, n, acct)

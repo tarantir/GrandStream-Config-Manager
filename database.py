@@ -110,7 +110,7 @@ def init_db():
                 sip_server_2=row[1] if row and row[1] else "pbx.example.com",
                 voicemail_number=row[2] if row and row[2] else "*97",
             ))
-            for n in range(2, 7):
+            for n in range(2, 5):
                 db.add(SipAccount(phone_id=phone.id, account_num=n, enabled=False,
                                   display_name="", extension=""))
         db.commit()

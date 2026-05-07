@@ -57,7 +57,7 @@
 
     <!-- Account sub-tabs -->
     <div class="flex gap-1 mb-5" id="acct-tab-bar">
-      {% for n in range(1, 7) %}
+      {% for n in range(1, 5) %}
       {% set acct = sip_accounts.get(n) %}
       <button type="button" class="acct-tab-btn px-3 py-1.5 text-xs rounded-lg transition-colors" data-acct="{{ n }}">
         Acct {{ n }}{% if acct and acct.enabled %} <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 ml-1 mb-0.5"></span>{% endif %}
@@ -65,67 +65,74 @@
       {% endfor %}
     </div>
 
-    {% for n in range(1, 7) %}
+    {% for n in range(1, 5) %}
     {% set acct = sip_accounts.get(n) %}
     <div class="acct-pane hidden" id="acct-pane-{{ n }}">
-      <div class="grid grid-cols-2 gap-5">
-        <div class="col-span-2 flex items-center gap-3 pb-3 border-b border-slate-700">
-          <label class="relative inline-flex items-center cursor-pointer">
-            <input type="checkbox" name="acct_{{ n }}_enabled" value="on"
-              class="sr-only peer" {% if acct and acct.enabled %}checked{% endif %}>
-            <div class="w-11 h-6 bg-slate-700 peer-focus:ring-2 peer-focus:ring-sky-500 rounded-full peer
-              peer-checked:after:translate-x-full peer-checked:bg-sky-600
-              after:content-[''] after:absolute after:top-0.5 after:left-[2px]
-              after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
-          </label>
-          <span class="text-sm text-slate-300">Account {{ n }} Enabled</span>
-        </div>
-        <div>
-          <label class="block text-xs text-slate-400 mb-1">Account Name <span class="text-slate-600 normal-case">(account.{{ n }}.name)</span></label>
-          <input type="text" name="acct_{{ n }}_display_name" value="{{ acct.display_name if acct else '' }}"
-            placeholder="e.g. Office"
-            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none">
-        </div>
-        <div>
-          <label class="block text-xs text-slate-400 mb-1">Subscriber Name <span class="text-slate-600 normal-case">(subscriber.name)</span></label>
-          <input type="text" name="acct_{{ n }}_subscriber_name" value="{{ acct.subscriber_name if acct else '' }}"
-            placeholder="e.g. Study"
-            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none">
-        </div>
-        <div>
-          <label class="block text-xs text-slate-400 mb-1">Password <span class="text-slate-600 normal-case">(subscriber.password)</span></label>
-          <div class="relative">
-            <input type="password" name="acct_{{ n }}_password" value="{{ acct.password if acct else '' }}"
-              id="acct-password-{{ n }}"
-              class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none pr-10">
-            <button type="button" onclick="toggleAcctPassword({{ n }})"
-              class="absolute right-2 top-2 text-slate-500 hover:text-slate-300 text-xs" id="acct-password-btn-{{ n }}">show</button>
+      <!-- Enabled toggle -->
+      <div class="flex items-center gap-3 pb-3 mb-5 border-b border-slate-700">
+        <label class="relative inline-flex items-center cursor-pointer">
+          <input type="checkbox" name="acct_{{ n }}_enabled" value="on"
+            class="sr-only peer" {% if acct and acct.enabled %}checked{% endif %}>
+          <div class="w-11 h-6 bg-slate-700 peer-focus:ring-2 peer-focus:ring-sky-500 rounded-full peer
+            peer-checked:after:translate-x-full peer-checked:bg-sky-600
+            after:content-[''] after:absolute after:top-0.5 after:left-[2px]
+            after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+        </label>
+        <span class="text-sm text-slate-300">Account {{ n }} Enabled</span>
+      </div>
+      <!-- Two-column layout -->
+      <div class="grid grid-cols-2 gap-x-8 gap-y-5">
+        <!-- Left: identity -->
+        <div class="space-y-5">
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Account <span class="text-slate-600 normal-case">(account.{{ n }}.name)</span></label>
+            <input type="text" name="acct_{{ n }}_display_name" value="{{ acct.display_name if acct else '' }}"
+              placeholder="e.g. Office"
+              class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none">
+          </div>
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Subscriber Name <span class="text-slate-600 normal-case">(subscriber.name)</span></label>
+            <input type="text" name="acct_{{ n }}_subscriber_name" value="{{ acct.subscriber_name if acct else '' }}"
+              class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none">
+          </div>
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Extension <span class="text-slate-600 normal-case">(sip/subscriber userid)</span></label>
+            <input type="text" name="acct_{{ n }}_extension" value="{{ acct.extension if acct else '' }}"
+              class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none">
+          </div>
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Password <span class="text-slate-600 normal-case">(subscriber.password)</span></label>
+            <div class="relative">
+              <input type="password" name="acct_{{ n }}_password" value="{{ acct.password if acct else '' }}"
+                id="acct-password-{{ n }}"
+                class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none pr-10">
+              <button type="button" onclick="toggleAcctPassword({{ n }})"
+                class="absolute right-2 top-2 text-slate-500 hover:text-slate-300 text-xs" id="acct-password-btn-{{ n }}">show</button>
+            </div>
           </div>
         </div>
-        <div>
-          <label class="block text-xs text-slate-400 mb-1">Extension <span class="text-slate-600 normal-case">(SIP user ID)</span></label>
-          <input type="text" name="acct_{{ n }}_extension" value="{{ acct.extension if acct else '' }}"
-            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none">
-        </div>
-        <div>
-          <label class="block text-xs text-slate-400 mb-1">SIP Server 1</label>
-          <input type="text" name="acct_{{ n }}_sip_server_1" value="{{ acct.sip_server_1 if acct else '192.168.4.1' }}"
-            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none">
-        </div>
-        <div>
-          <label class="block text-xs text-slate-400 mb-1">SIP Server 2</label>
-          <input type="text" name="acct_{{ n }}_sip_server_2" value="{{ acct.sip_server_2 if acct else 'pbx.example.com' }}"
-            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none">
-        </div>
-        <div>
-          <label class="block text-xs text-slate-400 mb-1">SIP Server 3</label>
-          <input type="text" name="acct_{{ n }}_sip_server_3" value="{{ acct.sip_server_3 if acct else '' }}"
-            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none">
-        </div>
-        <div>
-          <label class="block text-xs text-slate-400 mb-1">Voicemail Number</label>
-          <input type="text" name="acct_{{ n }}_voicemail_number" value="{{ acct.voicemail_number if acct else '*97' }}"
-            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none">
+        <!-- Right: servers -->
+        <div class="space-y-5">
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">SIP Server 1</label>
+            <input type="text" name="acct_{{ n }}_sip_server_1" value="{{ acct.sip_server_1 if acct else '192.168.1.1' }}"
+              class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none">
+          </div>
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">SIP Server 2</label>
+            <input type="text" name="acct_{{ n }}_sip_server_2" value="{{ acct.sip_server_2 if acct else 'pbx.example.com' }}"
+              class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none">
+          </div>
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">SIP Server 3</label>
+            <input type="text" name="acct_{{ n }}_sip_server_3" value="{{ acct.sip_server_3 if acct else '' }}"
+              class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none">
+          </div>
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Voicemail Number</label>
+            <input type="text" name="acct_{{ n }}_voicemail_number" value="{{ acct.voicemail_number if acct else '*97' }}"
+              class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none">
+          </div>
         </div>
       </div>
     </div>

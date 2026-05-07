@@ -150,7 +150,7 @@ async def save_phone_config(request: Request, phone_id: int, db: Session = Depen
 
     # ── SIP accounts ──────────────────────────────────────────────────────────
     existing_accounts = {a.account_num: a for a in phone.sip_accounts}
-    for n in range(1, 7):
+    for n in range(1, 5):
         acct = existing_accounts.get(n)
         if acct is None:
             acct = SipAccount(phone_id=phone_id, account_num=n)
