@@ -50,9 +50,6 @@ def _emit_account(config: ET.Element, n: int, acct) -> None:
     srv2.set("name", f"account.{n}.sip.server.2")
     _part(srv2, "address", acct.sip_server_2 or "")
 
-    srv3 = ET.SubElement(config, "item")
-    srv3.set("name", f"account.{n}.sip.server.3")
-    _part(srv3, "address", acct.sip_server_3 or "")
 
 
 def generate_xml(phone: Phone) -> str:
@@ -69,13 +66,7 @@ def generate_xml(phone: Phone) -> str:
         if acct and acct.enabled:
             _emit_account(config, n, acct)
 
-    # Hotdesking
-    hd = ET.SubElement(config, "item")
-    hd.set("name", "hotdesking.server")
-    _part(hd, "type", cfg.hotdesking_type or "TFTP")
-    _part(hd, "path", cfg.hotdesking_server or "")
-
-    # WiFi — skip for GRP2613 or if disabled
+# WiFi — skip for GRP2613 or if disabled
     if phone.model != "GRP2613" and cfg.wifi_enabled:
         wifi = ET.SubElement(config, "item")
         wifi.set("name", "network.wifi")

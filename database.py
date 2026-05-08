@@ -49,7 +49,7 @@ def init_db():
         _add_column_if_missing(conn, "phone_configs", "screensaver_useprogrammablekeys", "BOOLEAN DEFAULT 0")
         _add_column_if_missing(conn, "sip_accounts",  "subscriber_name",                  "TEXT DEFAULT ''")
         _add_column_if_missing(conn, "sip_accounts",  "password",                         "TEXT DEFAULT ''")
-        _add_column_if_missing(conn, "sip_accounts",  "sip_server_3",                     "TEXT DEFAULT ''")
+
         _add_column_if_missing(conn, "phone_configs", "sip_notify_challenge",             "BOOLEAN DEFAULT 1")
         _add_column_if_missing(conn, "phone_configs", "vpn_enabled",                     "BOOLEAN DEFAULT 0")
         _add_column_if_missing(conn, "phone_configs", "vpn_server",                      "TEXT DEFAULT ''")
@@ -136,7 +136,8 @@ def init_db():
                 AppSetting(key="output_dir",               value="./output"),
                 AppSetting(key="default_sip_server_1",     value="192.168.1.1"),
                 AppSetting(key="default_sip_server_2",     value="pbx.example.com"),
-                AppSetting(key="default_phonebook_server", value="192.168.1.1"),
+
+AppSetting(key="default_phonebook_server", value="192.168.1.1"),
             ])
             db.commit()
         os.makedirs("./output", exist_ok=True)

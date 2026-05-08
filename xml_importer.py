@@ -29,7 +29,7 @@ def parse_xml(content: bytes) -> dict:
     Returns:
       accounts: {1: {display_name, extension, sip_server_1, ...}, ...}
       vpk_keys: [{slot, keymode, description, value, account}, ...]
-      + phone-level keys: hotdesking_*, wifi_*, phonebook_*, wallpaper_*, screensaver_*
+      + phone-level keys: wifi_*, phonebook_*, wallpaper_*, screensaver_*
     """
     root = _load_xml(content)
     config_el = root.find("config")
@@ -136,14 +136,7 @@ def parse_xml(content: bytes) -> dict:
             if "challenge" in parts:
                 result["sip_notify_challenge"] = parts["challenge"].lower() == "yes"
 
-        # ── Hotdesking ────────────────────────────────────────────────────────
-        elif name == "hotdesking.server":
-            if "path" in parts:
-                result["hotdesking_server"] = parts["path"]
-            if "type" in parts:
-                result["hotdesking_type"] = parts["type"]
-
-        # ── WiFi (phone-level) ────────────────────────────────────────────────
+# ── WiFi (phone-level) ────────────────────────────────────────────────
         elif name == "network.wifi":
             result["wifi_enabled"] = parts.get("enable", "").lower() == "on"
             if "band" in parts:
@@ -246,8 +239,7 @@ def parse_xml(content: bytes) -> dict:
 
 PHONE_CONFIG_FIELDS = [
     "phonebook_server", "phonebook_mode", "phonebook_interval", "phonebook_protocol",
-    "hotdesking_server", "hotdesking_type",
-    "wifi_enabled", "wifi_band",
+"wifi_enabled", "wifi_band",
     "wallpaper_color", "wallpaper_source",
     "screensaver_enabled", "screensaver_source", "screensaver_timeout",
     "screensaver_showdatetime", "screensaver_serverpath",
@@ -263,7 +255,7 @@ WIFI_SSID_FIELDS = ["essid", "psk", "key_mgmt", "enabled", "hidden", "priority"]
 
 ACCOUNT_FIELDS = [
     "display_name", "subscriber_name", "password", "extension", "enabled",
-    "sip_server_1", "sip_server_2", "sip_server_3",
+    "sip_server_1", "sip_server_2",
     "voicemail_number",
 ]
 

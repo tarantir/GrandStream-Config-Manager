@@ -162,7 +162,7 @@ async def save_phone_config(request: Request, phone_id: int, db: Session = Depen
         acct.extension       = form_data.get(f"acct_{n}_extension", "")
         acct.sip_server_1 = form_data.get(f"acct_{n}_sip_server_1", "192.168.1.1")
         acct.sip_server_2 = form_data.get(f"acct_{n}_sip_server_2", "pbx.example.com")
-        acct.sip_server_3 = form_data.get(f"acct_{n}_sip_server_3", "")
+
         acct.voicemail_number = form_data.get(f"acct_{n}_voicemail_number", "*97")
 
     # Sync Phone.display_name from account 1 subscriber_name for the dashboard
@@ -183,8 +183,6 @@ async def save_phone_config(request: Request, phone_id: int, db: Session = Depen
     except (ValueError, TypeError):
         pass
     cfg.phonebook_protocol = form_data.get("phonebook_protocol", "TFTP")
-    cfg.hotdesking_server = form_data.get("hotdesking_server", "")
-    cfg.hotdesking_type = form_data.get("hotdesking_type", "TFTP")
     cfg.wifi_ssid = form_data.get("wifi_ssid", "")
     cfg.wifi_psk = form_data.get("wifi_psk", "")
     cfg.wifi_band = form_data.get("wifi_band", "Auto")
@@ -441,13 +439,15 @@ async def save_settings(
     output_dir: str = Form("./output"),
     default_sip_server_1: str = Form("192.168.1.1"),
     default_sip_server_2: str = Form("pbx.example.com"),
-    default_phonebook_server: str = Form("192.168.1.1"),
+
+default_phonebook_server: str = Form("192.168.1.1"),
 ):
     updates = {
         "output_dir": output_dir,
         "default_sip_server_1": default_sip_server_1,
         "default_sip_server_2": default_sip_server_2,
-        "default_phonebook_server": default_phonebook_server,
+
+"default_phonebook_server": default_phonebook_server,
     }
     for key, value in updates.items():
         setting = db.query(AppSetting).filter(AppSetting.key == key).first()
