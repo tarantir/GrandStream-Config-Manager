@@ -179,6 +179,14 @@ def parse_xml(content: bytes) -> dict:
             })
 
         # ── Phonebook ─────────────────────────────────────────────────────────
+        elif name == "phonebook":
+            if "sortby" in parts:
+                result["phonebook_sortby"] = parts["sortby"]
+            if "keyfunction" in parts:
+                result["phonebook_keyfunction"] = parts["keyfunction"]
+            if "defaultsearchmode" in parts:
+                result["phonebook_defaultsearchmode"] = parts["defaultsearchmode"]
+
         elif name == "phonebook.download":
             if "server" in parts:
                 result["phonebook_server"] = parts["server"]
@@ -239,6 +247,7 @@ def parse_xml(content: bytes) -> dict:
 
 PHONE_CONFIG_FIELDS = [
     "phonebook_server", "phonebook_mode", "phonebook_interval", "phonebook_protocol",
+    "phonebook_sortby", "phonebook_keyfunction", "phonebook_defaultsearchmode",
 "wifi_enabled", "wifi_band",
     "wallpaper_color", "wallpaper_source",
     "screensaver_enabled", "screensaver_source", "screensaver_timeout",

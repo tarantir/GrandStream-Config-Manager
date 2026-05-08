@@ -136,9 +136,9 @@ def generate_xml(phone: Phone) -> str:
 
     pbs = ET.SubElement(config, "item")
     pbs.set("name", "phonebook")
-    _part(pbs, "defaultsearchmode", "QuickMatch")
-    _part(pbs, "keyfunction", "Default")
-    _part(pbs, "sortby", "FirstName")
+    _part(pbs, "defaultsearchmode", cfg.phonebook_defaultsearchmode or "QuickMatch")
+    _part(pbs, "keyfunction", cfg.phonebook_keyfunction or "LocalPhonebook")
+    _part(pbs, "sortby", cfg.phonebook_sortby or "FirstName")
 
     # Date/time
     dtfmt = ET.SubElement(config, "item")

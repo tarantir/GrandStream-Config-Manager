@@ -183,6 +183,9 @@ async def save_phone_config(request: Request, phone_id: int, db: Session = Depen
     except (ValueError, TypeError):
         pass
     cfg.phonebook_protocol = form_data.get("phonebook_protocol", "TFTP")
+    cfg.phonebook_sortby = form_data.get("phonebook_sortby", "FirstName")
+    cfg.phonebook_keyfunction = form_data.get("phonebook_keyfunction", "LocalPhonebook")
+    cfg.phonebook_defaultsearchmode = form_data.get("phonebook_defaultsearchmode", "QuickMatch")
     cfg.wifi_ssid = form_data.get("wifi_ssid", "")
     cfg.wifi_psk = form_data.get("wifi_psk", "")
     cfg.wifi_band = form_data.get("wifi_band", "Auto")

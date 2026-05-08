@@ -50,6 +50,9 @@ def init_db():
         _add_column_if_missing(conn, "sip_accounts",  "subscriber_name",                  "TEXT DEFAULT ''")
         _add_column_if_missing(conn, "sip_accounts",  "password",                         "TEXT DEFAULT ''")
 
+        _add_column_if_missing(conn, "phone_configs", "phonebook_sortby",                 "TEXT DEFAULT 'FirstName'")
+        _add_column_if_missing(conn, "phone_configs", "phonebook_keyfunction",            "TEXT DEFAULT 'LocalPhonebook'")
+        _add_column_if_missing(conn, "phone_configs", "phonebook_defaultsearchmode",      "TEXT DEFAULT 'QuickMatch'")
         _add_column_if_missing(conn, "phone_configs", "sip_notify_challenge",             "BOOLEAN DEFAULT 1")
         _add_column_if_missing(conn, "phone_configs", "vpn_enabled",                     "BOOLEAN DEFAULT 0")
         _add_column_if_missing(conn, "phone_configs", "vpn_server",                      "TEXT DEFAULT ''")

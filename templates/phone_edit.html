@@ -304,6 +304,30 @@
           {% endfor %}
         </select>
       </div>
+      <div>
+        <label class="block text-xs text-slate-400 mb-1">Sort By <span class="text-slate-600 normal-case">(phonebook → sortby)</span></label>
+        <select name="phonebook_sortby" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200">
+          {% for opt in ['FirstName', 'LastName'] %}
+          <option value="{{ opt }}" {% if cfg.phonebook_sortby == opt %}selected{% endif %}>{{ opt }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <label class="block text-xs text-slate-400 mb-1">Key Function <span class="text-slate-600 normal-case">(phonebook → keyfunction)</span></label>
+        <select name="phonebook_keyfunction" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200">
+          {% for opt in ['LocalPhonebook', 'Default'] %}
+          <option value="{{ opt }}" {% if cfg.phonebook_keyfunction == opt %}selected{% endif %}>{{ opt }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <label class="block text-xs text-slate-400 mb-1">Default Search Mode <span class="text-slate-600 normal-case">(phonebook → defaultsearchmode)</span></label>
+        <select name="phonebook_defaultsearchmode" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200">
+          {% for opt in ['QuickMatch', 'ExactMatch'] %}
+          <option value="{{ opt }}" {% if cfg.phonebook_defaultsearchmode == opt %}selected{% endif %}>{{ opt }}</option>
+          {% endfor %}
+        </select>
+      </div>
     </div>
   </div>
 
