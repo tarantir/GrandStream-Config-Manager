@@ -154,16 +154,7 @@ def generate_xml(phone: Phone) -> str:
     # Screensaver
     ss = ET.SubElement(config, "item")
     ss.set("name", "lcd.screensaver")
-    _part(ss, "downloadxmlinterval", str(cfg.screensaver_downloadxmlinterval if cfg.screensaver_downloadxmlinterval is not None else 0))
     _part(ss, "enable", "Yes" if cfg.screensaver_enabled else "No")
-    p = ET.SubElement(ss, "part")
-    p.set("name", "serverpath")
-    if cfg.screensaver_serverpath:
-        p.text = cfg.screensaver_serverpath
-    _part(ss, "showdatetime", "Yes" if cfg.screensaver_showdatetime else "No")
-    _part(ss, "source", cfg.screensaver_source or "Default")
-    _part(ss, "timeout", str(cfg.screensaver_timeout if cfg.screensaver_timeout is not None else 3))
-    _part(ss, "useprogrammablekeys", "Yes" if cfg.screensaver_useprogrammablekeys else "No")
 
     ET.indent(root, space="    ")
     declaration = '<?xml version="1.0" encoding="UTF-8"?>\n'
