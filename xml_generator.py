@@ -128,7 +128,7 @@ def generate_xml(phone: Phone) -> str:
     _part(pb, "mode", cfg.phonebook_mode or "EnabledUseTFTP")
     _part(pb, "server", cfg.phonebook_server or "")
 
-pbs = ET.SubElement(config, "item")
+    pbs = ET.SubElement(config, "item")
     pbs.set("name", "phonebook")
     _part(pbs, "defaultsearchmode", cfg.phonebook_defaultsearchmode or "QuickMatch")
     _part(pbs, "keyfunction", cfg.phonebook_keyfunction or "LocalPhonebook")
