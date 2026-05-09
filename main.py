@@ -190,18 +190,8 @@ async def save_phone_config(request: Request, phone_id: int, db: Session = Depen
     cfg.wifi_psk = form_data.get("wifi_psk", "")
     cfg.wifi_band = form_data.get("wifi_band", "Auto")
     cfg.wifi_key_mgmt = form_data.get("wifi_key_mgmt", "WPA_PSK")
-    cfg.wallpaper_color = form_data.get("wallpaper_color", "#000000")
     cfg.wallpaper_source = form_data.get("wallpaper_source", "ColorBackground")
     cfg.screensaver_enabled = "screensaver_enabled" in form_data
-    cfg.screensaver_source = form_data.get("screensaver_source", "Default")
-    try:
-        cfg.screensaver_timeout = int(form_data.get("screensaver_timeout", 3))
-        cfg.screensaver_downloadxmlinterval = int(form_data.get("screensaver_downloadxmlinterval", 0))
-    except (ValueError, TypeError):
-        pass
-    cfg.screensaver_showdatetime = "screensaver_showdatetime" in form_data
-    cfg.screensaver_serverpath = form_data.get("screensaver_serverpath", "")
-    cfg.screensaver_useprogrammablekeys = "screensaver_useprogrammablekeys" in form_data
     cfg.sip_notify_challenge = "sip_notify_challenge" in form_data
     cfg.vpn_enabled    = "vpn_enabled" in form_data
     cfg.vpn_server     = form_data.get("vpn_server", "")

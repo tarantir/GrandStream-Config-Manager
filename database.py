@@ -41,12 +41,6 @@ def init_db():
     # ── Add columns that were added after initial schema ──────────────────────
     with engine.connect() as conn:
         _add_column_if_missing(conn, "phone_configs", "screensaver_enabled",            "BOOLEAN DEFAULT 0")
-        _add_column_if_missing(conn, "phone_configs", "screensaver_source",              "TEXT DEFAULT 'Default'")
-        _add_column_if_missing(conn, "phone_configs", "screensaver_timeout",             "INTEGER DEFAULT 3")
-        _add_column_if_missing(conn, "phone_configs", "screensaver_showdatetime",        "BOOLEAN DEFAULT 1")
-        _add_column_if_missing(conn, "phone_configs", "screensaver_serverpath",          "TEXT DEFAULT ''")
-        _add_column_if_missing(conn, "phone_configs", "screensaver_downloadxmlinterval", "INTEGER DEFAULT 0")
-        _add_column_if_missing(conn, "phone_configs", "screensaver_useprogrammablekeys", "BOOLEAN DEFAULT 0")
         _add_column_if_missing(conn, "sip_accounts",  "subscriber_name",                  "TEXT DEFAULT ''")
         _add_column_if_missing(conn, "sip_accounts",  "password",                         "TEXT DEFAULT ''")
 

@@ -147,8 +147,6 @@ def generate_xml(phone: Phone) -> str:
     # Wallpaper
     wp = ET.SubElement(config, "item")
     wp.set("name", "lcd.wallpaper")
-    _part(wp, "color", cfg.wallpaper_color or "#000000")
-    ET.SubElement(wp, "part").set("name", "serverpath")
     _part(wp, "source", cfg.wallpaper_source or "ColorBackground")
 
     # Screensaver

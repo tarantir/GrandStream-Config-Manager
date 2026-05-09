@@ -211,8 +211,6 @@ def parse_xml(content: bytes) -> dict:
                 result["datetime_show_on_statusbar"] = parts["showonstatusbar"]
         # ── Wallpaper ─────────────────────────────────────────────────────────
         elif name == "lcd.wallpaper":
-            if "color" in parts:
-                result["wallpaper_color"] = parts["color"]
             if "source" in parts:
                 result["wallpaper_source"] = parts["source"]
 
@@ -220,24 +218,6 @@ def parse_xml(content: bytes) -> dict:
         elif name == "lcd.screensaver":
             if "enable" in parts:
                 result["screensaver_enabled"] = parts["enable"].lower() == "yes"
-            if "source" in parts:
-                result["screensaver_source"] = parts["source"]
-            if "timeout" in parts:
-                try:
-                    result["screensaver_timeout"] = int(parts["timeout"])
-                except ValueError:
-                    pass
-            if "showdatetime" in parts:
-                result["screensaver_showdatetime"] = parts["showdatetime"].lower() == "yes"
-            if "serverpath" in parts:
-                result["screensaver_serverpath"] = parts["serverpath"]
-            if "downloadxmlinterval" in parts:
-                try:
-                    result["screensaver_downloadxmlinterval"] = int(parts["downloadxmlinterval"])
-                except ValueError:
-                    pass
-            if "useprogrammablekeys" in parts:
-                result["screensaver_useprogrammablekeys"] = parts["useprogrammablekeys"].lower() == "yes"
 
     result["accounts"] = accounts
     result["wifi_ssids"] = wifi_ssids
@@ -249,10 +229,8 @@ PHONE_CONFIG_FIELDS = [
     "phonebook_server", "phonebook_mode", "phonebook_interval", "phonebook_protocol",
     "phonebook_sortby", "phonebook_keyfunction", "phonebook_defaultsearchmode",
 "wifi_enabled", "wifi_band",
-    "wallpaper_color", "wallpaper_source",
-    "screensaver_enabled", "screensaver_source", "screensaver_timeout",
-    "screensaver_showdatetime", "screensaver_serverpath",
-    "screensaver_downloadxmlinterval", "screensaver_useprogrammablekeys",
+    "wallpaper_source",
+    "screensaver_enabled",
     "sip_notify_challenge",
     "vpn_enabled", "vpn_server", "vpn_port", "vpn_transport",
     "vpn_cipher", "vpn_ca", "vpn_cert", "vpn_client_key",
