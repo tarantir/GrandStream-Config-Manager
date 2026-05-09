@@ -140,7 +140,7 @@
   <div class="tab-pane hidden" id="tab-wifi">
 
     <!-- Phone-level WiFi controls -->
-    <div class="flex items-center gap-6 mb-6">
+    <div class="flex items-center gap-6 mb-6 flex-wrap">
       <div class="flex items-center gap-3">
         <label class="relative inline-flex items-center cursor-pointer">
           <input type="checkbox" name="wifi_enabled" value="on"
@@ -150,15 +150,30 @@
             after:content-[''] after:absolute after:top-0.5 after:left-[2px]
             after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
         </label>
-        <span class="text-sm text-slate-300">WiFi Enabled</span>
+        <div>
+          <span class="text-sm text-slate-300">WiFi Enabled</span>
+          <p class="text-xs text-slate-500">network.wifi → enable</p>
+        </div>
       </div>
       <div class="flex items-center gap-2">
-        <label class="text-xs text-slate-400">Band</label>
+        <div>
+          <label class="text-xs text-slate-400 block">Band</label>
+          <p class="text-xs text-slate-500">network.wifi → band</p>
+        </div>
         <select name="wifi_band" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm text-slate-200">
           {% for opt in ['Auto', '2.4GHz', '5GHz'] %}
           <option value="{{ opt }}" {% if cfg.wifi_band == opt %}selected{% endif %}>{{ opt }}</option>
           {% endfor %}
         </select>
+      </div>
+      <div class="flex items-center gap-2">
+        <div>
+          <label class="text-xs text-slate-400 block">Country Code</label>
+          <p class="text-xs text-slate-500">network.wifi.countryCode → public</p>
+        </div>
+        <input type="text" name="wifi_country_code" value="{{ cfg.wifi_country_code or 'US' }}"
+          maxlength="2" placeholder="US"
+          class="w-16 bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm mono text-slate-200 uppercase">
       </div>
     </div>
 
@@ -168,12 +183,10 @@
         <thead>
           <tr class="border-b border-slate-700 text-slate-400 text-xs uppercase tracking-wider">
             <th class="px-4 py-3 text-left w-10">#</th>
-            <th class="px-4 py-3 text-left w-16">On</th>
-            <th class="px-4 py-3 text-left">SSID</th>
-            <th class="px-4 py-3 text-left">Password</th>
-            <th class="px-4 py-3 text-left w-36">Key Mgmt</th>
-            <th class="px-4 py-3 text-left w-16">Hidden</th>
-            <th class="px-4 py-3 text-left w-20">Priority</th>
+            <th class="px-4 py-3 text-left">SSID <span class="normal-case text-slate-600 font-normal">(essid)</span></th>
+            <th class="px-4 py-3 text-left">Password <span class="normal-case text-slate-600 font-normal">(psk)</span></th>
+            <th class="px-4 py-3 text-left w-36">Key Mgmt <span class="normal-case text-slate-600 font-normal">(key_management)</span></th>
+            <th class="px-4 py-3 text-left w-16">Hidden <span class="normal-case text-slate-600 font-normal">(hidden)</span></th>
           </tr>
         </thead>
         <tbody class="divide-y divide-slate-700/50">
@@ -181,10 +194,6 @@
           {% set s = wifi_ssids.get(n) %}
           <tr>
             <td class="px-4 py-2 text-slate-400 mono text-xs font-medium">{{ n }}</td>
-            <td class="px-4 py-2">
-              <input type="checkbox" name="ssid_{{ n }}_enabled" value="on"
-                class="w-4 h-4 rounded accent-sky-500" {% if s and s.enabled %}checked{% endif %}>
-            </td>
             <td class="px-4 py-2">
               <input type="text" name="ssid_{{ n }}_essid" value="{{ s.essid if s else '' }}"
                 placeholder="Network name"
@@ -202,7 +211,7 @@
             <td class="px-4 py-2">
               <select name="ssid_{{ n }}_key_mgmt"
                 class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-slate-200">
-                {% for opt in ['WPA_PSK', 'WPA2_PSK', 'WPA_EAP', 'OPEN'] %}
+                {% for opt in ['WPA_PSK', 'WPA2_PSK', 'WPA_EAP', 'WPA2_EAP', 'OPEN'] %}
                 <option value="{{ opt }}" {% if s and s.key_mgmt == opt %}selected{% endif %}>{{ opt }}</option>
                 {% endfor %}
               </select>
@@ -210,10 +219,6 @@
             <td class="px-4 py-2 text-center">
               <input type="checkbox" name="ssid_{{ n }}_hidden" value="on"
                 class="w-4 h-4 rounded accent-sky-500" {% if s and s.hidden %}checked{% endif %}>
-            </td>
-            <td class="px-4 py-2">
-              <input type="number" name="ssid_{{ n }}_priority" value="{{ s.priority if s else 0 }}" min="0" max="255"
-                class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs mono text-slate-200">
             </td>
           </tr>
           {% endfor %}

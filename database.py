@@ -59,6 +59,7 @@ def init_db():
         _add_column_if_missing(conn, "phone_configs", "datetime_date_format",            "TEXT DEFAULT 'yyyy-mm-dd'")
         _add_column_if_missing(conn, "phone_configs", "datetime_time_format",            "TEXT DEFAULT '24Hour'")
         _add_column_if_missing(conn, "phone_configs", "datetime_show_on_statusbar",      "TEXT DEFAULT 'fullDate'")
+        _add_column_if_missing(conn, "phone_configs", "wifi_country_code",               "TEXT DEFAULT 'US'")
 
         for table in ("phones", "sip_accounts", "wifi_ssids", "phone_configs",
                       "vpk_keys", "phonebook_entries", "app_settings"):

@@ -94,6 +94,7 @@ class PhoneConfig(Base):
     phonebook_defaultsearchmode = Column(Text, default="QuickMatch")
     wifi_enabled = Column(Boolean, default=True)
     wifi_band = Column(Text, default="Auto")
+    wifi_country_code = Column(Text, default="US")
     wallpaper_source = Column(Text, default="ColorBackground")
     screensaver_enabled = Column(Boolean, default=False)
     sip_notify_challenge = Column(Boolean, default=True)

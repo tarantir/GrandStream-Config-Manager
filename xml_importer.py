@@ -4,6 +4,9 @@ from sqlalchemy.orm import Session
 from models import Phone, PhoneConfig, SipAccount, VpkKey, WifiSsid
 
 
+_NUM_KEY_MGMT = {"0": "OPEN", "1": "WEP", "2": "WPA_EAP", "3": "WPA2_EAP", "4": "WPA_PSK"}
+
+
 def _parts(item: ET.Element) -> dict[str, str]:
     return {p.get("name", ""): (p.text or "") for p in item.findall("part")}
 
@@ -136,9 +139,15 @@ def parse_xml(content: bytes) -> dict:
             if "challenge" in parts:
                 result["sip_notify_challenge"] = parts["challenge"].lower() == "yes"
 
-# ── WiFi (phone-level) ────────────────────────────────────────────────
+# ── WiFi country code ─────────────────────────────────────────────────
+        elif name == "network.wifi.countryCode":
+            if "public" in parts:
+                result["wifi_country_code"] = parts["public"]
+
+        # ── WiFi (phone-level) ────────────────────────────────────────────────
         elif name == "network.wifi":
-            result["wifi_enabled"] = parts.get("enable", "").lower() == "on"
+            enable = parts.get("enable", "")
+            result["wifi_enabled"] = enable in ("1", "on", "yes")
             if "band" in parts:
                 result["wifi_band"] = parts["band"]
 
@@ -153,16 +162,9 @@ def parse_xml(content: bytes) -> dict:
                     if "psk" in parts:
                         _ssid(n)["psk"] = parts["psk"]
                     if "key_management" in parts:
-                        _ssid(n)["key_mgmt"] = parts["key_management"]
-                    if "enabled" in parts:
-                        _ssid(n)["enabled"] = parts["enabled"].lower() == "yes"
+                        _ssid(n)["key_mgmt"] = _NUM_KEY_MGMT.get(parts["key_management"], parts["key_management"])
                     if "hidden" in parts:
-                        _ssid(n)["hidden"] = parts["hidden"].lower() == "yes"
-                    if "priority" in parts:
-                        try:
-                            _ssid(n)["priority"] = int(parts["priority"])
-                        except ValueError:
-                            pass
+                        _ssid(n)["hidden"] = parts["hidden"] in ("1", "yes", "Yes")
 
         # ── VPK keys ──────────────────────────────────────────────────────────
         elif name.startswith("pks.vpk."):
@@ -228,7 +230,7 @@ def parse_xml(content: bytes) -> dict:
 PHONE_CONFIG_FIELDS = [
     "phonebook_server", "phonebook_mode", "phonebook_interval", "phonebook_protocol",
     "phonebook_sortby", "phonebook_keyfunction", "phonebook_defaultsearchmode",
-"wifi_enabled", "wifi_band",
+    "wifi_enabled", "wifi_band", "wifi_country_code",
     "wallpaper_source",
     "screensaver_enabled",
     "sip_notify_challenge",
@@ -238,7 +240,7 @@ PHONE_CONFIG_FIELDS = [
     "datetime_show_on_statusbar",
 ]
 
-WIFI_SSID_FIELDS = ["essid", "psk", "key_mgmt", "enabled", "hidden", "priority"]
+WIFI_SSID_FIELDS = ["essid", "psk", "key_mgmt", "hidden"]
 
 ACCOUNT_FIELDS = [
     "display_name", "subscriber_name", "password", "extension", "enabled",

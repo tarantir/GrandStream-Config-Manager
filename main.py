@@ -186,10 +186,6 @@ async def save_phone_config(request: Request, phone_id: int, db: Session = Depen
     cfg.phonebook_sortby = form_data.get("phonebook_sortby", "FirstName")
     cfg.phonebook_keyfunction = form_data.get("phonebook_keyfunction", "LocalPhonebook")
     cfg.phonebook_defaultsearchmode = form_data.get("phonebook_defaultsearchmode", "QuickMatch")
-    cfg.wifi_ssid = form_data.get("wifi_ssid", "")
-    cfg.wifi_psk = form_data.get("wifi_psk", "")
-    cfg.wifi_band = form_data.get("wifi_band", "Auto")
-    cfg.wifi_key_mgmt = form_data.get("wifi_key_mgmt", "WPA_PSK")
     cfg.wallpaper_source = form_data.get("wallpaper_source", "ColorBackground")
     cfg.screensaver_enabled = "screensaver_enabled" in form_data
     cfg.sip_notify_challenge = "sip_notify_challenge" in form_data
@@ -213,6 +209,7 @@ async def save_phone_config(request: Request, phone_id: int, db: Session = Depen
     else:
         cfg.wifi_enabled = "wifi_enabled" in form_data
         cfg.wifi_band = form_data.get("wifi_band", "Auto")
+        cfg.wifi_country_code = form_data.get("wifi_country_code", "US")
 
     # ── WiFi SSIDs ────────────────────────────────────────────────────────────
     existing_ssids = {s.ssid_num: s for s in phone.wifi_ssids}
@@ -221,15 +218,10 @@ async def save_phone_config(request: Request, phone_id: int, db: Session = Depen
         if s is None:
             s = WifiSsid(phone_id=phone_id, ssid_num=n)
             db.add(s)
-        s.enabled = f"ssid_{n}_enabled" in form_data
         s.essid = form_data.get(f"ssid_{n}_essid", "")
         s.psk = form_data.get(f"ssid_{n}_psk", "")
         s.key_mgmt = form_data.get(f"ssid_{n}_key_mgmt", "WPA_PSK")
         s.hidden = f"ssid_{n}_hidden" in form_data
-        try:
-            s.priority = int(form_data.get(f"ssid_{n}_priority", 0))
-        except (ValueError, TypeError):
-            s.priority = 0
 
     # ── VPK keys ──────────────────────────────────────────────────────────────
     max_slots = 6 if phone.model == "GRP2613" else 4

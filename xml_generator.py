@@ -52,6 +52,9 @@ def _emit_account(config: ET.Element, n: int, acct) -> None:
 
 
 
+_KEY_MGMT_NUM = {"OPEN": "0", "WEP": "1", "WPA_EAP": "2", "WPA2_EAP": "3", "WPA_PSK": "4", "WPA2_PSK": "4"}
+
+
 def generate_xml(phone: Phone) -> str:
     cfg: PhoneConfig = phone.config
 
@@ -66,12 +69,15 @@ def generate_xml(phone: Phone) -> str:
         if acct and acct.enabled:
             _emit_account(config, n, acct)
 
-# WiFi — skip for GRP2613 or if disabled
+    # WiFi — skip for GRP2613 or if disabled
     if phone.model != "GRP2613" and cfg.wifi_enabled:
+        cc = ET.SubElement(config, "item")
+        cc.set("name", "network.wifi.countryCode")
+        _part(cc, "public", cfg.wifi_country_code or "US")
+
         wifi = ET.SubElement(config, "item")
         wifi.set("name", "network.wifi")
-        _part(wifi, "band", cfg.wifi_band or "Auto")
-        _part(wifi, "enable", "On")
+        _part(wifi, "enable", "1")
 
         ssid_map = {s.ssid_num: s for s in phone.wifi_ssids}
         for n in range(1, 5):
@@ -80,14 +86,11 @@ def generate_xml(phone: Phone) -> str:
                 continue
             ssid = ET.SubElement(config, "item")
             ssid.set("name", f"network.wifi.ssid.{n}")
-            _part(ssid, "hidden", "Yes" if s.hidden else "No")
+            _part(ssid, "eap_method", "0")
             _part(ssid, "essid", s.essid)
-            _part(ssid, "enabled", "Yes" if s.enabled else "No")
-            _part(ssid, "key_management", s.key_mgmt or "WPA_PSK")
+            _part(ssid, "hidden", "1" if s.hidden else "0")
+            _part(ssid, "key_management", _KEY_MGMT_NUM.get(s.key_mgmt or "WPA_PSK", "4"))
             _part(ssid, "psk", s.psk or "")
-            _part(ssid, "eap_method", "EAP-PWD")
-            _part(ssid, "80211r", "No")
-            _part(ssid, "priority", str(s.priority or 0))
 
     # VPN
     if cfg.vpn_enabled:
