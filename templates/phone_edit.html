@@ -46,7 +46,7 @@
     {% endif %}
     <button type="button" class="tab-btn px-4 py-2 text-sm rounded-t-lg transition-colors" data-tab="keys">Keys</button>
     <button type="button" class="tab-btn px-4 py-2 text-sm rounded-t-lg transition-colors" data-tab="phonebook">Phonebook</button>
-    <button type="button" class="tab-btn px-4 py-2 text-sm rounded-t-lg transition-colors" data-tab="display">Display</button>
+    <button type="button" class="tab-btn px-4 py-2 text-sm rounded-t-lg transition-colors" data-tab="personalize">Personalize</button>
     <button type="button" class="tab-btn px-4 py-2 text-sm rounded-t-lg transition-colors" data-tab="provisioning">Provisioning</button>
     <button type="button" class="tab-btn px-4 py-2 text-sm rounded-t-lg transition-colors" data-tab="vpn">VPN</button>
   </div>
@@ -331,18 +331,10 @@
     </div>
   </div>
 
-  <!-- Display Tab -->
-  <div class="tab-pane hidden" id="tab-display">
-    <div class="max-w-xs">
-      <label class="block text-xs text-slate-400 mb-1">Wallpaper Source</label>
-      <select name="wallpaper_source" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200">
-        {% for opt in ['ColorBackground', 'DefaultBackground', 'DownloadFromServer'] %}
-        <option value="{{ opt }}" {% if cfg.wallpaper_source == opt %}selected{% endif %}>{{ opt }}</option>
-        {% endfor %}
-      </select>
-    </div>
+  <!-- Personalize Tab -->
+  <div class="tab-pane hidden" id="tab-personalize">
 
-    <div class="mt-6 pt-5 border-t border-slate-700">
+    <div>
       <h3 class="text-xs text-slate-400 uppercase tracking-wider mb-4">Date &amp; Time</h3>
       <div class="grid grid-cols-2 gap-5 max-w-lg">
         <div>
@@ -374,7 +366,11 @@
 
     <div class="mt-6 pt-5 border-t border-slate-700">
       <h3 class="text-xs text-slate-400 uppercase tracking-wider mb-4">Screensaver</h3>
-      <div class="flex items-center gap-3">
+      <div class="flex items-center justify-between max-w-lg py-3">
+        <div>
+          <p class="text-sm text-slate-300">Enable</p>
+          <p class="text-xs text-slate-500 mt-0.5">lcd.screensaver → enable</p>
+        </div>
         <label class="relative inline-flex items-center cursor-pointer">
           <input type="checkbox" name="screensaver_enabled" value="on"
             class="sr-only peer" {% if cfg.screensaver_enabled %}checked{% endif %}>
@@ -383,9 +379,21 @@
             after:content-[''] after:absolute after:top-0.5 after:left-[2px]
             after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
         </label>
-        <span class="text-sm text-slate-300">Screensaver Enabled</span>
       </div>
     </div>
+
+    <div class="mt-6 pt-5 border-t border-slate-700">
+      <h3 class="text-xs text-slate-400 uppercase tracking-wider mb-4">Wallpaper</h3>
+      <div class="max-w-xs">
+        <label class="block text-xs text-slate-400 mb-1">Source <span class="text-slate-600 normal-case">(lcd.wallpaper → source)</span></label>
+        <select name="wallpaper_source" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200">
+          {% for opt in ['ColorBackground', 'DefaultBackground', 'DownloadFromServer'] %}
+          <option value="{{ opt }}" {% if cfg.wallpaper_source == opt %}selected{% endif %}>{{ opt }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
   </div>
 
   <!-- Provisioning Tab -->
