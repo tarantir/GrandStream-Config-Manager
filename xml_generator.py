@@ -126,15 +126,9 @@ def generate_xml(phone: Phone) -> str:
     pb.set("name", "phonebook.download")
     _part(pb, "interval", str(cfg.phonebook_interval or 720))
     _part(pb, "mode", cfg.phonebook_mode or "EnabledUseTFTP")
-    _part(pb, "removeeditedentries", "Yes")
     _part(pb, "server", cfg.phonebook_server or "")
-    ET.SubElement(pb, "part").set("name", "username")
 
-    pbg = ET.SubElement(config, "item")
-    pbg.set("name", "phonebook.import.group")
-    _part(pbg, "method", "Replace")
-
-    pbs = ET.SubElement(config, "item")
+pbs = ET.SubElement(config, "item")
     pbs.set("name", "phonebook")
     _part(pbs, "defaultsearchmode", cfg.phonebook_defaultsearchmode or "QuickMatch")
     _part(pbs, "keyfunction", cfg.phonebook_keyfunction or "LocalPhonebook")
