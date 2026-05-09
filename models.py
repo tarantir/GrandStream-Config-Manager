@@ -113,6 +113,14 @@ class PhoneConfig(Base):
     webaccess_timeout = Column(Integer, default=60)
     webaccess_authtimeout = Column(Integer, default=60)
     webaccess_accesstimeout = Column(Integer, default=60)
+    # Idle Screen Customizations (Keys tab)
+    idle_sc_softkey_mode  = Column(Text, default="Default")                               # pks.scsoftkey.1 → mode
+    idle_softkey_layout_enable = Column(Text, default="Yes")                              # softkey.idlelayout → enable
+    idle_layout_state     = Column(Text, default="Next,Custom1,History,ForwardAll,Redial")  # softkey.idlelayout.state → inidle (only when enable=Yes)
+    # Dialing Screen Customizations (Keys tab)
+    dialing_softkeys_enable = Column(Text, default="Yes")                               # softkeys.layout → enable
+    dialing_layout_state    = Column(Text, default="Custom1,EndCall,ReConf,ConfRoom,Redial,Dial,Backspace")  # softkeys.layout.state → indialing
+    dialing_softkey_mode    = Column(Text, default="Default")                           # pks.softkey.1 → keymode
     created_at = Column(DateTime, **_ts)
     updated_at = Column(DateTime, **_ts_update)
     deleted = Column(Boolean, **_deleted)

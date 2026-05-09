@@ -285,6 +285,94 @@
         </tbody>
       </table>
     </div>
+
+    <!-- Idle Screen Customizations -->
+    <div class="mt-5 bg-white border border-[#e0e4e8] rounded-xl p-5">
+      <h3 class="text-sm font-semibold text-[#1a2332] mb-4">Idle Screen Customizations</h3>
+      <div class="grid grid-cols-3 gap-5">
+        <div>
+          <label class="block text-xs text-[#5a6a7a] mb-1">
+            Idle Layout Enable
+            <span class="text-xs text-[#9aabb8] normal-case mono">(softkey.idlelayout → enable)</span>
+          </label>
+          <select name="idle_softkey_layout_enable" id="idle_softkey_layout_enable"
+            onchange="toggleIdleLayout(this.value)"
+            class="w-full bg-white border border-[#e0e4e8] rounded-lg px-3 py-2 text-sm text-[#1a2332] focus:outline-none focus:border-[#00679e]">
+            {% for opt in ['Yes', 'No'] %}
+            <option value="{{ opt }}" {% if (cfg.idle_softkey_layout_enable or 'Yes') == opt %}selected{% endif %}>{{ opt }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs text-[#5a6a7a] mb-1">
+            SC Softkey Mode
+            <span class="text-xs text-[#9aabb8] normal-case mono">(pks.scsoftkey.1 → mode)</span>
+          </label>
+          <select name="idle_sc_softkey_mode"
+            class="w-full bg-white border border-[#e0e4e8] rounded-lg px-3 py-2 text-sm text-[#1a2332] focus:outline-none focus:border-[#00679e]">
+            {% for opt in ['Default', 'Phonebook', 'History', 'ForwardAll', 'Redial', 'None'] %}
+            <option value="{{ opt }}" {% if cfg.idle_sc_softkey_mode == opt %}selected{% endif %}>{{ opt }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div id="idle-layout-state-row" class="col-span-3">
+          <label class="block text-xs text-[#5a6a7a] mb-1">
+            Idle Layout
+            <span class="text-xs text-[#9aabb8] normal-case mono">(softkey.idlelayout.state → inidle)</span>
+          </label>
+          <div class="token-input-wrapper border border-[#e0e4e8] rounded-lg bg-white focus-within:border-[#00679e] px-2 py-1.5 flex flex-wrap gap-1 min-h-[2.5rem] cursor-text"
+               data-field="idle_layout_state">
+          </div>
+          <input type="hidden" name="idle_layout_state"
+                 value="{{ cfg.idle_layout_state or 'Next,Custom1,History,ForwardAll,Redial' }}">
+          <p class="text-xs text-[#9aabb8] mt-1">Drag to reorder · click token × to remove · type &amp; Enter to add</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dialing Screen Customizations -->
+    <div class="mt-4 bg-white border border-[#e0e4e8] rounded-xl p-5">
+      <h3 class="text-sm font-semibold text-[#1a2332] mb-4">Dialing Screen Customizations</h3>
+      <div class="grid grid-cols-3 gap-5">
+        <div>
+          <label class="block text-xs text-[#5a6a7a] mb-1">
+            Custom Softkeys Enable
+            <span class="text-xs text-[#9aabb8] normal-case mono">(softkeys.layout → enable)</span>
+          </label>
+          <select name="dialing_softkeys_enable" id="dialing_softkeys_enable"
+            onchange="toggleDialingLayout(this.value)"
+            class="w-full bg-white border border-[#e0e4e8] rounded-lg px-3 py-2 text-sm text-[#1a2332] focus:outline-none focus:border-[#00679e]">
+            {% for opt in ['Yes', 'No'] %}
+            <option value="{{ opt }}" {% if cfg.dialing_softkeys_enable == opt %}selected{% endif %}>{{ opt }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs text-[#5a6a7a] mb-1">
+            Softkey 1 Mode
+            <span class="text-xs text-[#9aabb8] normal-case mono">(pks.softkey.1 → keymode)</span>
+          </label>
+          <select name="dialing_softkey_mode"
+            class="w-full bg-white border border-[#e0e4e8] rounded-lg px-3 py-2 text-sm text-[#1a2332] focus:outline-none focus:border-[#00679e]">
+            {% for opt in ['Default', 'Phonebook', 'History', 'ForwardAll', 'Redial', 'SpeedDial', 'BLF', 'None'] %}
+            <option value="{{ opt }}" {% if cfg.dialing_softkey_mode == opt %}selected{% endif %}>{{ opt }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-span-3" id="dialing-layout-state-row">
+          <label class="block text-xs text-[#5a6a7a] mb-1">
+            Dialing Layout
+            <span class="text-xs text-[#9aabb8] normal-case mono">(softkeys.layout.state → indialing)</span>
+          </label>
+          <div class="token-input-wrapper border border-[#e0e4e8] rounded-lg bg-white focus-within:border-[#00679e] px-2 py-1.5 flex flex-wrap gap-1 min-h-[2.5rem] cursor-text"
+               data-field="dialing_layout_state">
+          </div>
+          <input type="hidden" name="dialing_layout_state"
+                 value="{{ cfg.dialing_layout_state or 'Custom1,EndCall,ReConf,ConfRoom,Redial,Dial,Backspace' }}">
+          <p class="text-xs text-[#9aabb8] mt-1">Drag to reorder · click token × to remove · type &amp; Enter to add</p>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Phonebook Tab -->
@@ -645,5 +733,102 @@
     // reset so re-selecting same file triggers onchange again
     input.value = '';
   }
+
+  // ── Idle/Dialing layout state row visibility ──────────────────────────────
+  function toggleIdleLayout(val) {
+    document.getElementById('idle-layout-state-row').style.display = (val === 'Yes') ? '' : 'none';
+  }
+  function toggleDialingLayout(val) {
+    document.getElementById('dialing-layout-state-row').style.display = (val === 'Yes') ? '' : 'none';
+  }
+  // Init on load
+  toggleIdleLayout(document.getElementById('idle_softkey_layout_enable')?.value || 'Yes');
+  toggleDialingLayout(document.getElementById('dialing_softkeys_enable')?.value || 'Yes');
+
+  // ── Sortable token inputs ─────────────────────────────────────────────────
+  // Each .token-input-wrapper reads/writes the associated hidden input by name.
+  // Tokens are draggable; a mini text input at the end lets you type new ones.
+  (function initTokenInputs() {
+    document.querySelectorAll('.token-input-wrapper').forEach(wrapper => {
+      const fieldName = wrapper.dataset.field;
+      const hidden = document.querySelector(`input[type="hidden"][name="${fieldName}"]`);
+      if (!hidden) return;
+
+      // Build initial tokens from hidden value
+      function renderTokens() {
+        wrapper.innerHTML = '';
+        const values = hidden.value ? hidden.value.split(',').map(v => v.trim()).filter(Boolean) : [];
+        values.forEach(val => wrapper.appendChild(makeToken(val)));
+        wrapper.appendChild(makeAdder());
+      }
+
+      function syncHidden() {
+        const tokens = [...wrapper.querySelectorAll('.token-chip')].map(t => t.dataset.value);
+        hidden.value = tokens.join(',');
+      }
+
+      function makeToken(val) {
+        const chip = document.createElement('span');
+        chip.className = 'token-chip inline-flex items-center gap-1 px-2 py-0.5 bg-[#e8f4fb] text-[#005580] text-xs rounded font-medium cursor-grab select-none';
+        chip.dataset.value = val;
+        chip.draggable = true;
+        chip.innerHTML = `${val} <button type="button" class="token-remove text-[#9aabb8] hover:text-[#005580] leading-none">&times;</button>`;
+        chip.querySelector('.token-remove').addEventListener('click', () => { chip.remove(); syncHidden(); });
+
+        // Drag-and-drop reorder
+        chip.addEventListener('dragstart', e => {
+          e.dataTransfer.effectAllowed = 'move';
+          chip.classList.add('opacity-50');
+          wrapper._dragging = chip;
+        });
+        chip.addEventListener('dragend', () => {
+          chip.classList.remove('opacity-50');
+          wrapper._dragging = null;
+          syncHidden();
+        });
+        chip.addEventListener('dragover', e => {
+          e.preventDefault();
+          e.dataTransfer.dropEffect = 'move';
+          const dragging = wrapper._dragging;
+          if (dragging && dragging !== chip) {
+            const rect = chip.getBoundingClientRect();
+            const midX = rect.left + rect.width / 2;
+            if (e.clientX < midX) wrapper.insertBefore(dragging, chip);
+            else chip.after(dragging);
+          }
+        });
+        return chip;
+      }
+
+      function makeAdder() {
+        const inp = document.createElement('input');
+        inp.type = 'text';
+        inp.placeholder = 'add…';
+        inp.className = 'token-adder outline-none border-none text-xs text-[#1a2332] placeholder-[#9aabb8] w-16 min-w-[4rem] py-0.5';
+        inp.addEventListener('keydown', e => {
+          if ((e.key === 'Enter' || e.key === ',') && inp.value.trim()) {
+            e.preventDefault();
+            const val = inp.value.trim().replace(/,/g, '');
+            wrapper.insertBefore(makeToken(val), inp);
+            inp.value = '';
+            syncHidden();
+          } else if (e.key === 'Backspace' && inp.value === '') {
+            const chips = wrapper.querySelectorAll('.token-chip');
+            if (chips.length) { chips[chips.length - 1].remove(); syncHidden(); }
+          }
+        });
+        // Auto-resize to content
+        inp.addEventListener('input', () => { inp.style.width = Math.max(64, inp.value.length * 8 + 24) + 'px'; });
+        return inp;
+      }
+
+      // Click anywhere on wrapper focuses the adder
+      wrapper.addEventListener('click', e => {
+        if (!e.target.closest('.token-chip')) wrapper.querySelector('.token-adder')?.focus();
+      });
+
+      renderTokens();
+    });
+  })();
 </script>
 {% endblock %}

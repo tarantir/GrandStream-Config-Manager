@@ -81,6 +81,13 @@ Phonebook / date-time / display:
   datetime.showOnStatusBar     → P8387  (0=No Date, 1=Short Date, 2=Full Date)
   lcd.wallpaper.source         → P2916
   lcd.screensaver.enable       → P2970  (0=disabled, 1=enabled)
+
+Idle/Dialing softkey layout (Keys tab — pre-date pvalue docs, not in release notes):
+  pks.scsoftkey.1 → mode           → pvalue unknown (text: Default, Phonebook, History, …)
+  softkey.idlelayout.state → inidle → pvalue unknown (comma-separated token list)
+  softkeys.layout → enable          → pvalue unknown (Yes/No)
+  softkeys.layout.state → indialing → pvalue unknown (comma-separated token list)
+  pks.softkey.1 → keymode           → pvalue unknown (text: Default, Phonebook, …)
 """
 
 import os
@@ -256,6 +263,32 @@ def generate_xml(phone: Phone) -> str:
     _part(sec, "timeout",       str(cfg.webaccess_timeout or 60))
     _part(sec, "authtimeout",   str(cfg.webaccess_authtimeout or 60))
     _part(sec, "accesstimeout", str(cfg.webaccess_accesstimeout or 60))
+
+    # Idle Screen Customizations (pvalues unknown — older params predating pvalue docs)
+    idle_layout_enable = cfg.idle_softkey_layout_enable or "Yes"
+    idl = ET.SubElement(config, "item")
+    idl.set("name", "softkey.idlelayout")
+    _part(idl, "enable", idle_layout_enable)                       # pvalue unknown
+    if idle_layout_enable == "Yes":
+        sc_sk = ET.SubElement(config, "item")
+        sc_sk.set("name", "pks.scsoftkey.1")
+        _part(sc_sk, "mode", cfg.idle_sc_softkey_mode or "Default")  # pvalue unknown
+        idle_layout = ET.SubElement(config, "item")
+        idle_layout.set("name", "softkey.idlelayout.state")
+        _part(idle_layout, "inidle", cfg.idle_layout_state or "Next,Custom1,History,ForwardAll,Redial")  # pvalue unknown
+
+    # Dialing Screen Customizations (pvalues unknown — older params predating pvalue docs)
+    dialing_enable = cfg.dialing_softkeys_enable or "Yes"
+    sk_layout = ET.SubElement(config, "item")
+    sk_layout.set("name", "softkeys.layout")
+    _part(sk_layout, "enable", dialing_enable)                     # pvalue unknown
+    if dialing_enable == "Yes":
+        sk1 = ET.SubElement(config, "item")
+        sk1.set("name", "pks.softkey.1")
+        _part(sk1, "keymode", cfg.dialing_softkey_mode or "Default")  # pvalue unknown
+        dial_layout = ET.SubElement(config, "item")
+        dial_layout.set("name", "softkeys.layout.state")
+        _part(dial_layout, "indialing", cfg.dialing_layout_state or "Custom1,EndCall,ReConf,ConfRoom,Redial,Dial,Backspace")  # pvalue unknown
 
     ET.indent(root, space="    ")
     declaration = '<?xml version="1.0" encoding="UTF-8"?>\n'

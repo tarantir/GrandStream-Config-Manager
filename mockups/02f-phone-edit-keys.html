@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit 1001 — Keys — GS Config Manager</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+  </style>
+</head>
+<body class="bg-[#f4f6f8] text-[#1a2332] min-h-full">
+
+  <nav class="bg-[#00679e] px-6 py-3 flex items-center gap-8 shadow-sm">
+    <a href="01-phones.html" class="text-white font-semibold text-lg tracking-tight mono">GS Config Manager</a>
+    <div class="flex gap-6 text-sm text-white/80">
+      <a href="01-phones.html" class="text-white font-medium">Phones</a>
+      <a href="03-phonebook.html" class="hover:text-white transition-colors">Phone Book</a>
+      <a href="04-settings.html" class="hover:text-white transition-colors">Settings</a>
+    </div>
+  </nav>
+
+  <main class="px-6 py-8 max-w-7xl mx-auto">
+
+    <div class="flex items-start justify-between mb-6">
+      <div class="flex items-center gap-4">
+        <a href="01-phones.html" class="text-[#5a6a7a] hover:text-[#1a2332] text-sm transition-colors">← Phones</a>
+        <div>
+          <div class="flex items-center gap-3">
+            <h1 class="text-xl font-semibold text-[#00679e] mono">1001</h1>
+            <span class="px-2 py-0.5 bg-[#e8f4fb] border border-[#00679e]/30 text-[#00679e] text-xs rounded-md font-medium mono">GRP2612W</span>
+          </div>
+          <div class="flex gap-4 mt-1 text-xs text-[#9aabb8] mono">
+            <span>S/N: C0BADDCAFE01</span>
+            <span>eth0: c0baddcafe01</span>
+            <span>wlan: c0baddcafe02</span>
+          </div>
+        </div>
+      </div>
+      <div class="flex gap-3 items-center">
+        <button onclick="showToast('XML imported (demo)')" class="px-4 py-2 bg-white hover:bg-[#f4f6f8] text-[#1a2332] text-sm rounded-lg border border-[#e0e4e8] transition-colors">Import XML</button>
+        <button onclick="showToast('cfg1001.xml written → ./output/')" class="px-4 py-2 bg-[#1e7e4a] hover:bg-[#166038] text-white text-sm rounded-lg font-medium transition-colors">Generate XML</button>
+      </div>
+    </div>
+
+    <!-- Tab bar — Keys active -->
+    <div class="flex gap-1 border-b border-[#e0e4e8] mb-6">
+      <button onclick="window.location.href='02a-phone-edit-sip.html'"         class="px-4 py-2 text-sm rounded-t-lg text-[#5a6a7a] hover:text-[#1a2332] transition-colors cursor-pointer">SIP</button>
+      <button onclick="window.location.href='02b-phone-edit-wifi.html'"        class="px-4 py-2 text-sm rounded-t-lg text-[#5a6a7a] hover:text-[#1a2332] transition-colors cursor-pointer">WiFi</button>
+      <button class="px-4 py-2 text-sm rounded-t-lg bg-white text-[#00679e] font-medium border border-[#e0e4e8] border-b-white -mb-px z-10">Keys</button>
+      <button onclick="window.location.href='02d-phone-edit-phonebook.html'"   class="px-4 py-2 text-sm rounded-t-lg text-[#5a6a7a] hover:text-[#1a2332] transition-colors cursor-pointer">Phonebook</button>
+      <button onclick="window.location.href='02e-phone-edit-personalize.html'" class="px-4 py-2 text-sm rounded-t-lg text-[#5a6a7a] hover:text-[#1a2332] transition-colors cursor-pointer">Personalize</button>
+      <button onclick="showToast('Security tab — not yet mocked up')"          class="px-4 py-2 text-sm rounded-t-lg text-[#5a6a7a] hover:text-[#1a2332] transition-colors cursor-pointer">Security</button>
+      <button onclick="window.location.href='02c-phone-edit-vpn.html'"         class="px-4 py-2 text-sm rounded-t-lg text-[#5a6a7a] hover:text-[#1a2332] transition-colors cursor-pointer">VPN</button>
+    </div>
+
+    <!-- VPK table -->
+    <div class="bg-white border border-[#e0e4e8] rounded-xl overflow-hidden">
+      <table class="w-full text-sm">
+        <thead class="bg-[#f4f6f8]">
+          <tr class="border-b border-[#e0e4e8] text-[#5a6a7a] text-xs uppercase tracking-wider">
+            <th class="px-4 py-3 text-left w-12">Slot <span class="normal-case font-normal text-[#9aabb8] mono">(pks.vpk.N)</span></th>
+            <th class="px-4 py-3 text-left w-40">Mode <span class="normal-case font-normal text-[#9aabb8] mono">(keymode)</span></th>
+            <th class="px-4 py-3 text-left">Description <span class="normal-case font-normal text-[#9aabb8] mono">(description)</span></th>
+            <th class="px-4 py-3 text-left">Value / Ext <span class="normal-case font-normal text-[#9aabb8] mono">(value)</span></th>
+            <th class="px-4 py-3 text-left w-36">Account <span class="normal-case font-normal text-[#9aabb8] mono">(account)</span></th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-[#e0e4e8]">
+          <tr class="hover:bg-[#f4f6f8] transition-colors">
+            <td class="px-4 py-2 text-[#5a6a7a] mono text-xs font-medium">1</td>
+            <td class="px-4 py-2">
+              <select class="w-full bg-white border border-[#e0e4e8] rounded px-2 py-1.5 text-xs text-[#1a2332] focus:outline-none focus:border-[#00679e]">
+                <option selected>Line</option><option>BLF</option><option>SpeedDial</option><option>None</option>
+              </select>
+            </td>
+            <td class="px-4 py-2"><input type="text" value="Alice" class="w-full bg-white border border-[#e0e4e8] rounded px-2 py-1.5 text-xs text-[#1a2332] focus:outline-none focus:border-[#00679e]"></td>
+            <td class="px-4 py-2"><input type="text" value="" disabled class="w-full bg-[#f4f6f8] border border-[#e0e4e8] rounded px-2 py-1.5 text-xs text-[#1a2332] opacity-40 cursor-not-allowed"></td>
+            <td class="px-4 py-2">
+              <select class="w-full bg-white border border-[#e0e4e8] rounded px-2 py-1.5 text-xs text-[#1a2332] focus:outline-none focus:border-[#00679e]">
+                <option selected>Account1</option><option>Account2</option><option>Account3</option>
+              </select>
+            </td>
+          </tr>
+          <tr class="hover:bg-[#f4f6f8] transition-colors">
+            <td class="px-4 py-2 text-[#5a6a7a] mono text-xs font-medium">2</td>
+            <td class="px-4 py-2">
+              <select class="w-full bg-white border border-[#e0e4e8] rounded px-2 py-1.5 text-xs text-[#1a2332] focus:outline-none focus:border-[#00679e]">
+                <option>Line</option><option selected>BLF</option><option>SpeedDial</option><option>None</option>
+              </select>
+            </td>
+            <td class="px-4 py-2"><input type="text" value="Reception" class="w-full bg-white border border-[#e0e4e8] rounded px-2 py-1.5 text-xs text-[#1a2332] focus:outline-none focus:border-[#00679e]"></td>
+            <td class="px-4 py-2"><input type="text" value="1000" class="w-full bg-white border border-[#e0e4e8] rounded px-2 py-1.5 text-xs text-[#1a2332] focus:outline-none focus:border-[#00679e]"></td>
+            <td class="px-4 py-2">
+              <select class="w-full bg-white border border-[#e0e4e8] rounded px-2 py-1.5 text-xs text-[#1a2332] focus:outline-none focus:border-[#00679e]">
+                <option selected>Account1</option><option>Account2</option><option>Account3</option>
+              </select>
+            </td>
+          </tr>
+          <tr class="hover:bg-[#f4f6f8] transition-colors">
+            <td class="px-4 py-2 text-[#5a6a7a] mono text-xs font-medium">3</td>
+            <td class="px-4 py-2">
+              <select class="w-full bg-white border border-[#e0e4e8] rounded px-2 py-1.5 text-xs text-[#1a2332] focus:outline-none focus:border-[#00679e]">
+                <option>Line</option><option>BLF</option><option>SpeedDial</option><option selected>None</option>
+              </select>
+            </td>
+            <td class="px-4 py-2"><input type="text" value="" class="w-full bg-white border border-[#e0e4e8] rounded px-2 py-1.5 text-xs text-[#1a2332] focus:outline-none focus:border-[#00679e]"></td>
+            <td class="px-4 py-2"><input type="text" value="" class="w-full bg-[#f4f6f8] border border-[#e0e4e8] rounded px-2 py-1.5 text-xs text-[#1a2332] opacity-40 cursor-not-allowed"></td>
+            <td class="px-4 py-2">
+              <select class="w-full bg-white border border-[#e0e4e8] rounded px-2 py-1.5 text-xs text-[#1a2332] focus:outline-none focus:border-[#00679e]">
+                <option selected>Account1</option><option>Account2</option><option>Account3</option>
+              </select>
+            </td>
+          </tr>
+          <tr class="hover:bg-[#f4f6f8] transition-colors">
+            <td class="px-4 py-2 text-[#5a6a7a] mono text-xs font-medium">4</td>
+            <td class="px-4 py-2">
+              <select class="w-full bg-white border border-[#e0e4e8] rounded px-2 py-1.5 text-xs text-[#1a2332] focus:outline-none focus:border-[#00679e]">
+                <option>Line</option><option>BLF</option><option>SpeedDial</option><option selected>None</option>
+              </select>
+            </td>
+            <td class="px-4 py-2"><input type="text" value="" class="w-full bg-white border border-[#e0e4e8] rounded px-2 py-1.5 text-xs text-[#1a2332] focus:outline-none focus:border-[#00679e]"></td>
+            <td class="px-4 py-2"><input type="text" value="" class="w-full bg-[#f4f6f8] border border-[#e0e4e8] rounded px-2 py-1.5 text-xs text-[#1a2332] opacity-40 cursor-not-allowed"></td>
+            <td class="px-4 py-2">
+              <select class="w-full bg-white border border-[#e0e4e8] rounded px-2 py-1.5 text-xs text-[#1a2332] focus:outline-none focus:border-[#00679e]">
+                <option selected>Account1</option><option>Account2</option><option>Account3</option>
+              </select>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Idle Screen Customizations -->
+    <div class="mt-5 bg-white border border-[#e0e4e8] rounded-xl p-5">
+      <h3 class="text-sm font-semibold text-[#1a2332] mb-4">Idle Screen Customizations</h3>
+      <div class="grid grid-cols-3 gap-5">
+        <div>
+          <label class="block text-xs text-[#5a6a7a] mb-1">
+            Idle Layout Enable
+            <span class="text-xs text-[#9aabb8] normal-case mono">(softkey.idlelayout → enable)</span>
+          </label>
+          <select id="idle-enable-demo" onchange="toggleIdleDemo(this.value)"
+            class="w-full bg-white border border-[#e0e4e8] rounded-lg px-3 py-2 text-sm text-[#1a2332] focus:outline-none focus:border-[#00679e]">
+            <option selected>Yes</option><option>No</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs text-[#5a6a7a] mb-1">
+            SC Softkey Mode
+            <span class="text-xs text-[#9aabb8] normal-case mono">(pks.scsoftkey.1 → mode)</span>
+          </label>
+          <select class="w-full bg-white border border-[#e0e4e8] rounded-lg px-3 py-2 text-sm text-[#1a2332] focus:outline-none focus:border-[#00679e]">
+            <option>Default</option><option selected>Phonebook</option><option>History</option><option>ForwardAll</option><option>Redial</option><option>None</option>
+          </select>
+        </div>
+        <div id="idle-layout-demo" class="col-span-3">
+          <label class="block text-xs text-[#5a6a7a] mb-1">
+            Idle Layout
+            <span class="text-xs text-[#9aabb8] normal-case mono">(softkey.idlelayout.state → inidle)</span>
+          </label>
+          <div class="border border-[#e0e4e8] rounded-lg bg-white px-2 py-1.5 flex flex-wrap gap-1 min-h-[2.5rem]">
+            <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-[#e8f4fb] text-[#005580] text-xs rounded font-medium">Next <button class="text-[#9aabb8] hover:text-[#005580]">&times;</button></span>
+            <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-[#e8f4fb] text-[#005580] text-xs rounded font-medium">Custom1 <button class="text-[#9aabb8] hover:text-[#005580]">&times;</button></span>
+            <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-[#e8f4fb] text-[#005580] text-xs rounded font-medium">History <button class="text-[#9aabb8] hover:text-[#005580]">&times;</button></span>
+            <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-[#e8f4fb] text-[#005580] text-xs rounded font-medium">ForwardAll <button class="text-[#9aabb8] hover:text-[#005580]">&times;</button></span>
+            <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-[#e8f4fb] text-[#005580] text-xs rounded font-medium">Redial <button class="text-[#9aabb8] hover:text-[#005580]">&times;</button></span>
+            <input type="text" placeholder="add…" class="outline-none border-none text-xs text-[#1a2332] placeholder-[#9aabb8] w-16 py-0.5">
+          </div>
+          <p class="text-xs text-[#9aabb8] mt-1">Drag to reorder · click token × to remove · type &amp; Enter to add</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dialing Screen Customizations -->
+    <div class="mt-4 bg-white border border-[#e0e4e8] rounded-xl p-5">
+      <h3 class="text-sm font-semibold text-[#1a2332] mb-4">Dialing Screen Customizations</h3>
+      <div class="grid grid-cols-3 gap-5">
+        <div>
+          <label class="block text-xs text-[#5a6a7a] mb-1">
+            Custom Softkeys Enable
+            <span class="text-xs text-[#9aabb8] normal-case mono">(softkeys.layout → enable)</span>
+          </label>
+          <select id="dial-enable-demo" onchange="toggleDialDemo(this.value)"
+            class="w-full bg-white border border-[#e0e4e8] rounded-lg px-3 py-2 text-sm text-[#1a2332] focus:outline-none focus:border-[#00679e]">
+            <option selected>Yes</option><option>No</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs text-[#5a6a7a] mb-1">
+            Softkey 1 Mode
+            <span class="text-xs text-[#9aabb8] normal-case mono">(pks.softkey.1 → keymode)</span>
+          </label>
+          <select class="w-full bg-white border border-[#e0e4e8] rounded-lg px-3 py-2 text-sm text-[#1a2332] focus:outline-none focus:border-[#00679e]">
+            <option>Default</option><option selected>Phonebook</option><option>History</option><option>ForwardAll</option><option>Redial</option><option>SpeedDial</option><option>BLF</option><option>None</option>
+          </select>
+        </div>
+        <div id="dial-layout-demo" class="col-span-3">
+          <label class="block text-xs text-[#5a6a7a] mb-1">
+            Dialing Layout
+            <span class="text-xs text-[#9aabb8] normal-case mono">(softkeys.layout.state → indialing)</span>
+          </label>
+          <div class="border border-[#e0e4e8] rounded-lg bg-white px-2 py-1.5 flex flex-wrap gap-1 min-h-[2.5rem]">
+            <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-[#e8f4fb] text-[#005580] text-xs rounded font-medium">Custom1 <button class="text-[#9aabb8] hover:text-[#005580]">&times;</button></span>
+            <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-[#e8f4fb] text-[#005580] text-xs rounded font-medium">EndCall <button class="text-[#9aabb8] hover:text-[#005580]">&times;</button></span>
+            <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-[#e8f4fb] text-[#005580] text-xs rounded font-medium">ReConf <button class="text-[#9aabb8] hover:text-[#005580]">&times;</button></span>
+            <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-[#e8f4fb] text-[#005580] text-xs rounded font-medium">ConfRoom <button class="text-[#9aabb8] hover:text-[#005580]">&times;</button></span>
+            <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-[#e8f4fb] text-[#005580] text-xs rounded font-medium">Redial <button class="text-[#9aabb8] hover:text-[#005580]">&times;</button></span>
+            <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-[#e8f4fb] text-[#005580] text-xs rounded font-medium">Dial <button class="text-[#9aabb8] hover:text-[#005580]">&times;</button></span>
+            <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-[#e8f4fb] text-[#005580] text-xs rounded font-medium">Backspace <button class="text-[#9aabb8] hover:text-[#005580]">&times;</button></span>
+            <input type="text" placeholder="add…" class="outline-none border-none text-xs text-[#1a2332] placeholder-[#9aabb8] w-16 py-0.5">
+          </div>
+          <p class="text-xs text-[#9aabb8] mt-1">Drag to reorder · click token × to remove · type &amp; Enter to add</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-6 flex gap-3 pt-4 border-t border-[#e0e4e8]">
+      <button onclick="showToast('Configuration saved')" class="px-5 py-2 bg-[#00679e] hover:bg-[#005580] text-white rounded-lg text-sm font-medium transition-colors">Save Configuration</button>
+      <a href="01-phones.html" class="px-5 py-2 bg-white hover:bg-[#f4f6f8] border border-[#e0e4e8] text-[#1a2332] rounded-lg text-sm transition-colors">Cancel</a>
+    </div>
+
+  </main>
+
+  <div id="toast" class="hidden fixed bottom-6 right-6 bg-[#1a2332] text-white text-sm px-4 py-2.5 rounded-lg shadow-lg z-50"></div>
+
+  <script>
+    let toastTimer;
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.remove('hidden');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => t.classList.add('hidden'), 2500);
+    }
+    function toggleIdleDemo(val) {
+      document.getElementById('idle-layout-demo').style.display = val === 'Yes' ? '' : 'none';
+    }
+    function toggleDialDemo(val) {
+      document.getElementById('dial-layout-demo').style.display = val === 'Yes' ? '' : 'none';
+    }
+  </script>
+</body>
+</html>

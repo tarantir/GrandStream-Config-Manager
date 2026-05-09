@@ -19,6 +19,7 @@ Static HTML mockups are in the [mockups/](mockups/) folder:
 | [02c-phone-edit-vpn.html](mockups/02c-phone-edit-vpn.html) | Phone Edit — VPN tab |
 | [02d-phone-edit-phonebook.html](mockups/02d-phone-edit-phonebook.html) | Phone Edit — Phonebook tab |
 | [02e-phone-edit-personalize.html](mockups/02e-phone-edit-personalize.html) | Phone Edit — Personalize tab |
+| [02f-phone-edit-keys.html](mockups/02f-phone-edit-keys.html) | Phone Edit — Keys tab |
 | [03-phonebook.html](mockups/03-phonebook.html) | Phone Book |
 | [04-settings.html](mockups/04-settings.html) | Settings |
 
@@ -29,7 +30,7 @@ This tool **generates XML configuration files only**. It does not include a TFTP
 ## Features
 
 - **Phone inventory** — import phones via CSV or existing XML config files
-- **Per-phone configuration** — SIP accounts (up to 4), WiFi SSIDs (up to 4), virtual programmable keys, phonebook, date/time, screensaver enable, wallpaper source, web access security, and OpenVPN
+- **Per-phone configuration** — SIP accounts (up to 4), WiFi SSIDs (up to 4), virtual programmable keys, idle/dialing softkey layout customization, phonebook, date/time, screensaver enable, wallpaper source, web access security, and OpenVPN
 - **SIP account passwords** — per-account SIP password stored and emitted in the provisioning XML
 - **WiFi** — enable/disable, country code (`network.wifi.countryCode`), and up to 4 SSIDs (ESSID, PSK, key management, hidden); key management stored as text (`WPA_PSK`, `OPEN`, etc.) and converted to GrandStream numeric values on XML output
 - **OpenVPN** — per-phone VPN configuration (server, port, transport, cipher, CA cert, client cert, client key)
@@ -110,7 +111,7 @@ Most XML output values come from the database and are editable in the UI. A few 
 | Table | Key columns | Description |
 |---|---|---|
 | `endpoints` | `account`, `extension`, `display_name`, `model`, `serial`, `mac_eth0`, `mac_wlan`, `factory_password` | Phone/endpoint records (previously `phones`) |
-| `endpoint_config` | `phonebook_*`, `wifi_*`, `vpn_*`, `datetime_*`, `wallpaper_source`, `screensaver_enabled`, `sip_notify_challenge`, `webaccess_*` | Per-endpoint provisioning configuration (previously `phone_configs`) |
+| `endpoint_config` | `phonebook_*`, `wifi_*`, `vpn_*`, `datetime_*`, `wallpaper_source`, `screensaver_enabled`, `sip_notify_challenge`, `webaccess_*`, `idle_*`, `dialing_*` | Per-endpoint provisioning configuration (previously `phone_configs`) |
 | `sip_accounts` | `account_num`, `enabled`, `extension`, `subscriber_name`, `display_name`, `password`, `sip_server_1`, `sip_server_2`, `voicemail_number` | SIP accounts (up to 4 per endpoint) |
 | `wifi_ssids` | `ssid_num`, `enabled`, `essid`, `psk`, `key_mgmt`, `hidden` | WiFi SSID entries (up to 4 per endpoint; GRP2612W only) |
 | `vpk_keys` | `slot`, `keymode`, `description`, `value`, `account` | Virtual programmable key assignments |
@@ -153,6 +154,12 @@ This tool uses the XML provisioning format (`gs_provision` / `config` / `item` /
 | OpenVPN enable | P7050 | No/Yes |
 | OpenVPN server | P7051 | string |
 | OpenVPN port | P7052 | integer |
+| Idle layout enable | unknown | Yes/No |
+| Idle SC softkey mode | unknown | text (Default, Phonebook, …) |
+| Idle layout state | unknown | comma-separated token list |
+| Dialing custom softkeys enable | unknown | Yes/No |
+| Dialing softkey 1 mode | unknown | text (Default, Phonebook, …) |
+| Dialing layout state | unknown | comma-separated token list |
 
 ## Phone Models
 

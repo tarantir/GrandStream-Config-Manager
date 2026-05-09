@@ -216,6 +216,13 @@ async def save_phone_config(request: Request, endpoint_id: int, db: Session = De
     except (ValueError, TypeError):
         cfg.webaccess_accesstimeout = 60
 
+    cfg.idle_sc_softkey_mode       = form_data.get("idle_sc_softkey_mode", "Default")
+    cfg.idle_softkey_layout_enable = form_data.get("idle_softkey_layout_enable", "Yes")
+    cfg.idle_layout_state          = form_data.get("idle_layout_state", "Next,Custom1,History,ForwardAll,Redial")
+    cfg.dialing_softkeys_enable = form_data.get("dialing_softkeys_enable", "Yes")
+    cfg.dialing_layout_state  = form_data.get("dialing_layout_state", "Custom1,EndCall,ReConf,ConfRoom,Redial,Dial,Backspace")
+    cfg.dialing_softkey_mode  = form_data.get("dialing_softkey_mode", "Default")
+
     if phone.model == "GRP2613":
         cfg.wifi_enabled = False
     else:
