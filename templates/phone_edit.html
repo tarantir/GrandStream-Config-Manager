@@ -5,17 +5,17 @@
 <!-- Phone header -->
 <div class="flex items-start justify-between mb-6">
   <div class="flex items-center gap-4">
-    <a href="/" class="text-slate-500 hover:text-slate-300 text-sm transition-colors">← Phones</a>
+    <a href="/" class="text-[#5a6a7a] hover:text-[#1a2332] text-sm transition-colors">← Phones</a>
     <div>
       <div class="flex items-center gap-3">
-        <h1 class="text-xl font-semibold text-white mono">{{ phone.extension }}</h1>
+        <h1 class="text-xl font-semibold text-[#1a2332] mono">{{ phone.extension }}</h1>
         {% if phone.model == 'GRP2613' %}
-          <span class="px-2 py-0.5 bg-amber-900/50 border border-amber-700/50 text-amber-300 text-xs rounded-md font-medium mono">{{ phone.model }}</span>
+          <span class="px-2 py-0.5 bg-amber-50 border border-amber-200 text-amber-700 text-xs rounded-md font-medium mono">{{ phone.model }}</span>
         {% else %}
-          <span class="px-2 py-0.5 bg-sky-900/50 border border-sky-700/50 text-sky-300 text-xs rounded-md font-medium mono">{{ phone.model }}</span>
+          <span class="px-2 py-0.5 bg-[#e8f4fb] border border-[#00679e]/30 text-[#00679e] text-xs rounded-md font-medium mono">{{ phone.model }}</span>
         {% endif %}
       </div>
-      <div class="flex gap-4 mt-1 text-xs text-slate-500 mono">
+      <div class="flex gap-4 mt-1 text-xs text-[#5a6a7a] mono">
         <span>S/N: {{ phone.serial }}</span>
         <span>eth0: {{ phone.mac_eth0 }}</span>
         {% if phone.mac_wlan %}<span>wlan: {{ phone.mac_wlan }}</span>{% endif %}
@@ -24,14 +24,14 @@
   </div>
   <div class="flex gap-3 items-center">
     <button onclick="document.getElementById('xml-import-input').click()"
-      class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-sm rounded-lg border border-slate-600 transition-colors" id="import-xml-btn">
+      class="px-4 py-2 bg-white hover:bg-[#f4f6f8] text-[#1a2332] text-sm rounded-lg border border-[#e0e4e8] transition-colors" id="import-xml-btn">
       Import XML
     </button>
     <form id="xml-import-form" action="/phones/{{ phone.id }}/import-xml" method="post" enctype="multipart/form-data" class="hidden">
       <input id="xml-import-input" type="file" name="file" accept=".xml" onchange="importXml({{ phone.id }})">
     </form>
     <button onclick="generateXml({{ phone.id }})"
-      class="px-4 py-2 bg-emerald-700 hover:bg-emerald-600 text-sm rounded-lg font-medium transition-colors" id="gen-btn">
+      class="px-4 py-2 bg-[#1e7e4a] hover:bg-[#166038] text-white text-sm rounded-lg font-medium transition-colors" id="gen-btn">
       Generate XML
     </button>
   </div>
@@ -39,7 +39,7 @@
 
 <form action="/phones/{{ phone.id }}/config" method="post" id="config-form">
   <!-- Tab bar -->
-  <div class="flex gap-1 border-b border-slate-700 mb-6" id="tab-bar">
+  <div class="flex gap-1 border-b border-[#e0e4e8] mb-6" id="tab-bar">
     <button type="button" class="tab-btn px-4 py-2 text-sm rounded-t-lg transition-colors" data-tab="sip">SIP</button>
     {% if phone.model != 'GRP2613' %}
     <button type="button" class="tab-btn px-4 py-2 text-sm rounded-t-lg transition-colors" data-tab="wifi">WiFi</button>
@@ -60,7 +60,7 @@
       {% for n in range(1, 5) %}
       {% set acct = sip_accounts.get(n) %}
       <button type="button" class="acct-tab-btn px-3 py-1.5 text-xs rounded-lg transition-colors" data-acct="{{ n }}">
-        Acct {{ n }}{% if acct and acct.enabled %} <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 ml-1 mb-0.5"></span>{% endif %}
+        Acct {{ n }}{% if acct and acct.enabled %} <span class="inline-block w-1.5 h-1.5 rounded-full bg-[#1e7e4a] ml-1 mb-0.5"></span>{% endif %}
       </button>
       {% endfor %}
     </div>
@@ -69,16 +69,16 @@
     {% set acct = sip_accounts.get(n) %}
     <div class="acct-pane hidden" id="acct-pane-{{ n }}">
       <!-- Enabled toggle -->
-      <div class="flex items-center justify-between pb-3 mb-5 border-b border-slate-700">
+      <div class="flex items-center justify-between pb-3 mb-5 border-b border-[#e0e4e8]">
         <div>
-          <p class="text-sm text-slate-300">Account {{ n }} Enabled</p>
-          <p class="text-xs text-slate-500 mt-0.5">account.{{ n }} → enable</p>
+          <p class="text-sm text-[#1a2332]">Account {{ n }} Enabled</p>
+          <p class="text-xs text-[#9aabb8] mt-0.5 mono">account.{{ n }} → enable</p>
         </div>
         <label class="relative inline-flex items-center cursor-pointer">
           <input type="checkbox" name="acct_{{ n }}_enabled" value="on"
             class="sr-only peer" {% if acct and acct.enabled %}checked{% endif %}>
-          <div class="w-11 h-6 bg-slate-700 peer-focus:ring-2 peer-focus:ring-sky-500 rounded-full peer
-            peer-checked:after:translate-x-full peer-checked:bg-sky-600
+          <div class="w-11 h-6 bg-[#e0e4e8] peer-focus:ring-2 peer-focus:ring-[#00679e]/40 rounded-full peer
+            peer-checked:after:translate-x-full peer-checked:bg-[#00679e]
             after:content-[''] after:absolute after:top-0.5 after:left-[2px]
             after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
         </label>
@@ -88,48 +88,48 @@
         <!-- Left: identity -->
         <div class="space-y-5">
           <div>
-            <label class="block text-xs text-slate-400 mb-1">Account Name <span class="text-xs text-slate-500 normal-case">(account.{{ n }} → name)</span></label>
+            <label class="block text-xs text-[#5a6a7a] mb-1">Account Name <span class="text-xs text-[#9aabb8] normal-case mono">(account.{{ n }} → name)</span></label>
             <input type="text" name="acct_{{ n }}_display_name" value="{{ acct.display_name if acct else '' }}"
               placeholder="e.g. Office"
-              class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none">
+              class="w-full bg-white border border-[#e0e4e8] rounded-lg px-3 py-2 text-sm text-[#1a2332] focus:ring-2 focus:ring-[#00679e]/20 focus:border-[#00679e] outline-none transition-colors">
           </div>
           <div>
-            <label class="block text-xs text-slate-400 mb-1">Subscriber Name <span class="text-xs text-slate-500 normal-case">(account.{{ n }}.sip.subscriber → name)</span></label>
+            <label class="block text-xs text-[#5a6a7a] mb-1">Subscriber Name <span class="text-xs text-[#9aabb8] normal-case mono">(account.{{ n }}.sip.subscriber → name)</span></label>
             <input type="text" name="acct_{{ n }}_subscriber_name" value="{{ acct.subscriber_name if acct else '' }}"
-              class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none">
+              class="w-full bg-white border border-[#e0e4e8] rounded-lg px-3 py-2 text-sm text-[#1a2332] focus:ring-2 focus:ring-[#00679e]/20 focus:border-[#00679e] outline-none transition-colors">
           </div>
           <div>
-            <label class="block text-xs text-slate-400 mb-1">Extension <span class="text-xs text-slate-500 normal-case">(account.{{ n }}.sip → userid)</span></label>
+            <label class="block text-xs text-[#5a6a7a] mb-1">Extension <span class="text-xs text-[#9aabb8] normal-case mono">(account.{{ n }}.sip → userid)</span></label>
             <input type="text" name="acct_{{ n }}_extension" value="{{ acct.extension if acct else '' }}"
-              class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none">
+              class="w-full bg-white border border-[#e0e4e8] rounded-lg px-3 py-2 text-sm mono text-[#1a2332] focus:ring-2 focus:ring-[#00679e]/20 focus:border-[#00679e] outline-none transition-colors">
           </div>
           <div>
-            <label class="block text-xs text-slate-400 mb-1">Password <span class="text-xs text-slate-500 normal-case">(account.{{ n }}.sip.subscriber → password)</span></label>
+            <label class="block text-xs text-[#5a6a7a] mb-1">Password <span class="text-xs text-[#9aabb8] normal-case mono">(account.{{ n }}.sip.subscriber → password)</span></label>
             <div class="relative">
               <input type="password" name="acct_{{ n }}_password" value="{{ acct.password if acct else '' }}"
                 id="acct-password-{{ n }}"
-                class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none pr-10">
+                class="w-full bg-white border border-[#e0e4e8] rounded-lg px-3 py-2 text-sm mono text-[#1a2332] focus:ring-2 focus:ring-[#00679e]/20 focus:border-[#00679e] outline-none transition-colors pr-10">
               <button type="button" onclick="toggleAcctPassword({{ n }})"
-                class="absolute right-2 top-2 text-slate-500 hover:text-slate-300 text-xs" id="acct-password-btn-{{ n }}">show</button>
+                class="absolute right-2 top-2 text-[#9aabb8] hover:text-[#5a6a7a] text-xs" id="acct-password-btn-{{ n }}">show</button>
             </div>
           </div>
         </div>
         <!-- Right: servers -->
         <div class="space-y-5">
           <div>
-            <label class="block text-xs text-slate-400 mb-1">SIP Server 1 <span class="text-xs text-slate-500 normal-case">(account.{{ n }}.sip.server.1 → address)</span></label>
+            <label class="block text-xs text-[#5a6a7a] mb-1">SIP Server 1 <span class="text-xs text-[#9aabb8] normal-case mono">(account.{{ n }}.sip.server.1 → address)</span></label>
             <input type="text" name="acct_{{ n }}_sip_server_1" value="{{ acct.sip_server_1 if acct else '192.168.1.1' }}"
-              class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none">
+              class="w-full bg-white border border-[#e0e4e8] rounded-lg px-3 py-2 text-sm mono text-[#1a2332] focus:ring-2 focus:ring-[#00679e]/20 focus:border-[#00679e] outline-none transition-colors">
           </div>
           <div>
-            <label class="block text-xs text-slate-400 mb-1">SIP Server 2 <span class="text-xs text-slate-500 normal-case">(account.{{ n }}.sip.server.2 → address)</span></label>
+            <label class="block text-xs text-[#5a6a7a] mb-1">SIP Server 2 <span class="text-xs text-[#9aabb8] normal-case mono">(account.{{ n }}.sip.server.2 → address)</span></label>
             <input type="text" name="acct_{{ n }}_sip_server_2" value="{{ acct.sip_server_2 if acct else 'pbx.example.com' }}"
-              class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none">
+              class="w-full bg-white border border-[#e0e4e8] rounded-lg px-3 py-2 text-sm mono text-[#1a2332] focus:ring-2 focus:ring-[#00679e]/20 focus:border-[#00679e] outline-none transition-colors">
           </div>
           <div>
-            <label class="block text-xs text-slate-400 mb-1">Voicemail Number <span class="text-xs text-slate-500 normal-case">(account.{{ n }}.sip.voicemail → number)</span></label>
+            <label class="block text-xs text-[#5a6a7a] mb-1">Voicemail Number <span class="text-xs text-[#9aabb8] normal-case mono">(account.{{ n }}.sip.voicemail → number)</span></label>
             <input type="text" name="acct_{{ n }}_voicemail_number" value="{{ acct.voicemail_number if acct else '*97' }}"
-              class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none">
+              class="w-full bg-white border border-[#e0e4e8] rounded-lg px-3 py-2 text-sm mono text-[#1a2332] focus:ring-2 focus:ring-[#00679e]/20 focus:border-[#00679e] outline-none transition-colors">
           </div>
         </div>
       </div>
@@ -148,22 +148,22 @@
         <label class="relative inline-flex items-center cursor-pointer">
           <input type="checkbox" name="wifi_enabled" value="on"
             class="sr-only peer" {% if cfg.wifi_enabled %}checked{% endif %}>
-          <div class="w-11 h-6 bg-slate-700 peer-focus:ring-2 peer-focus:ring-sky-500 rounded-full peer
-            peer-checked:after:translate-x-full peer-checked:bg-sky-600
+          <div class="w-11 h-6 bg-[#e0e4e8] peer-focus:ring-2 peer-focus:ring-[#00679e]/40 rounded-full peer
+            peer-checked:after:translate-x-full peer-checked:bg-[#00679e]
             after:content-[''] after:absolute after:top-0.5 after:left-[2px]
             after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
         </label>
         <div>
-          <span class="text-sm text-slate-300">WiFi Enabled</span>
-          <p class="text-xs text-slate-500">network.wifi → enable</p>
+          <span class="text-sm text-[#1a2332]">WiFi Enabled</span>
+          <p class="text-xs text-[#9aabb8] mono">network.wifi → enable</p>
         </div>
       </div>
       <div class="flex items-center gap-2">
         <div>
-          <label class="text-xs text-slate-400 block">Band</label>
-          <p class="text-xs text-slate-500">network.wifi → band</p>
+          <label class="text-xs text-[#5a6a7a] block">Band</label>
+          <p class="text-xs text-[#9aabb8] mono">network.wifi → band</p>
         </div>
-        <select name="wifi_band" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm text-slate-200">
+        <select name="wifi_band" class="bg-white border border-[#e0e4e8] rounded-lg px-3 py-1.5 text-sm text-[#1a2332] focus:outline-none focus:border-[#00679e]">
           {% for opt in ['Auto', '2.4GHz', '5GHz'] %}
           <option value="{{ opt }}" {% if cfg.wifi_band == opt %}selected{% endif %}>{{ opt }}</option>
           {% endfor %}
@@ -171,49 +171,49 @@
       </div>
       <div class="flex items-center gap-2">
         <div>
-          <label class="text-xs text-slate-400 block">Country Code</label>
-          <p class="text-xs text-slate-500">network.wifi.countryCode → public</p>
+          <label class="text-xs text-[#5a6a7a] block">Country Code</label>
+          <p class="text-xs text-[#9aabb8] mono">network.wifi.countryCode → public</p>
         </div>
         <input type="text" name="wifi_country_code" value="{{ cfg.wifi_country_code or 'US' }}"
           maxlength="2" placeholder="US"
-          class="w-16 bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm mono text-slate-200 uppercase">
+          class="w-16 bg-white border border-[#e0e4e8] rounded-lg px-3 py-1.5 text-sm mono text-[#1a2332] uppercase focus:outline-none focus:border-[#00679e]">
       </div>
     </div>
 
     <!-- SSID table -->
-    <div class="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden">
+    <div class="bg-white border border-[#e0e4e8] rounded-xl overflow-hidden">
       <table class="w-full text-sm">
-        <thead>
-          <tr class="border-b border-slate-700 text-slate-400 text-xs uppercase tracking-wider">
+        <thead class="bg-[#f4f6f8]">
+          <tr class="border-b border-[#e0e4e8] text-[#5a6a7a] text-xs uppercase tracking-wider">
             <th class="px-4 py-3 text-left w-10">#</th>
-            <th class="px-4 py-3 text-left">SSID <span class="normal-case text-slate-600 font-normal">(essid)</span></th>
-            <th class="px-4 py-3 text-left">Password <span class="normal-case text-slate-600 font-normal">(psk)</span></th>
-            <th class="px-4 py-3 text-left w-36">Key Mgmt <span class="normal-case text-slate-600 font-normal">(key_management)</span></th>
-            <th class="px-4 py-3 text-left w-16">Hidden <span class="normal-case text-slate-600 font-normal">(hidden)</span></th>
+            <th class="px-4 py-3 text-left">SSID <span class="normal-case text-[#9aabb8] font-normal mono">(essid)</span></th>
+            <th class="px-4 py-3 text-left">Password <span class="normal-case text-[#9aabb8] font-normal mono">(psk)</span></th>
+            <th class="px-4 py-3 text-left w-36">Key Mgmt <span class="normal-case text-[#9aabb8] font-normal mono">(key_management)</span></th>
+            <th class="px-4 py-3 text-left w-16">Hidden <span class="normal-case text-[#9aabb8] font-normal mono">(hidden)</span></th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-slate-700/50">
+        <tbody class="divide-y divide-[#e0e4e8]">
           {% for n in range(0, 4) %}
           {% set s = wifi_ssids.get(n) %}
-          <tr>
-            <td class="px-4 py-2 text-slate-400 mono text-xs font-medium">{{ n }}</td>
+          <tr class="hover:bg-[#f4f6f8] transition-colors">
+            <td class="px-4 py-2 text-[#5a6a7a] mono text-xs font-medium">{{ n }}</td>
             <td class="px-4 py-2">
               <input type="text" name="ssid_{{ n }}_essid" value="{{ s.essid if s else '' }}"
                 placeholder="Network name"
-                class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs mono text-slate-200">
+                class="w-full bg-white border border-[#e0e4e8] rounded px-2 py-1.5 text-xs mono text-[#1a2332] focus:outline-none focus:border-[#00679e]">
             </td>
             <td class="px-4 py-2">
               <div class="relative">
                 <input type="password" name="ssid_{{ n }}_psk" value="{{ s.psk if s else '' }}"
                   id="ssid-psk-{{ n }}"
-                  class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs mono text-slate-200 pr-10">
+                  class="w-full bg-white border border-[#e0e4e8] rounded px-2 py-1.5 text-xs mono text-[#1a2332] pr-10 focus:outline-none focus:border-[#00679e]">
                 <button type="button" onclick="toggleSsidPsk({{ n }})"
-                  class="absolute right-2 top-1.5 text-slate-500 hover:text-slate-300 text-xs" id="ssid-psk-btn-{{ n }}">show</button>
+                  class="absolute right-2 top-1.5 text-[#9aabb8] hover:text-[#5a6a7a] text-xs" id="ssid-psk-btn-{{ n }}">show</button>
               </div>
             </td>
             <td class="px-4 py-2">
               <select name="ssid_{{ n }}_key_mgmt"
-                class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-slate-200">
+                class="w-full bg-white border border-[#e0e4e8] rounded px-2 py-1.5 text-xs text-[#1a2332] focus:outline-none focus:border-[#00679e]">
                 {% for opt in ['WPA_PSK', 'WPA2_PSK', 'WPA_EAP', 'WPA2_EAP', 'OPEN'] %}
                 <option value="{{ opt }}" {% if s and s.key_mgmt == opt %}selected{% endif %}>{{ opt }}</option>
                 {% endfor %}
@@ -221,7 +221,7 @@
             </td>
             <td class="px-4 py-2 text-center">
               <input type="checkbox" name="ssid_{{ n }}_hidden" value="on"
-                class="w-4 h-4 rounded accent-sky-500" {% if s and s.hidden %}checked{% endif %}>
+                class="w-4 h-4 rounded accent-[#00679e]" {% if s and s.hidden %}checked{% endif %}>
             </td>
           </tr>
           {% endfor %}
@@ -236,25 +236,25 @@
     {% set max_slots = 6 if phone.model == 'GRP2613' else 4 %}
     {% set vpk_map = {} %}
     {% for vpk in vpk_keys %}{% set _ = vpk_map.update({vpk.slot: vpk}) %}{% endfor %}
-    <div class="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden">
+    <div class="bg-white border border-[#e0e4e8] rounded-xl overflow-hidden">
       <table class="w-full text-sm">
-        <thead>
-          <tr class="border-b border-slate-700 text-slate-400 text-xs uppercase tracking-wider">
-            <th class="px-4 py-3 text-left w-12">Slot <span class="normal-case font-normal text-slate-600">(pks.vpk.N)</span></th>
-            <th class="px-4 py-3 text-left w-40">Mode <span class="normal-case font-normal text-slate-600">(keymode)</span></th>
-            <th class="px-4 py-3 text-left">Description <span class="normal-case font-normal text-slate-600">(description)</span></th>
-            <th class="px-4 py-3 text-left">Value / Ext <span class="normal-case font-normal text-slate-600">(value)</span></th>
-            <th class="px-4 py-3 text-left w-36">Account <span class="normal-case font-normal text-slate-600">(account)</span></th>
+        <thead class="bg-[#f4f6f8]">
+          <tr class="border-b border-[#e0e4e8] text-[#5a6a7a] text-xs uppercase tracking-wider">
+            <th class="px-4 py-3 text-left w-12">Slot <span class="normal-case font-normal text-[#9aabb8] mono">(pks.vpk.N)</span></th>
+            <th class="px-4 py-3 text-left w-40">Mode <span class="normal-case font-normal text-[#9aabb8] mono">(keymode)</span></th>
+            <th class="px-4 py-3 text-left">Description <span class="normal-case font-normal text-[#9aabb8] mono">(description)</span></th>
+            <th class="px-4 py-3 text-left">Value / Ext <span class="normal-case font-normal text-[#9aabb8] mono">(value)</span></th>
+            <th class="px-4 py-3 text-left w-36">Account <span class="normal-case font-normal text-[#9aabb8] mono">(account)</span></th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-slate-700/50">
+        <tbody class="divide-y divide-[#e0e4e8]">
           {% for slot in range(1, max_slots + 1) %}
           {% set vpk = vpk_map.get(slot) %}
-          <tr>
-            <td class="px-4 py-2 text-slate-400 mono text-xs font-medium">{{ slot }}</td>
+          <tr class="hover:bg-[#f4f6f8] transition-colors">
+            <td class="px-4 py-2 text-[#5a6a7a] mono text-xs font-medium">{{ slot }}</td>
             <td class="px-4 py-2">
               <select name="vpk_{{ slot }}_keymode" onchange="updateVpkRow(this, {{ slot }})"
-                class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-slate-200">
+                class="w-full bg-white border border-[#e0e4e8] rounded px-2 py-1.5 text-xs text-[#1a2332] focus:outline-none focus:border-[#00679e]">
                 {% for mode in ['Line', 'BLF', 'SpeedDial', 'None'] %}
                 <option value="{{ mode }}" {% if vpk and vpk.keymode == mode %}selected{% endif %}
                   {% if not vpk and mode == ('Line' if slot == 1 else 'None') %}selected{% endif %}>{{ mode }}</option>
@@ -264,17 +264,17 @@
             <td class="px-4 py-2">
               <input type="text" name="vpk_{{ slot }}_description"
                 value="{{ vpk.description if vpk else '' }}"
-                class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-slate-200">
+                class="w-full bg-white border border-[#e0e4e8] rounded px-2 py-1.5 text-xs text-[#1a2332] focus:outline-none focus:border-[#00679e]">
             </td>
             <td class="px-4 py-2">
               <input type="text" name="vpk_{{ slot }}_value"
                 value="{{ vpk.value if vpk else '' }}"
                 id="vpk-value-{{ slot }}"
-                class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-slate-200 disabled:opacity-40 disabled:cursor-not-allowed">
+                class="w-full bg-white border border-[#e0e4e8] rounded px-2 py-1.5 text-xs text-[#1a2332] focus:outline-none focus:border-[#00679e] disabled:opacity-40 disabled:cursor-not-allowed disabled:bg-[#f4f6f8]">
             </td>
             <td class="px-4 py-2">
               <select name="vpk_{{ slot }}_account"
-                class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-slate-200">
+                class="w-full bg-white border border-[#e0e4e8] rounded px-2 py-1.5 text-xs text-[#1a2332] focus:outline-none focus:border-[#00679e]">
                 {% for acc in ['Account1', 'Account2', 'Account3'] %}
                 <option value="{{ acc }}" {% if vpk and vpk.account == acc %}selected{% endif %}>{{ acc }}</option>
                 {% endfor %}
@@ -289,15 +289,15 @@
 
   <!-- Phonebook Tab -->
   <div class="tab-pane hidden" id="tab-phonebook">
-    <div class="mb-4 flex items-center gap-2 px-3 py-2 bg-slate-700/40 border border-slate-600/50 rounded-lg text-xs text-slate-400 w-fit">
-      <span class="text-slate-500">📖</span>
-      The phonebook file on your TFTP server must be named <span class="mono text-slate-200 mx-1">phonebook.xml</span>
+    <div class="mb-4 flex items-center gap-2 px-3 py-2 bg-[#e8f4fb] border border-[#00679e]/20 rounded-lg text-xs text-[#5a6a7a] w-fit">
+      <span>📖</span>
+      The phonebook file on your TFTP server must be named <span class="mono text-[#00679e] mx-1">phonebook.xml</span>
     </div>
     <div class="grid grid-cols-2 gap-5">
       {{ field("Server", "phonebook_server", cfg.phonebook_server, "text", "phonebook.download → server") }}
       <div>
-        <label class="block text-xs text-slate-400 mb-1">Mode <span class="text-xs text-slate-500 normal-case">(phonebook.download → mode)</span></label>
-        <select name="phonebook_mode" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200">
+        <label class="block text-xs text-[#5a6a7a] mb-1">Mode <span class="text-xs text-[#9aabb8] normal-case mono">(phonebook.download → mode)</span></label>
+        <select name="phonebook_mode" class="w-full bg-white border border-[#e0e4e8] rounded-lg px-3 py-2 text-sm text-[#1a2332] focus:outline-none focus:border-[#00679e]">
           {% for opt in ['EnabledUseTFTP', 'EnabledUseHTTP', 'EnabledUseHTTPS', 'Disabled'] %}
           <option value="{{ opt }}" {% if cfg.phonebook_mode == opt %}selected{% endif %}>{{ opt }}</option>
           {% endfor %}
@@ -305,24 +305,24 @@
       </div>
       {{ field("Sync Interval (minutes)", "phonebook_interval", cfg.phonebook_interval, "number", "phonebook.download → interval") }}
       <div>
-        <label class="block text-xs text-slate-400 mb-1">Sort By <span class="text-xs text-slate-500 normal-case">(phonebook → sortby)</span></label>
-        <select name="phonebook_sortby" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200">
+        <label class="block text-xs text-[#5a6a7a] mb-1">Sort By <span class="text-xs text-[#9aabb8] normal-case mono">(phonebook → sortby)</span></label>
+        <select name="phonebook_sortby" class="w-full bg-white border border-[#e0e4e8] rounded-lg px-3 py-2 text-sm text-[#1a2332] focus:outline-none focus:border-[#00679e]">
           {% for opt in ['FirstName', 'LastName'] %}
           <option value="{{ opt }}" {% if cfg.phonebook_sortby == opt %}selected{% endif %}>{{ opt }}</option>
           {% endfor %}
         </select>
       </div>
       <div>
-        <label class="block text-xs text-slate-400 mb-1">Key Function <span class="text-xs text-slate-500 normal-case">(phonebook → keyfunction)</span></label>
-        <select name="phonebook_keyfunction" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200">
+        <label class="block text-xs text-[#5a6a7a] mb-1">Key Function <span class="text-xs text-[#9aabb8] normal-case mono">(phonebook → keyfunction)</span></label>
+        <select name="phonebook_keyfunction" class="w-full bg-white border border-[#e0e4e8] rounded-lg px-3 py-2 text-sm text-[#1a2332] focus:outline-none focus:border-[#00679e]">
           {% for opt in ['LocalPhonebook', 'Default'] %}
           <option value="{{ opt }}" {% if cfg.phonebook_keyfunction == opt %}selected{% endif %}>{{ opt }}</option>
           {% endfor %}
         </select>
       </div>
       <div>
-        <label class="block text-xs text-slate-400 mb-1">Default Search Mode <span class="text-xs text-slate-500 normal-case">(phonebook → defaultsearchmode)</span></label>
-        <select name="phonebook_defaultsearchmode" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200">
+        <label class="block text-xs text-[#5a6a7a] mb-1">Default Search Mode <span class="text-xs text-[#9aabb8] normal-case mono">(phonebook → defaultsearchmode)</span></label>
+        <select name="phonebook_defaultsearchmode" class="w-full bg-white border border-[#e0e4e8] rounded-lg px-3 py-2 text-sm text-[#1a2332] focus:outline-none focus:border-[#00679e]">
           {% for opt in ['QuickMatch', 'ExactMatch'] %}
           <option value="{{ opt }}" {% if cfg.phonebook_defaultsearchmode == opt %}selected{% endif %}>{{ opt }}</option>
           {% endfor %}
@@ -335,27 +335,27 @@
   <div class="tab-pane hidden" id="tab-personalize">
 
     <div>
-      <h3 class="text-xs text-slate-400 uppercase tracking-wider mb-4">Date &amp; Time</h3>
+      <h3 class="text-xs text-[#5a6a7a] uppercase tracking-wider mb-4">Date &amp; Time</h3>
       <div class="grid grid-cols-2 gap-5 max-w-lg">
         <div>
-          <label class="block text-xs text-slate-400 mb-1">Date Format <span class="text-xs text-slate-500 normal-case">(datetime.format → date)</span></label>
-          <select name="datetime_date_format" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200">
+          <label class="block text-xs text-[#5a6a7a] mb-1">Date Format <span class="text-xs text-[#9aabb8] normal-case mono">(datetime.format → date)</span></label>
+          <select name="datetime_date_format" class="w-full bg-white border border-[#e0e4e8] rounded-lg px-3 py-2 text-sm text-[#1a2332] focus:outline-none focus:border-[#00679e]">
             {% for opt in ['yyyy-mm-dd', 'mm-dd-yyyy', 'dd-mm-yyyy', 'dddd, MMMM dd', 'MMMM dd, dddd'] %}
             <option value="{{ opt }}" {% if cfg.datetime_date_format == opt %}selected{% endif %}>{{ opt }}</option>
             {% endfor %}
           </select>
         </div>
         <div>
-          <label class="block text-xs text-slate-400 mb-1">Time Format <span class="text-xs text-slate-500 normal-case">(datetime.format → time)</span></label>
-          <select name="datetime_time_format" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200">
+          <label class="block text-xs text-[#5a6a7a] mb-1">Time Format <span class="text-xs text-[#9aabb8] normal-case mono">(datetime.format → time)</span></label>
+          <select name="datetime_time_format" class="w-full bg-white border border-[#e0e4e8] rounded-lg px-3 py-2 text-sm text-[#1a2332] focus:outline-none focus:border-[#00679e]">
             {% for opt in ['24Hour', '12Hour'] %}
             <option value="{{ opt }}" {% if cfg.datetime_time_format == opt %}selected{% endif %}>{{ opt }}</option>
             {% endfor %}
           </select>
         </div>
         <div>
-          <label class="block text-xs text-slate-400 mb-1">Show on Status Bar <span class="text-xs text-slate-500 normal-case">(datetime → showonstatusbar)</span></label>
-          <select name="datetime_show_on_statusbar" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200">
+          <label class="block text-xs text-[#5a6a7a] mb-1">Show on Status Bar <span class="text-xs text-[#9aabb8] normal-case mono">(datetime → showonstatusbar)</span></label>
+          <select name="datetime_show_on_statusbar" class="w-full bg-white border border-[#e0e4e8] rounded-lg px-3 py-2 text-sm text-[#1a2332] focus:outline-none focus:border-[#00679e]">
             {% for val, label in [('noDate', 'No Date'), ('shortDate', 'Short Date'), ('fullDate', 'Full Date')] %}
             <option value="{{ val }}" {% if cfg.datetime_show_on_statusbar == val %}selected{% endif %}>{{ label }}</option>
             {% endfor %}
@@ -364,29 +364,29 @@
       </div>
     </div>
 
-    <div class="mt-6 pt-5 border-t border-slate-700">
-      <h3 class="text-xs text-slate-400 uppercase tracking-wider mb-4">Screensaver</h3>
+    <div class="mt-6 pt-5 border-t border-[#e0e4e8]">
+      <h3 class="text-xs text-[#5a6a7a] uppercase tracking-wider mb-4">Screensaver</h3>
       <div class="flex items-center justify-between max-w-lg py-3">
         <div>
-          <p class="text-sm text-slate-300">Enable</p>
-          <p class="text-xs text-slate-500 mt-0.5">lcd.screensaver → enable</p>
+          <p class="text-sm text-[#1a2332]">Enable</p>
+          <p class="text-xs text-[#9aabb8] mt-0.5 mono">lcd.screensaver → enable</p>
         </div>
         <label class="relative inline-flex items-center cursor-pointer">
           <input type="checkbox" name="screensaver_enabled" value="on"
             class="sr-only peer" {% if cfg.screensaver_enabled %}checked{% endif %}>
-          <div class="w-11 h-6 bg-slate-700 peer-focus:ring-2 peer-focus:ring-sky-500 rounded-full peer
-            peer-checked:after:translate-x-full peer-checked:bg-sky-600
+          <div class="w-11 h-6 bg-[#e0e4e8] peer-focus:ring-2 peer-focus:ring-[#00679e]/40 rounded-full peer
+            peer-checked:after:translate-x-full peer-checked:bg-[#00679e]
             after:content-[''] after:absolute after:top-0.5 after:left-[2px]
             after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
         </label>
       </div>
     </div>
 
-    <div class="mt-6 pt-5 border-t border-slate-700">
-      <h3 class="text-xs text-slate-400 uppercase tracking-wider mb-4">Wallpaper</h3>
+    <div class="mt-6 pt-5 border-t border-[#e0e4e8]">
+      <h3 class="text-xs text-[#5a6a7a] uppercase tracking-wider mb-4">Wallpaper</h3>
       <div class="max-w-xs">
-        <label class="block text-xs text-slate-400 mb-1">Source <span class="text-xs text-slate-500 normal-case">(lcd.wallpaper → source)</span></label>
-        <select name="wallpaper_source" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200">
+        <label class="block text-xs text-[#5a6a7a] mb-1">Source <span class="text-xs text-[#9aabb8] normal-case mono">(lcd.wallpaper → source)</span></label>
+        <select name="wallpaper_source" class="w-full bg-white border border-[#e0e4e8] rounded-lg px-3 py-2 text-sm text-[#1a2332] focus:outline-none focus:border-[#00679e]">
           {% for opt in ['ColorBackground', 'DefaultBackground', 'DownloadFromServer'] %}
           <option value="{{ opt }}" {% if cfg.wallpaper_source == opt %}selected{% endif %}>{{ opt }}</option>
           {% endfor %}
@@ -399,18 +399,18 @@
   <!-- Provisioning Tab -->
   <div class="tab-pane hidden" id="tab-provisioning">
     <div class="max-w-lg">
-      <h3 class="text-xs text-slate-400 uppercase tracking-wider mb-4">SIP</h3>
+      <h3 class="text-xs text-[#5a6a7a] uppercase tracking-wider mb-4">SIP</h3>
       <div class="space-y-4">
-        <div class="flex items-center justify-between py-3 border-b border-slate-700">
+        <div class="flex items-center justify-between py-3 border-b border-[#e0e4e8]">
           <div>
-            <p class="text-sm text-slate-200">Notify Challenge</p>
-            <p class="text-xs text-slate-500 mt-0.5">sip.notify → challenge</p>
+            <p class="text-sm text-[#1a2332]">Notify Challenge</p>
+            <p class="text-xs text-[#9aabb8] mt-0.5 mono">sip.notify → challenge</p>
           </div>
           <label class="relative inline-flex items-center cursor-pointer">
             <input type="checkbox" name="sip_notify_challenge" value="on"
               class="sr-only peer" {% if config.sip_notify_challenge %}checked{% endif %}>
-            <div class="w-11 h-6 bg-slate-700 peer-focus:ring-2 peer-focus:ring-sky-500 rounded-full peer
-              peer-checked:after:translate-x-full peer-checked:bg-sky-600
+            <div class="w-11 h-6 bg-[#e0e4e8] peer-focus:ring-2 peer-focus:ring-[#00679e]/40 rounded-full peer
+              peer-checked:after:translate-x-full peer-checked:bg-[#00679e]
               after:content-[''] after:absolute after:top-0.5 after:left-[2px]
               after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
           </label>
@@ -422,42 +422,42 @@
   <!-- VPN Tab -->
   <div class="tab-pane hidden" id="tab-vpn">
     <div class="max-w-lg space-y-5">
-      <div class="flex items-center justify-between py-3 border-b border-slate-700">
+      <div class="flex items-center justify-between py-3 border-b border-[#e0e4e8]">
         <div>
-          <p class="text-sm text-slate-200">OpenVPN Enabled</p>
-          <p class="text-xs text-slate-500 mt-0.5">network.openvpn → enable</p>
+          <p class="text-sm text-[#1a2332]">OpenVPN Enabled</p>
+          <p class="text-xs text-[#9aabb8] mt-0.5 mono">network.openvpn → enable</p>
         </div>
         <label class="relative inline-flex items-center cursor-pointer">
           <input type="checkbox" name="vpn_enabled" value="on"
             class="sr-only peer" {% if config.vpn_enabled %}checked{% endif %}>
-          <div class="w-11 h-6 bg-slate-700 peer-focus:ring-2 peer-focus:ring-sky-500 rounded-full peer
-            peer-checked:after:translate-x-full peer-checked:bg-sky-600
+          <div class="w-11 h-6 bg-[#e0e4e8] peer-focus:ring-2 peer-focus:ring-[#00679e]/40 rounded-full peer
+            peer-checked:after:translate-x-full peer-checked:bg-[#00679e]
             after:content-[''] after:absolute after:top-0.5 after:left-[2px]
             after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
         </label>
       </div>
       <div class="grid grid-cols-2 gap-5">
         <div>
-          <label class="block text-xs text-slate-400 mb-1">Server <span class="text-xs text-slate-500 normal-case">(network.openvpn → server)</span></label>
+          <label class="block text-xs text-[#5a6a7a] mb-1">Server <span class="text-xs text-[#9aabb8] normal-case mono">(network.openvpn → server)</span></label>
           <input type="text" name="vpn_server" value="{{ config.vpn_server or '' }}"
-            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none">
+            class="w-full bg-white border border-[#e0e4e8] rounded-lg px-3 py-2 text-sm mono text-[#1a2332] focus:ring-2 focus:ring-[#00679e]/20 focus:border-[#00679e] outline-none transition-colors">
         </div>
         <div>
-          <label class="block text-xs text-slate-400 mb-1">Port <span class="text-xs text-slate-500 normal-case">(network.openvpn → port)</span></label>
+          <label class="block text-xs text-[#5a6a7a] mb-1">Port <span class="text-xs text-[#9aabb8] normal-case mono">(network.openvpn → port)</span></label>
           <input type="number" name="vpn_port" value="{{ config.vpn_port or 1194 }}"
-            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none">
+            class="w-full bg-white border border-[#e0e4e8] rounded-lg px-3 py-2 text-sm mono text-[#1a2332] focus:ring-2 focus:ring-[#00679e]/20 focus:border-[#00679e] outline-none transition-colors">
         </div>
         <div>
-          <label class="block text-xs text-slate-400 mb-1">Transport <span class="text-xs text-slate-500 normal-case">(network.openvpn → transport)</span></label>
-          <select name="vpn_transport" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200">
+          <label class="block text-xs text-[#5a6a7a] mb-1">Transport <span class="text-xs text-[#9aabb8] normal-case mono">(network.openvpn → transport)</span></label>
+          <select name="vpn_transport" class="w-full bg-white border border-[#e0e4e8] rounded-lg px-3 py-2 text-sm text-[#1a2332] focus:outline-none focus:border-[#00679e]">
             {% for opt in ['udp', 'tcp'] %}
             <option value="{{ opt }}" {% if config.vpn_transport == opt %}selected{% endif %}>{{ opt }}</option>
             {% endfor %}
           </select>
         </div>
         <div>
-          <label class="block text-xs text-slate-400 mb-1">Cipher <span class="text-xs text-slate-500 normal-case">(network.openvpn → cipermethod)</span></label>
-          <select name="vpn_cipher" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200">
+          <label class="block text-xs text-[#5a6a7a] mb-1">Cipher <span class="text-xs text-[#9aabb8] normal-case mono">(network.openvpn → cipermethod)</span></label>
+          <select name="vpn_cipher" class="w-full bg-white border border-[#e0e4e8] rounded-lg px-3 py-2 text-sm text-[#1a2332] focus:outline-none focus:border-[#00679e]">
             {% for opt in ['AES256GCM', 'AES128GCM', 'AES256CBC', 'AES128CBC'] %}
             <option value="{{ opt }}" {% if config.vpn_cipher == opt %}selected{% endif %}>{{ opt }}</option>
             {% endfor %}
@@ -466,39 +466,39 @@
       </div>
       <div class="space-y-4 pt-2">
         <div>
-          <label class="block text-xs text-slate-400 mb-1">CA Certificate <span class="text-xs text-slate-500 normal-case">(network.openvpn → ca)</span></label>
+          <label class="block text-xs text-[#5a6a7a] mb-1">CA Certificate <span class="text-xs text-[#9aabb8] normal-case mono">(network.openvpn → ca)</span></label>
           <textarea name="vpn_ca" rows="3"
-            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none resize-none">{{ config.vpn_ca or '' }}</textarea>
+            class="w-full bg-white border border-[#e0e4e8] rounded-lg px-3 py-2 text-sm mono text-[#1a2332] focus:ring-2 focus:ring-[#00679e]/20 focus:border-[#00679e] outline-none resize-none transition-colors">{{ config.vpn_ca or '' }}</textarea>
         </div>
         <div>
-          <label class="block text-xs text-slate-400 mb-1">Certificate <span class="text-xs text-slate-500 normal-case">(network.openvpn → cert)</span></label>
+          <label class="block text-xs text-[#5a6a7a] mb-1">Certificate <span class="text-xs text-[#9aabb8] normal-case mono">(network.openvpn → cert)</span></label>
           <textarea name="vpn_cert" rows="3"
-            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none resize-none">{{ config.vpn_cert or '' }}</textarea>
+            class="w-full bg-white border border-[#e0e4e8] rounded-lg px-3 py-2 text-sm mono text-[#1a2332] focus:ring-2 focus:ring-[#00679e]/20 focus:border-[#00679e] outline-none resize-none transition-colors">{{ config.vpn_cert or '' }}</textarea>
         </div>
         <div>
-          <label class="block text-xs text-slate-400 mb-1">Client Key <span class="text-xs text-slate-500 normal-case">(network.openvpn → clientKey)</span></label>
+          <label class="block text-xs text-[#5a6a7a] mb-1">Client Key <span class="text-xs text-[#9aabb8] normal-case mono">(network.openvpn → clientKey)</span></label>
           <textarea name="vpn_client_key" rows="3"
-            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none resize-none">{{ config.vpn_client_key or '' }}</textarea>
+            class="w-full bg-white border border-[#e0e4e8] rounded-lg px-3 py-2 text-sm mono text-[#1a2332] focus:ring-2 focus:ring-[#00679e]/20 focus:border-[#00679e] outline-none resize-none transition-colors">{{ config.vpn_client_key or '' }}</textarea>
         </div>
       </div>
     </div>
   </div>
 
   <!-- Save bar -->
-  <div class="mt-6 flex gap-3 pt-4 border-t border-slate-700">
-    <button type="submit" class="px-5 py-2 bg-sky-700 hover:bg-sky-600 rounded-lg text-sm font-medium transition-colors">
+  <div class="mt-6 flex gap-3 pt-4 border-t border-[#e0e4e8]">
+    <button type="submit" class="px-5 py-2 bg-[#00679e] hover:bg-[#005580] text-white rounded-lg text-sm font-medium transition-colors">
       Save Configuration
     </button>
-    <a href="/" class="px-5 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-sm transition-colors">Cancel</a>
+    <a href="/" class="px-5 py-2 bg-white hover:bg-[#f4f6f8] border border-[#e0e4e8] text-[#1a2332] rounded-lg text-sm transition-colors">Cancel</a>
   </div>
 </form>
 {% endblock %}
 
 {% macro field(label, name, value, type="text", hint="") %}
 <div>
-  <label class="block text-xs text-slate-400 mb-1">{{ label }}{% if hint %} <span class="text-xs text-slate-500 normal-case">({{ hint }})</span>{% endif %}</label>
+  <label class="block text-xs text-[#5a6a7a] mb-1">{{ label }}{% if hint %} <span class="text-xs text-[#9aabb8] normal-case mono">({{ hint }})</span>{% endif %}</label>
   <input type="{{ type }}" name="{{ name }}" value="{{ value }}"
-    class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none transition-colors">
+    class="w-full bg-white border border-[#e0e4e8] rounded-lg px-3 py-2 text-sm text-[#1a2332] focus:ring-2 focus:ring-[#00679e]/20 focus:border-[#00679e] outline-none transition-colors">
 </div>
 {% endmacro %}
 
@@ -512,8 +512,8 @@
     tabs.forEach(t => {
       const active = t.dataset.tab === name;
       t.className = `tab-btn px-4 py-2 text-sm rounded-t-lg transition-colors ${active
-        ? 'bg-slate-800 text-white border border-slate-700 border-b-slate-800 -mb-px z-10'
-        : 'text-slate-400 hover:text-slate-200'}`;
+        ? 'bg-white text-[#00679e] font-medium border border-[#e0e4e8] border-b-white -mb-px z-10'
+        : 'text-[#5a6a7a] hover:text-[#1a2332]'}`;
     });
     panes.forEach(p => p.classList.toggle('hidden', p.id !== `tab-${name}`));
     localStorage.setItem('gs-tab-{{ phone.id }}', name);
@@ -532,8 +532,8 @@
     acctBtns.forEach(b => {
       const active = parseInt(b.dataset.acct) === n;
       b.className = `acct-tab-btn px-3 py-1.5 text-xs rounded-lg transition-colors ${active
-        ? 'bg-slate-700 text-white'
-        : 'text-slate-400 hover:text-slate-200'}`;
+        ? 'bg-[#e8f4fb] text-[#00679e] font-medium'
+        : 'text-[#5a6a7a] hover:text-[#1a2332]'}`;
     });
     acctPanes.forEach(p => p.classList.toggle('hidden', p.id !== `acct-pane-${n}`));
     localStorage.setItem('gs-acct-{{ phone.id }}', n);
