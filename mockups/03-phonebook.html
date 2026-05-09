@@ -10,21 +10,17 @@
   <style>
     body { font-family: 'Inter', sans-serif; }
     .mono { font-family: 'JetBrains Mono', monospace; }
+    .row-deleting { transition: opacity 0.3s, transform 0.3s; opacity: 0; transform: translateX(16px); }
   </style>
-  <script>
-    tailwind.config = {
-      theme: { extend: { colors: { navy: { 900: '#0f172a', 800: '#1e293b', 700: '#334155' } } } }
-    }
-  </script>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-full">
+<body class="bg-[#f4f6f8] text-[#1a2332] min-h-full">
 
-  <nav class="bg-slate-800 border-b border-slate-700 px-6 py-3 flex items-center gap-8">
-    <a href="#" class="text-sky-400 font-semibold text-lg tracking-tight mono">GS Config Manager</a>
-    <div class="flex gap-6 text-sm text-slate-400">
-      <a href="#" class="hover:text-white">Phones</a>
-      <a href="#" class="text-white">Phone Book</a>
-      <a href="#" class="hover:text-white">Settings</a>
+  <nav class="bg-[#00679e] px-6 py-3 flex items-center gap-8 shadow-sm">
+    <a href="01-phones.html" class="text-white font-semibold text-lg tracking-tight mono">GS Config Manager</a>
+    <div class="flex gap-6 text-sm text-white/80">
+      <a href="01-phones.html" class="hover:text-white transition-colors">Phones</a>
+      <a href="03-phonebook.html" class="text-white font-medium transition-colors">Phone Book</a>
+      <a href="04-settings.html" class="hover:text-white transition-colors">Settings</a>
     </div>
   </nav>
 
@@ -32,52 +28,52 @@
 
     <div class="flex items-center justify-between mb-6">
       <div>
-        <h1 class="text-xl font-semibold text-white">Phone Book</h1>
-        <p class="text-slate-400 text-sm mt-1">8 entries total</p>
+        <h1 class="text-xl font-semibold text-[#1a2332]">Phone Book</h1>
+        <p class="text-[#5a6a7a] text-sm mt-1" id="entry-count">8 entries total</p>
       </div>
       <div class="flex gap-3">
-        <button class="px-4 py-2 bg-slate-700 text-sm rounded-lg border border-slate-600">Preview XML</button>
-        <button class="px-4 py-2 bg-emerald-700 text-sm rounded-lg border border-emerald-600 font-medium">Generate phonebook.xml</button>
+        <button onclick="previewXml()" class="px-4 py-2 bg-white hover:bg-[#f4f6f8] text-[#1a2332] text-sm rounded-lg border border-[#e0e4e8] transition-colors">Preview XML</button>
+        <button onclick="showToast('phonebook.xml written → ./output/')" class="px-4 py-2 bg-[#1e7e4a] hover:bg-[#166038] text-white text-sm rounded-lg font-medium transition-colors">Generate phonebook.xml</button>
       </div>
     </div>
 
     <!-- From Phone Inventory -->
     <div class="mb-6">
-      <h2 class="text-sm font-medium text-slate-400 uppercase tracking-wider mb-3">From Phone Inventory</h2>
-      <div class="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden">
+      <h2 class="text-xs text-[#5a6a7a] font-medium uppercase tracking-wider mb-3">From Phone Inventory</h2>
+      <div class="bg-white border border-[#e0e4e8] rounded-xl overflow-hidden">
         <table class="w-full text-sm">
-          <thead>
-            <tr class="border-b border-slate-700 text-slate-400 text-xs uppercase tracking-wider">
+          <thead class="bg-[#f4f6f8]">
+            <tr class="border-b border-[#e0e4e8] text-[#5a6a7a] text-xs uppercase tracking-wider">
               <th class="px-4 py-3 text-left">Name</th>
               <th class="px-4 py-3 text-left">Extension</th>
               <th class="px-4 py-3 text-left">Account</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-slate-700/50">
-            <tr class="hover:bg-slate-700/30">
-              <td class="px-4 py-3 text-slate-200">Alice Chen</td>
-              <td class="px-4 py-3 mono text-sky-300 font-medium">1001</td>
-              <td class="px-4 py-3 text-slate-400 text-xs">1</td>
+          <tbody class="divide-y divide-[#e0e4e8]">
+            <tr class="hover:bg-[#f4f6f8] transition-colors">
+              <td class="px-4 py-3 text-[#1a2332]">Alice Chen</td>
+              <td class="px-4 py-3 mono text-[#00679e] font-medium">1001</td>
+              <td class="px-4 py-3 text-[#5a6a7a] text-xs">1</td>
             </tr>
-            <tr class="hover:bg-slate-700/30">
-              <td class="px-4 py-3 text-slate-200">Bob Martinez</td>
-              <td class="px-4 py-3 mono text-sky-300 font-medium">1002</td>
-              <td class="px-4 py-3 text-slate-400 text-xs">1</td>
+            <tr class="hover:bg-[#f4f6f8] transition-colors">
+              <td class="px-4 py-3 text-[#1a2332]">Bob Martinez</td>
+              <td class="px-4 py-3 mono text-[#00679e] font-medium">1002</td>
+              <td class="px-4 py-3 text-[#5a6a7a] text-xs">1</td>
             </tr>
-            <tr class="hover:bg-slate-700/30">
-              <td class="px-4 py-3 text-slate-200">Carol Davis</td>
-              <td class="px-4 py-3 mono text-sky-300 font-medium">1003</td>
-              <td class="px-4 py-3 text-slate-400 text-xs">1</td>
+            <tr class="hover:bg-[#f4f6f8] transition-colors">
+              <td class="px-4 py-3 text-[#1a2332]">Carol Davis</td>
+              <td class="px-4 py-3 mono text-[#00679e] font-medium">1003</td>
+              <td class="px-4 py-3 text-[#5a6a7a] text-xs">1</td>
             </tr>
-            <tr class="hover:bg-slate-700/30">
-              <td class="px-4 py-3 text-slate-200">Dan Nguyen</td>
-              <td class="px-4 py-3 mono text-sky-300 font-medium">1004</td>
-              <td class="px-4 py-3 text-slate-400 text-xs">1</td>
+            <tr class="hover:bg-[#f4f6f8] transition-colors">
+              <td class="px-4 py-3 text-[#1a2332]">Dan Nguyen</td>
+              <td class="px-4 py-3 mono text-[#00679e] font-medium">1004</td>
+              <td class="px-4 py-3 text-[#5a6a7a] text-xs">1</td>
             </tr>
-            <tr class="hover:bg-slate-700/30">
-              <td class="px-4 py-3 text-slate-200">Eve Okafor</td>
-              <td class="px-4 py-3 mono text-sky-300 font-medium">1005</td>
-              <td class="px-4 py-3 text-slate-400 text-xs">1</td>
+            <tr class="hover:bg-[#f4f6f8] transition-colors">
+              <td class="px-4 py-3 text-[#1a2332]">Eve Okafor</td>
+              <td class="px-4 py-3 mono text-[#00679e] font-medium">1005</td>
+              <td class="px-4 py-3 text-[#5a6a7a] text-xs">1</td>
             </tr>
           </tbody>
         </table>
@@ -87,51 +83,73 @@
     <!-- Additional Entries -->
     <div>
       <div class="flex items-center justify-between mb-3">
-        <h2 class="text-sm font-medium text-slate-400 uppercase tracking-wider">Additional Entries</h2>
-        <button class="px-3 py-1.5 bg-sky-800 border border-sky-700 text-sky-200 text-xs rounded-lg">+ Add Entry</button>
+        <h2 class="text-xs text-[#5a6a7a] font-medium uppercase tracking-wider">Additional Entries</h2>
+        <button onclick="showAddForm()" class="px-3 py-1.5 bg-[#e8f4fb] hover:bg-[#d0e8f5] border border-[#00679e]/30 text-[#00679e] text-xs rounded-lg font-medium transition-colors">+ Add Entry</button>
       </div>
 
-      <div class="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden">
+      <!-- Inline add form (hidden by default) -->
+      <div id="add-form" class="hidden mb-3 bg-white border border-[#00679e]/30 rounded-xl p-4">
+        <div class="flex gap-3 items-end">
+          <div class="flex-1">
+            <label class="block text-xs text-[#5a6a7a] mb-1">Name</label>
+            <input type="text" id="new-name" placeholder="Display name" class="w-full bg-white border border-[#e0e4e8] rounded-lg px-3 py-2 text-sm text-[#1a2332] focus:ring-2 focus:ring-[#00679e]/20 focus:border-[#00679e] outline-none">
+          </div>
+          <div class="flex-1">
+            <label class="block text-xs text-[#5a6a7a] mb-1">Phone Number</label>
+            <input type="text" id="new-number" placeholder="e.g. 9200" class="w-full bg-white border border-[#e0e4e8] rounded-lg px-3 py-2 text-sm mono text-[#1a2332] focus:ring-2 focus:ring-[#00679e]/20 focus:border-[#00679e] outline-none">
+          </div>
+          <div class="w-24">
+            <label class="block text-xs text-[#5a6a7a] mb-1">Account</label>
+            <select id="new-acct" class="w-full bg-white border border-[#e0e4e8] rounded-lg px-3 py-2 text-sm text-[#1a2332] focus:outline-none focus:border-[#00679e]">
+              <option>1</option><option>2</option><option>3</option><option>4</option>
+            </select>
+          </div>
+          <button onclick="addEntry()" class="px-4 py-2 bg-[#00679e] hover:bg-[#005580] text-white text-sm rounded-lg font-medium transition-colors">Add</button>
+          <button onclick="hideAddForm()" class="px-4 py-2 bg-white hover:bg-[#f4f6f8] border border-[#e0e4e8] text-[#1a2332] text-sm rounded-lg transition-colors">Cancel</button>
+        </div>
+      </div>
+
+      <div class="bg-white border border-[#e0e4e8] rounded-xl overflow-hidden">
         <table class="w-full text-sm">
-          <thead>
-            <tr class="border-b border-slate-700 text-slate-400 text-xs uppercase tracking-wider">
+          <thead class="bg-[#f4f6f8]">
+            <tr class="border-b border-[#e0e4e8] text-[#5a6a7a] text-xs uppercase tracking-wider">
               <th class="px-4 py-3 text-left">Name</th>
               <th class="px-4 py-3 text-left">Phone Number</th>
               <th class="px-4 py-3 text-left">Account</th>
               <th class="px-4 py-3 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-slate-700/50">
-            <tr>
-              <td class="px-4 py-3 text-slate-200">Front Desk</td>
-              <td class="px-4 py-3 mono text-sky-300 font-medium">9000</td>
-              <td class="px-4 py-3 text-slate-400 text-xs">1</td>
+          <tbody id="extra-tbody" class="divide-y divide-[#e0e4e8]">
+            <tr id="extra-row-1" class="hover:bg-[#f4f6f8] transition-colors">
+              <td class="px-4 py-3 text-[#1a2332]">Front Desk</td>
+              <td class="px-4 py-3 mono text-[#00679e] font-medium">9000</td>
+              <td class="px-4 py-3 text-[#5a6a7a] text-xs">1</td>
               <td class="px-4 py-3 text-right">
                 <div class="flex gap-2 justify-end">
-                  <button class="px-3 py-1.5 bg-slate-700 rounded-md text-xs">Edit</button>
-                  <button class="px-3 py-1.5 bg-red-900/40 border border-red-700/40 text-red-400 rounded-md text-xs">Delete</button>
+                  <button onclick="showToast('Edit — not yet mocked up')" class="px-3 py-1.5 bg-white hover:bg-[#f4f6f8] border border-[#e0e4e8] text-[#1a2332] rounded-md text-xs transition-colors">Edit</button>
+                  <button onclick="deleteEntry('extra-row-1')" class="px-3 py-1.5 bg-[#fdf2f2] hover:bg-[#f8d7da] border border-[#f5c6cb] text-[#c0392b] rounded-md text-xs transition-colors">Delete</button>
                 </div>
               </td>
             </tr>
-            <tr>
-              <td class="px-4 py-3 text-slate-200">Building Security</td>
-              <td class="px-4 py-3 mono text-sky-300 font-medium">9911</td>
-              <td class="px-4 py-3 text-slate-400 text-xs">1</td>
+            <tr id="extra-row-2" class="hover:bg-[#f4f6f8] transition-colors">
+              <td class="px-4 py-3 text-[#1a2332]">Building Security</td>
+              <td class="px-4 py-3 mono text-[#00679e] font-medium">9911</td>
+              <td class="px-4 py-3 text-[#5a6a7a] text-xs">1</td>
               <td class="px-4 py-3 text-right">
                 <div class="flex gap-2 justify-end">
-                  <button class="px-3 py-1.5 bg-slate-700 rounded-md text-xs">Edit</button>
-                  <button class="px-3 py-1.5 bg-red-900/40 border border-red-700/40 text-red-400 rounded-md text-xs">Delete</button>
+                  <button onclick="showToast('Edit — not yet mocked up')" class="px-3 py-1.5 bg-white hover:bg-[#f4f6f8] border border-[#e0e4e8] text-[#1a2332] rounded-md text-xs transition-colors">Edit</button>
+                  <button onclick="deleteEntry('extra-row-2')" class="px-3 py-1.5 bg-[#fdf2f2] hover:bg-[#f8d7da] border border-[#f5c6cb] text-[#c0392b] rounded-md text-xs transition-colors">Delete</button>
                 </div>
               </td>
             </tr>
-            <tr>
-              <td class="px-4 py-3 text-slate-200">Conference Room</td>
-              <td class="px-4 py-3 mono text-sky-300 font-medium">9100</td>
-              <td class="px-4 py-3 text-slate-400 text-xs">1</td>
+            <tr id="extra-row-3" class="hover:bg-[#f4f6f8] transition-colors">
+              <td class="px-4 py-3 text-[#1a2332]">Conference Room</td>
+              <td class="px-4 py-3 mono text-[#00679e] font-medium">9100</td>
+              <td class="px-4 py-3 text-[#5a6a7a] text-xs">1</td>
               <td class="px-4 py-3 text-right">
                 <div class="flex gap-2 justify-end">
-                  <button class="px-3 py-1.5 bg-slate-700 rounded-md text-xs">Edit</button>
-                  <button class="px-3 py-1.5 bg-red-900/40 border border-red-700/40 text-red-400 rounded-md text-xs">Delete</button>
+                  <button onclick="showToast('Edit — not yet mocked up')" class="px-3 py-1.5 bg-white hover:bg-[#f4f6f8] border border-[#e0e4e8] text-[#1a2332] rounded-md text-xs transition-colors">Edit</button>
+                  <button onclick="deleteEntry('extra-row-3')" class="px-3 py-1.5 bg-[#fdf2f2] hover:bg-[#f8d7da] border border-[#f5c6cb] text-[#c0392b] rounded-md text-xs transition-colors">Delete</button>
                 </div>
               </td>
             </tr>
@@ -141,5 +159,133 @@
     </div>
 
   </main>
+
+  <!-- XML Preview Modal -->
+  <div id="xml-modal" class="hidden fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-6" onclick="if(event.target===this)closeModal()">
+    <div class="bg-white rounded-xl border border-[#e0e4e8] w-full max-w-2xl max-h-[80vh] flex flex-col shadow-xl">
+      <div class="flex items-center justify-between px-5 py-3 border-b border-[#e0e4e8]">
+        <span class="text-sm font-medium text-[#1a2332] mono">phonebook.xml — preview</span>
+        <button onclick="closeModal()" class="text-[#9aabb8] hover:text-[#1a2332] text-xl leading-none transition-colors">&times;</button>
+      </div>
+      <pre class="flex-1 overflow-auto px-5 py-4 text-xs mono text-[#1a2332] bg-[#f4f6f8] rounded-b-xl leading-relaxed">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;AddressBook&gt;
+  &lt;DirectoryEntry&gt;
+    &lt;FirstName&gt;Alice&lt;/FirstName&gt;
+    &lt;LastName&gt;Chen&lt;/LastName&gt;
+    &lt;Phone&gt;&lt;phonenumber&gt;1001&lt;/phonenumber&gt;&lt;accountindex&gt;1&lt;/accountindex&gt;&lt;/Phone&gt;
+  &lt;/DirectoryEntry&gt;
+  &lt;DirectoryEntry&gt;
+    &lt;FirstName&gt;Bob&lt;/FirstName&gt;
+    &lt;LastName&gt;Martinez&lt;/LastName&gt;
+    &lt;Phone&gt;&lt;phonenumber&gt;1002&lt;/phonenumber&gt;&lt;accountindex&gt;1&lt;/accountindex&gt;&lt;/Phone&gt;
+  &lt;/DirectoryEntry&gt;
+  &lt;DirectoryEntry&gt;
+    &lt;FirstName&gt;Carol&lt;/FirstName&gt;
+    &lt;LastName&gt;Davis&lt;/LastName&gt;
+    &lt;Phone&gt;&lt;phonenumber&gt;1003&lt;/phonenumber&gt;&lt;accountindex&gt;1&lt;/accountindex&gt;&lt;/Phone&gt;
+  &lt;/DirectoryEntry&gt;
+  &lt;DirectoryEntry&gt;
+    &lt;FirstName&gt;Dan&lt;/FirstName&gt;
+    &lt;LastName&gt;Nguyen&lt;/LastName&gt;
+    &lt;Phone&gt;&lt;phonenumber&gt;1004&lt;/phonenumber&gt;&lt;accountindex&gt;1&lt;/accountindex&gt;&lt;/Phone&gt;
+  &lt;/DirectoryEntry&gt;
+  &lt;DirectoryEntry&gt;
+    &lt;FirstName&gt;Eve&lt;/FirstName&gt;
+    &lt;LastName&gt;Okafor&lt;/LastName&gt;
+    &lt;Phone&gt;&lt;phonenumber&gt;1005&lt;/phonenumber&gt;&lt;accountindex&gt;1&lt;/accountindex&gt;&lt;/Phone&gt;
+  &lt;/DirectoryEntry&gt;
+  &lt;DirectoryEntry&gt;
+    &lt;FirstName&gt;Front Desk&lt;/FirstName&gt;
+    &lt;LastName&gt;&lt;/LastName&gt;
+    &lt;Phone&gt;&lt;phonenumber&gt;9000&lt;/phonenumber&gt;&lt;accountindex&gt;1&lt;/accountindex&gt;&lt;/Phone&gt;
+  &lt;/DirectoryEntry&gt;
+  &lt;DirectoryEntry&gt;
+    &lt;FirstName&gt;Building Security&lt;/FirstName&gt;
+    &lt;LastName&gt;&lt;/LastName&gt;
+    &lt;Phone&gt;&lt;phonenumber&gt;9911&lt;/phonenumber&gt;&lt;accountindex&gt;1&lt;/accountindex&gt;&lt;/Phone&gt;
+  &lt;/DirectoryEntry&gt;
+  &lt;DirectoryEntry&gt;
+    &lt;FirstName&gt;Conference Room&lt;/FirstName&gt;
+    &lt;LastName&gt;&lt;/LastName&gt;
+    &lt;Phone&gt;&lt;phonenumber&gt;9100&lt;/phonenumber&gt;&lt;accountindex&gt;1&lt;/accountindex&gt;&lt;/Phone&gt;
+  &lt;/DirectoryEntry&gt;
+&lt;/AddressBook&gt;</pre>
+    </div>
+  </div>
+
+  <div id="toast" class="hidden fixed bottom-6 right-6 bg-[#1a2332] text-white text-sm px-4 py-2.5 rounded-lg shadow-lg z-50 transition-all"></div>
+
+  <script>
+    let rowCounter = 10;
+
+    function updateCount() {
+      const fixed = 5;
+      const extra = document.querySelectorAll('#extra-tbody tr').length;
+      document.getElementById('entry-count').textContent = `${fixed + extra} entries total`;
+    }
+
+    function deleteEntry(rowId) {
+      const row = document.getElementById(rowId);
+      if (!row) return;
+      row.classList.add('row-deleting');
+      setTimeout(() => { row.remove(); updateCount(); }, 300);
+    }
+
+    function showAddForm() {
+      document.getElementById('add-form').classList.remove('hidden');
+      document.getElementById('new-name').focus();
+    }
+
+    function hideAddForm() {
+      document.getElementById('add-form').classList.add('hidden');
+      document.getElementById('new-name').value = '';
+      document.getElementById('new-number').value = '';
+    }
+
+    function addEntry() {
+      const name   = document.getElementById('new-name').value.trim();
+      const number = document.getElementById('new-number').value.trim();
+      const acct   = document.getElementById('new-acct').value;
+      if (!name || !number) { showToast('Name and number are required'); return; }
+      const id  = `extra-row-${rowCounter++}`;
+      const row = document.createElement('tr');
+      row.id = id;
+      row.className = 'hover:bg-[#f4f6f8] transition-colors';
+      row.innerHTML = `
+        <td class="px-4 py-3 text-[#1a2332]">${name}</td>
+        <td class="px-4 py-3 mono text-[#00679e] font-medium">${number}</td>
+        <td class="px-4 py-3 text-[#5a6a7a] text-xs">${acct}</td>
+        <td class="px-4 py-3 text-right">
+          <div class="flex gap-2 justify-end">
+            <button onclick="showToast('Edit — not yet mocked up')" class="px-3 py-1.5 bg-white hover:bg-[#f4f6f8] border border-[#e0e4e8] text-[#1a2332] rounded-md text-xs transition-colors">Edit</button>
+            <button onclick="deleteEntry('${id}')" class="px-3 py-1.5 bg-[#fdf2f2] hover:bg-[#f8d7da] border border-[#f5c6cb] text-[#c0392b] rounded-md text-xs transition-colors">Delete</button>
+          </div>
+        </td>`;
+      document.getElementById('extra-tbody').appendChild(row);
+      hideAddForm();
+      updateCount();
+      showToast(`Added ${name}`);
+    }
+
+    function previewXml() {
+      document.getElementById('xml-modal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+      document.getElementById('xml-modal').classList.add('hidden');
+    }
+
+    let toastTimer;
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.remove('hidden');
+      t.style.opacity = '1';
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.classList.add('hidden'), 300); }, 2500);
+    }
+
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+  </script>
 </body>
 </html>

@@ -11,20 +11,15 @@
     body { font-family: 'Inter', sans-serif; }
     .mono { font-family: 'JetBrains Mono', monospace; }
   </style>
-  <script>
-    tailwind.config = {
-      theme: { extend: { colors: { navy: { 900: '#0f172a', 800: '#1e293b', 700: '#334155' } } } }
-    }
-  </script>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-full">
+<body class="bg-[#f4f6f8] text-[#1a2332] min-h-full">
 
-  <nav class="bg-slate-800 border-b border-slate-700 px-6 py-3 flex items-center gap-8">
-    <a href="#" class="text-sky-400 font-semibold text-lg tracking-tight mono">GS Config Manager</a>
-    <div class="flex gap-6 text-sm text-slate-400">
-      <a href="#" class="text-white">Phones</a>
-      <a href="#" class="hover:text-white">Phone Book</a>
-      <a href="#" class="hover:text-white">Settings</a>
+  <nav class="bg-[#00679e] px-6 py-3 flex items-center gap-8 shadow-sm">
+    <a href="01-phones.html" class="text-white font-semibold text-lg tracking-tight mono">GS Config Manager</a>
+    <div class="flex gap-6 text-sm text-white/80">
+      <a href="01-phones.html" class="text-white font-medium transition-colors">Phones</a>
+      <a href="03-phonebook.html" class="hover:text-white transition-colors">Phone Book</a>
+      <a href="04-settings.html" class="hover:text-white transition-colors">Settings</a>
     </div>
   </nav>
 
@@ -32,13 +27,13 @@
 
     <div class="flex items-start justify-between mb-6">
       <div class="flex items-center gap-4">
-        <a href="#" class="text-slate-500 text-sm">← Phones</a>
+        <a href="01-phones.html" class="text-[#5a6a7a] hover:text-[#1a2332] text-sm transition-colors">← Phones</a>
         <div>
           <div class="flex items-center gap-3">
-            <h1 class="text-xl font-semibold text-white mono">1001</h1>
-            <span class="px-2 py-0.5 bg-sky-900/50 border border-sky-700/50 text-sky-300 text-xs rounded-md font-medium mono">GRP2612W</span>
+            <h1 class="text-xl font-semibold text-[#00679e] mono">1001</h1>
+            <span class="px-2 py-0.5 bg-[#e8f4fb] border border-[#00679e]/30 text-[#00679e] text-xs rounded-md font-medium mono">GRP2612W</span>
           </div>
-          <div class="flex gap-4 mt-1 text-xs text-slate-500 mono">
+          <div class="flex gap-4 mt-1 text-xs text-[#9aabb8] mono">
             <span>S/N: C0BADDCAFE01</span>
             <span>eth0: c0baddcafe01</span>
             <span>wlan: c0baddcafe02</span>
@@ -46,117 +41,157 @@
         </div>
       </div>
       <div class="flex gap-3">
-        <button class="px-4 py-2 bg-slate-700 text-sm rounded-lg border border-slate-600">Import XML</button>
-        <button class="px-4 py-2 bg-emerald-700 text-sm rounded-lg font-medium">Generate XML</button>
+        <button onclick="showToast('XML imported (demo)')" class="px-4 py-2 bg-white hover:bg-[#f4f6f8] text-[#1a2332] text-sm rounded-lg border border-[#e0e4e8] transition-colors">Import XML</button>
+        <button onclick="showToast('cfg1001.xml written → ./output/')" class="px-4 py-2 bg-[#1e7e4a] hover:bg-[#166038] text-white text-sm rounded-lg font-medium transition-colors">Generate XML</button>
       </div>
     </div>
 
     <!-- Tab bar — WiFi active -->
-    <div class="flex gap-1 border-b border-slate-700 mb-6">
-      <button class="px-4 py-2 text-sm rounded-t-lg text-slate-400">SIP</button>
-      <button class="px-4 py-2 text-sm rounded-t-lg bg-slate-800 text-white border border-slate-700 border-b-slate-800 -mb-px z-10">WiFi</button>
-      <button class="px-4 py-2 text-sm rounded-t-lg text-slate-400">Keys</button>
-      <button class="px-4 py-2 text-sm rounded-t-lg text-slate-400">Phonebook</button>
-      <button class="px-4 py-2 text-sm rounded-t-lg text-slate-400">Display</button>
-      <button class="px-4 py-2 text-sm rounded-t-lg text-slate-400">Provisioning</button>
-      <button class="px-4 py-2 text-sm rounded-t-lg text-slate-400">VPN</button>
+    <div class="flex gap-1 border-b border-[#e0e4e8] mb-6">
+      <button onclick="window.location.href='02a-phone-edit-sip.html'"          class="px-4 py-2 text-sm rounded-t-lg text-[#5a6a7a] hover:text-[#1a2332] transition-colors cursor-pointer">SIP</button>
+      <button class="px-4 py-2 text-sm rounded-t-lg bg-white text-[#00679e] font-medium border border-[#e0e4e8] border-b-white -mb-px z-10">WiFi</button>
+      <button onclick="showToast('Keys tab — not yet mocked up')"               class="px-4 py-2 text-sm rounded-t-lg text-[#5a6a7a] hover:text-[#1a2332] transition-colors cursor-pointer">Keys</button>
+      <button onclick="window.location.href='02d-phone-edit-phonebook.html'"    class="px-4 py-2 text-sm rounded-t-lg text-[#5a6a7a] hover:text-[#1a2332] transition-colors cursor-pointer">Phonebook</button>
+      <button onclick="window.location.href='02e-phone-edit-personalize.html'"  class="px-4 py-2 text-sm rounded-t-lg text-[#5a6a7a] hover:text-[#1a2332] transition-colors cursor-pointer">Personalize</button>
+      <button onclick="showToast('Provisioning tab — not yet mocked up')"       class="px-4 py-2 text-sm rounded-t-lg text-[#5a6a7a] hover:text-[#1a2332] transition-colors cursor-pointer">Provisioning</button>
+      <button onclick="window.location.href='02c-phone-edit-vpn.html'"          class="px-4 py-2 text-sm rounded-t-lg text-[#5a6a7a] hover:text-[#1a2332] transition-colors cursor-pointer">VPN</button>
     </div>
 
     <!-- WiFi controls -->
     <div class="flex items-center gap-6 mb-6">
       <div class="flex items-center gap-3">
         <label class="relative inline-flex items-center cursor-pointer">
-          <input type="checkbox" checked class="sr-only peer">
-          <div class="w-11 h-6 bg-sky-600 rounded-full peer after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:translate-x-full"></div>
+          <input type="checkbox" id="wifi-enabled" checked class="sr-only peer">
+          <div class="w-11 h-6 bg-[#e0e4e8] peer-focus:ring-2 peer-focus:ring-[#00679e]/40 rounded-full peer
+            peer-checked:after:translate-x-full peer-checked:bg-[#00679e]
+            after:content-[''] after:absolute after:top-0.5 after:left-[2px]
+            after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
         </label>
-        <span class="text-sm text-slate-300">WiFi Enabled</span>
+        <div>
+          <span class="text-sm text-[#1a2332]">WiFi Enabled</span>
+          <p class="text-xs text-[#9aabb8] mono">network.wifi → enable</p>
+        </div>
       </div>
       <div class="flex items-center gap-2">
-        <label class="text-xs text-slate-400">Band</label>
-        <select class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm text-slate-200">
+        <label class="text-xs text-[#5a6a7a]">Band <span class="text-[#9aabb8] mono">(network.wifi → band)</span></label>
+        <select class="bg-white border border-[#e0e4e8] rounded-lg px-3 py-1.5 text-sm text-[#1a2332] focus:outline-none focus:border-[#00679e]">
           <option selected>Auto</option>
           <option>2.4GHz</option>
           <option>5GHz</option>
         </select>
       </div>
+      <div class="flex items-center gap-2">
+        <label class="text-xs text-[#5a6a7a]">Country Code <span class="text-[#9aabb8] mono">(network.wifi.countryCode → public)</span></label>
+        <input type="text" value="US" class="w-16 bg-white border border-[#e0e4e8] rounded-lg px-3 py-1.5 text-sm mono text-[#1a2332] focus:outline-none focus:border-[#00679e]">
+      </div>
     </div>
 
     <!-- SSID table -->
-    <div class="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden">
+    <div class="bg-white border border-[#e0e4e8] rounded-xl overflow-hidden">
       <table class="w-full text-sm">
-        <thead>
-          <tr class="border-b border-slate-700 text-slate-400 text-xs uppercase tracking-wider">
+        <thead class="bg-[#f4f6f8]">
+          <tr class="border-b border-[#e0e4e8] text-[#5a6a7a] text-xs uppercase tracking-wider">
             <th class="px-4 py-3 text-left w-10">#</th>
-            <th class="px-4 py-3 text-left w-16">On</th>
-            <th class="px-4 py-3 text-left">SSID</th>
-            <th class="px-4 py-3 text-left">Password</th>
-            <th class="px-4 py-3 text-left w-36">Key Mgmt</th>
-            <th class="px-4 py-3 text-left w-16">Hidden</th>
-            <th class="px-4 py-3 text-left w-20">Priority</th>
+            <th class="px-4 py-3 text-left">SSID <span class="normal-case text-[#9aabb8] font-normal mono">(essid)</span></th>
+            <th class="px-4 py-3 text-left">Password <span class="normal-case text-[#9aabb8] font-normal mono">(psk)</span></th>
+            <th class="px-4 py-3 text-left w-36">Key Mgmt <span class="normal-case text-[#9aabb8] font-normal mono">(key_management)</span></th>
+            <th class="px-4 py-3 text-left w-16">Hidden <span class="normal-case text-[#9aabb8] font-normal mono">(hidden)</span></th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-slate-700/50">
-          <tr>
-            <td class="px-4 py-2 text-slate-400 mono text-xs font-medium">1</td>
-            <td class="px-4 py-2"><input type="checkbox" checked class="w-4 h-4 rounded accent-sky-500"></td>
-            <td class="px-4 py-2"><input type="text" value="OfficeWifi" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs mono text-slate-200"></td>
-            <td class="px-4 py-2"><input type="password" value="••••••••••" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs mono text-slate-200"></td>
+        <tbody class="divide-y divide-[#e0e4e8]">
+          <tr class="hover:bg-[#f4f6f8] transition-colors">
+            <td class="px-4 py-2 text-[#5a6a7a] mono text-xs font-medium">0</td>
+            <td class="px-4 py-2"><input type="text" value="OfficeWifi" class="w-full bg-white border border-[#e0e4e8] rounded px-2 py-1.5 text-xs mono text-[#1a2332] focus:outline-none focus:border-[#00679e]"></td>
             <td class="px-4 py-2">
-              <select class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-slate-200">
-                <option>WPA_PSK</option><option selected>WPA2_PSK</option><option>WPA_EAP</option><option>OPEN</option>
+              <div class="relative">
+                <input type="password" value="p4ssw0rd!" id="psk-0" class="w-full bg-white border border-[#e0e4e8] rounded px-2 py-1.5 text-xs mono text-[#1a2332] pr-10 focus:outline-none focus:border-[#00679e]">
+                <button type="button" onclick="togglePsk(0, this)" class="absolute right-2 top-1.5 text-[#9aabb8] hover:text-[#5a6a7a] text-xs transition-colors">show</button>
+              </div>
+            </td>
+            <td class="px-4 py-2">
+              <select class="w-full bg-white border border-[#e0e4e8] rounded px-2 py-1.5 text-xs text-[#1a2332] focus:outline-none focus:border-[#00679e]">
+                <option>WPA_PSK</option><option selected>WPA2_PSK</option><option>WPA_EAP</option><option>WPA2_EAP</option><option>OPEN</option>
               </select>
             </td>
-            <td class="px-4 py-2 text-center"><input type="checkbox" class="w-4 h-4 rounded accent-sky-500"></td>
-            <td class="px-4 py-2"><input type="number" value="10" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs mono text-slate-200"></td>
+            <td class="px-4 py-2 text-center"><input type="checkbox" class="w-4 h-4 rounded accent-[#00679e]"></td>
           </tr>
-          <tr>
-            <td class="px-4 py-2 text-slate-400 mono text-xs font-medium">2</td>
-            <td class="px-4 py-2"><input type="checkbox" class="w-4 h-4 rounded accent-sky-500"></td>
-            <td class="px-4 py-2"><input type="text" value="" placeholder="Network name" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs mono text-slate-400 placeholder-slate-600"></td>
-            <td class="px-4 py-2"><input type="password" value="" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs mono text-slate-200"></td>
+          <tr class="hover:bg-[#f4f6f8] transition-colors">
+            <td class="px-4 py-2 text-[#5a6a7a] mono text-xs font-medium">1</td>
+            <td class="px-4 py-2"><input type="text" value="" placeholder="Network name" class="w-full bg-white border border-[#e0e4e8] rounded px-2 py-1.5 text-xs mono text-[#1a2332] placeholder-[#9aabb8] focus:outline-none focus:border-[#00679e]"></td>
             <td class="px-4 py-2">
-              <select class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-slate-200">
-                <option selected>WPA_PSK</option><option>WPA2_PSK</option><option>WPA_EAP</option><option>OPEN</option>
+              <div class="relative">
+                <input type="password" value="" id="psk-1" class="w-full bg-white border border-[#e0e4e8] rounded px-2 py-1.5 text-xs mono text-[#1a2332] pr-10 focus:outline-none focus:border-[#00679e]">
+                <button type="button" onclick="togglePsk(1, this)" class="absolute right-2 top-1.5 text-[#9aabb8] hover:text-[#5a6a7a] text-xs transition-colors">show</button>
+              </div>
+            </td>
+            <td class="px-4 py-2">
+              <select class="w-full bg-white border border-[#e0e4e8] rounded px-2 py-1.5 text-xs text-[#1a2332] focus:outline-none focus:border-[#00679e]">
+                <option selected>WPA_PSK</option><option>WPA2_PSK</option><option>WPA_EAP</option><option>WPA2_EAP</option><option>OPEN</option>
               </select>
             </td>
-            <td class="px-4 py-2 text-center"><input type="checkbox" class="w-4 h-4 rounded accent-sky-500"></td>
-            <td class="px-4 py-2"><input type="number" value="0" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs mono text-slate-200"></td>
+            <td class="px-4 py-2 text-center"><input type="checkbox" class="w-4 h-4 rounded accent-[#00679e]"></td>
           </tr>
-          <tr>
-            <td class="px-4 py-2 text-slate-400 mono text-xs font-medium">3</td>
-            <td class="px-4 py-2"><input type="checkbox" class="w-4 h-4 rounded accent-sky-500"></td>
-            <td class="px-4 py-2"><input type="text" value="" placeholder="Network name" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs mono text-slate-400 placeholder-slate-600"></td>
-            <td class="px-4 py-2"><input type="password" value="" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs mono text-slate-200"></td>
+          <tr class="hover:bg-[#f4f6f8] transition-colors">
+            <td class="px-4 py-2 text-[#5a6a7a] mono text-xs font-medium">2</td>
+            <td class="px-4 py-2"><input type="text" value="" placeholder="Network name" class="w-full bg-white border border-[#e0e4e8] rounded px-2 py-1.5 text-xs mono text-[#1a2332] placeholder-[#9aabb8] focus:outline-none focus:border-[#00679e]"></td>
             <td class="px-4 py-2">
-              <select class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-slate-200">
-                <option selected>WPA_PSK</option><option>WPA2_PSK</option><option>WPA_EAP</option><option>OPEN</option>
+              <div class="relative">
+                <input type="password" value="" id="psk-2" class="w-full bg-white border border-[#e0e4e8] rounded px-2 py-1.5 text-xs mono text-[#1a2332] pr-10 focus:outline-none focus:border-[#00679e]">
+                <button type="button" onclick="togglePsk(2, this)" class="absolute right-2 top-1.5 text-[#9aabb8] hover:text-[#5a6a7a] text-xs transition-colors">show</button>
+              </div>
+            </td>
+            <td class="px-4 py-2">
+              <select class="w-full bg-white border border-[#e0e4e8] rounded px-2 py-1.5 text-xs text-[#1a2332] focus:outline-none focus:border-[#00679e]">
+                <option selected>WPA_PSK</option><option>WPA2_PSK</option><option>WPA_EAP</option><option>WPA2_EAP</option><option>OPEN</option>
               </select>
             </td>
-            <td class="px-4 py-2 text-center"><input type="checkbox" class="w-4 h-4 rounded accent-sky-500"></td>
-            <td class="px-4 py-2"><input type="number" value="0" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs mono text-slate-200"></td>
+            <td class="px-4 py-2 text-center"><input type="checkbox" class="w-4 h-4 rounded accent-[#00679e]"></td>
           </tr>
-          <tr>
-            <td class="px-4 py-2 text-slate-400 mono text-xs font-medium">4</td>
-            <td class="px-4 py-2"><input type="checkbox" class="w-4 h-4 rounded accent-sky-500"></td>
-            <td class="px-4 py-2"><input type="text" value="" placeholder="Network name" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs mono text-slate-400 placeholder-slate-600"></td>
-            <td class="px-4 py-2"><input type="password" value="" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs mono text-slate-200"></td>
+          <tr class="hover:bg-[#f4f6f8] transition-colors">
+            <td class="px-4 py-2 text-[#5a6a7a] mono text-xs font-medium">3</td>
+            <td class="px-4 py-2"><input type="text" value="" placeholder="Network name" class="w-full bg-white border border-[#e0e4e8] rounded px-2 py-1.5 text-xs mono text-[#1a2332] placeholder-[#9aabb8] focus:outline-none focus:border-[#00679e]"></td>
             <td class="px-4 py-2">
-              <select class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-slate-200">
-                <option selected>WPA_PSK</option><option>WPA2_PSK</option><option>WPA_EAP</option><option>OPEN</option>
+              <div class="relative">
+                <input type="password" value="" id="psk-3" class="w-full bg-white border border-[#e0e4e8] rounded px-2 py-1.5 text-xs mono text-[#1a2332] pr-10 focus:outline-none focus:border-[#00679e]">
+                <button type="button" onclick="togglePsk(3, this)" class="absolute right-2 top-1.5 text-[#9aabb8] hover:text-[#5a6a7a] text-xs transition-colors">show</button>
+              </div>
+            </td>
+            <td class="px-4 py-2">
+              <select class="w-full bg-white border border-[#e0e4e8] rounded px-2 py-1.5 text-xs text-[#1a2332] focus:outline-none focus:border-[#00679e]">
+                <option selected>WPA_PSK</option><option>WPA2_PSK</option><option>WPA_EAP</option><option>WPA2_EAP</option><option>OPEN</option>
               </select>
             </td>
-            <td class="px-4 py-2 text-center"><input type="checkbox" class="w-4 h-4 rounded accent-sky-500"></td>
-            <td class="px-4 py-2"><input type="number" value="0" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs mono text-slate-200"></td>
+            <td class="px-4 py-2 text-center"><input type="checkbox" class="w-4 h-4 rounded accent-[#00679e]"></td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <div class="mt-6 flex gap-3 pt-4 border-t border-slate-700">
-      <button class="px-5 py-2 bg-sky-700 rounded-lg text-sm font-medium">Save Configuration</button>
-      <a href="#" class="px-5 py-2 bg-slate-700 rounded-lg text-sm">Cancel</a>
+    <div class="mt-6 flex gap-3 pt-4 border-t border-[#e0e4e8]">
+      <button onclick="showToast('Configuration saved')" class="px-5 py-2 bg-[#00679e] hover:bg-[#005580] text-white rounded-lg text-sm font-medium transition-colors">Save Configuration</button>
+      <a href="01-phones.html" class="px-5 py-2 bg-white hover:bg-[#f4f6f8] border border-[#e0e4e8] text-[#1a2332] rounded-lg text-sm transition-colors">Cancel</a>
     </div>
 
   </main>
+
+  <div id="toast" class="hidden fixed bottom-6 right-6 bg-[#1a2332] text-white text-sm px-4 py-2.5 rounded-lg shadow-lg z-50 transition-all"></div>
+
+  <script>
+    function togglePsk(n, btn) {
+      const inp = document.getElementById(`psk-${n}`);
+      if (inp.type === 'password') { inp.type = 'text';     btn.textContent = 'hide'; }
+      else                         { inp.type = 'password'; btn.textContent = 'show'; }
+    }
+
+    let toastTimer;
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.remove('hidden');
+      t.style.opacity = '1';
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.classList.add('hidden'), 300); }, 2500);
+    }
+  </script>
 </body>
 </html>

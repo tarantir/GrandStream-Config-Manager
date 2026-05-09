@@ -10,31 +10,33 @@
   <style>
     body { font-family: 'Inter', sans-serif; }
     .mono { font-family: 'JetBrains Mono', monospace; }
+    .acct-tab[data-active="true"]  { background: #e8f4fb; color: #00679e; font-weight: 500; }
+    .acct-tab[data-active="false"] { color: #5a6a7a; }
+    .acct-tab[data-active="false"]:hover { color: #1a2332; }
   </style>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-full">
+<body class="bg-[#f4f6f8] text-[#1a2332] min-h-full">
 
-  <nav class="bg-slate-800 border-b border-slate-700 px-6 py-3 flex items-center gap-8">
-    <a href="#" class="text-sky-400 font-semibold text-lg tracking-tight mono">GS Config Manager</a>
-    <div class="flex gap-6 text-sm text-slate-400">
-      <a href="#" class="text-white transition-colors">Phones</a>
-      <a href="#" class="hover:text-white transition-colors">Phone Book</a>
-      <a href="#" class="hover:text-white transition-colors">Settings</a>
+  <nav class="bg-[#00679e] px-6 py-3 flex items-center gap-8 shadow-sm">
+    <a href="01-phones.html" class="text-white font-semibold text-lg tracking-tight mono">GS Config Manager</a>
+    <div class="flex gap-6 text-sm text-white/80">
+      <a href="01-phones.html" class="text-white font-medium transition-colors">Phones</a>
+      <a href="03-phonebook.html" class="hover:text-white transition-colors">Phone Book</a>
+      <a href="04-settings.html" class="hover:text-white transition-colors">Settings</a>
     </div>
   </nav>
 
   <main class="px-6 py-8 max-w-7xl mx-auto">
 
-    <!-- Phone header -->
     <div class="flex items-start justify-between mb-6">
       <div class="flex items-center gap-4">
-        <a href="#" class="text-slate-500 hover:text-slate-300 text-sm">← Phones</a>
+        <a href="01-phones.html" class="text-[#5a6a7a] hover:text-[#1a2332] text-sm transition-colors">← Phones</a>
         <div>
           <div class="flex items-center gap-3">
-            <h1 class="text-xl font-semibold text-white mono">1001</h1>
-            <span class="px-2 py-0.5 bg-sky-900/50 border border-sky-700/50 text-sky-300 text-xs rounded-md font-medium mono">GRP2612W</span>
+            <h1 class="text-xl font-semibold text-[#00679e] mono">1001</h1>
+            <span class="px-2 py-0.5 bg-[#e8f4fb] border border-[#00679e]/30 text-[#00679e] text-xs rounded-md font-medium mono">GRP2612W</span>
           </div>
-          <div class="flex gap-4 mt-1 text-xs text-slate-500 mono">
+          <div class="flex gap-4 mt-1 text-xs text-[#9aabb8] mono">
             <span>S/N: C0BADDCAFE01</span>
             <span>eth0: c0baddcafe01</span>
             <span>wlan: c0baddcafe02</span>
@@ -42,99 +44,143 @@
         </div>
       </div>
       <div class="flex gap-3 items-center">
-        <button class="px-4 py-2 bg-slate-700 text-sm rounded-lg border border-slate-600">Import XML</button>
-        <button class="px-4 py-2 bg-emerald-700 text-sm rounded-lg font-medium">Generate XML</button>
+        <button onclick="showToast('XML imported (demo)')" class="px-4 py-2 bg-white hover:bg-[#f4f6f8] text-[#1a2332] text-sm rounded-lg border border-[#e0e4e8] transition-colors">Import XML</button>
+        <button onclick="showToast('cfg1001.xml written → ./output/')" class="px-4 py-2 bg-[#1e7e4a] hover:bg-[#166038] text-white text-sm rounded-lg font-medium transition-colors">Generate XML</button>
       </div>
     </div>
 
-    <!-- Tab bar -->
-    <div class="flex gap-1 border-b border-slate-700 mb-6">
-      <button class="px-4 py-2 text-sm rounded-t-lg bg-slate-800 text-white border border-slate-700 border-b-slate-800 -mb-px z-10">SIP</button>
-      <button class="px-4 py-2 text-sm rounded-t-lg text-slate-400">WiFi</button>
-      <button class="px-4 py-2 text-sm rounded-t-lg text-slate-400">Keys</button>
-      <button class="px-4 py-2 text-sm rounded-t-lg text-slate-400">Phonebook</button>
-      <button class="px-4 py-2 text-sm rounded-t-lg text-slate-400">Personalize</button>
-      <button class="px-4 py-2 text-sm rounded-t-lg text-slate-400">Provisioning</button>
-      <button class="px-4 py-2 text-sm rounded-t-lg text-slate-400">VPN</button>
+    <!-- Tab bar — SIP active -->
+    <div class="flex gap-1 border-b border-[#e0e4e8] mb-6">
+      <button class="px-4 py-2 text-sm rounded-t-lg bg-white text-[#00679e] font-medium border border-[#e0e4e8] border-b-white -mb-px z-10">SIP</button>
+      <button onclick="window.location.href='02b-phone-edit-wifi.html'"  class="px-4 py-2 text-sm rounded-t-lg text-[#5a6a7a] hover:text-[#1a2332] transition-colors cursor-pointer">WiFi</button>
+      <button onclick="showToast('Keys tab — not yet mocked up')"        class="px-4 py-2 text-sm rounded-t-lg text-[#5a6a7a] hover:text-[#1a2332] transition-colors cursor-pointer">Keys</button>
+      <button onclick="window.location.href='02d-phone-edit-phonebook.html'" class="px-4 py-2 text-sm rounded-t-lg text-[#5a6a7a] hover:text-[#1a2332] transition-colors cursor-pointer">Phonebook</button>
+      <button onclick="window.location.href='02e-phone-edit-personalize.html'" class="px-4 py-2 text-sm rounded-t-lg text-[#5a6a7a] hover:text-[#1a2332] transition-colors cursor-pointer">Personalize</button>
+      <button onclick="showToast('Provisioning tab — not yet mocked up')" class="px-4 py-2 text-sm rounded-t-lg text-[#5a6a7a] hover:text-[#1a2332] transition-colors cursor-pointer">Provisioning</button>
+      <button onclick="window.location.href='02c-phone-edit-vpn.html'"   class="px-4 py-2 text-sm rounded-t-lg text-[#5a6a7a] hover:text-[#1a2332] transition-colors cursor-pointer">VPN</button>
     </div>
 
     <!-- Account sub-tabs -->
     <div class="flex gap-1 mb-5">
-      <button class="px-3 py-1.5 text-xs rounded-lg bg-slate-700 text-white">Acct 1 <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 ml-1 mb-0.5"></span></button>
-      <button class="px-3 py-1.5 text-xs rounded-lg text-slate-400">Acct 2</button>
-      <button class="px-3 py-1.5 text-xs rounded-lg text-slate-400">Acct 3</button>
-      <button class="px-3 py-1.5 text-xs rounded-lg text-slate-400">Acct 4</button>
+      <button class="acct-tab px-3 py-1.5 text-xs rounded-lg transition-colors" data-active="true"  onclick="switchAcct(0)">Acct 1 <span class="inline-block w-1.5 h-1.5 rounded-full bg-[#1e7e4a] ml-1 mb-0.5"></span></button>
+      <button class="acct-tab px-3 py-1.5 text-xs rounded-lg transition-colors" data-active="false" onclick="switchAcct(1)">Acct 2</button>
+      <button class="acct-tab px-3 py-1.5 text-xs rounded-lg transition-colors" data-active="false" onclick="switchAcct(2)">Acct 3</button>
+      <button class="acct-tab px-3 py-1.5 text-xs rounded-lg transition-colors" data-active="false" onclick="switchAcct(3)">Acct 4</button>
     </div>
 
-    <!-- Account 1 pane -->
-    <div>
-      <!-- Enabled toggle -->
-      <div class="flex items-center justify-between pb-3 mb-5 border-b border-slate-700">
+    <!-- Account pane -->
+    <div id="acct-pane">
+      <div class="flex items-center justify-between pb-3 mb-5 border-b border-[#e0e4e8]">
         <div>
-          <p class="text-sm text-slate-300">Account 1 Enabled</p>
-          <p class="text-xs text-slate-500 mt-0.5">account.1 → enable</p>
+          <p class="text-sm text-[#1a2332]" id="acct-label">Account 1 Enabled</p>
+          <p class="text-xs text-[#9aabb8] mono mt-0.5" id="acct-key">account.1 → enable</p>
         </div>
         <label class="relative inline-flex items-center cursor-pointer">
-          <input type="checkbox" checked class="sr-only peer">
-          <div class="w-11 h-6 bg-sky-600 rounded-full peer after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:translate-x-full"></div>
+          <input type="checkbox" id="acct-enabled" checked class="sr-only peer">
+          <div class="w-11 h-6 bg-[#e0e4e8] peer-focus:ring-2 peer-focus:ring-[#00679e]/40 rounded-full peer
+            peer-checked:after:translate-x-full peer-checked:bg-[#00679e]
+            after:content-[''] after:absolute after:top-0.5 after:left-[2px]
+            after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
         </label>
       </div>
 
-      <!-- Two-column layout -->
       <div class="grid grid-cols-2 gap-x-8 gap-y-5 max-w-2xl">
-        <!-- Left: identity -->
         <div class="space-y-5">
           <div>
-            <label class="block text-xs text-slate-400 mb-1">Account Name <span class="text-xs text-slate-500 normal-case">(account.1 → name)</span></label>
-            <input type="text" value="Office"
-              class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:ring-1 focus:ring-sky-500 outline-none">
+            <label class="block text-xs text-[#5a6a7a] mb-1">Account Name <span class="text-xs text-[#9aabb8] normal-case mono" id="f-name-key">(account.1 → name)</span></label>
+            <input type="text" id="f-name" value="Office"
+              class="w-full bg-white border border-[#e0e4e8] rounded-lg px-3 py-2 text-sm text-[#1a2332] focus:ring-2 focus:ring-[#00679e]/20 focus:border-[#00679e] outline-none transition-colors">
           </div>
           <div>
-            <label class="block text-xs text-slate-400 mb-1">Subscriber Name <span class="text-xs text-slate-500 normal-case">(account.1.sip.subscriber → name)</span></label>
-            <input type="text" value="Alice Chen"
-              class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:ring-1 focus:ring-sky-500 outline-none">
+            <label class="block text-xs text-[#5a6a7a] mb-1">Subscriber Name <span class="text-xs text-[#9aabb8] normal-case mono" id="f-sub-key">(account.1.sip.subscriber → name)</span></label>
+            <input type="text" id="f-sub" value="Alice Chen"
+              class="w-full bg-white border border-[#e0e4e8] rounded-lg px-3 py-2 text-sm text-[#1a2332] focus:ring-2 focus:ring-[#00679e]/20 focus:border-[#00679e] outline-none transition-colors">
           </div>
           <div>
-            <label class="block text-xs text-slate-400 mb-1">Extension <span class="text-xs text-slate-500 normal-case">(account.1.sip → userid)</span></label>
-            <input type="text" value="1001"
-              class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 outline-none">
+            <label class="block text-xs text-[#5a6a7a] mb-1">Extension <span class="text-xs text-[#9aabb8] normal-case mono" id="f-ext-key">(account.1.sip → userid)</span></label>
+            <input type="text" id="f-ext" value="1001"
+              class="w-full bg-white border border-[#e0e4e8] rounded-lg px-3 py-2 text-sm mono text-[#1a2332] focus:ring-2 focus:ring-[#00679e]/20 focus:border-[#00679e] outline-none transition-colors">
           </div>
           <div>
-            <label class="block text-xs text-slate-400 mb-1">Password <span class="text-xs text-slate-500 normal-case">(account.1.sip.subscriber → password)</span></label>
+            <label class="block text-xs text-[#5a6a7a] mb-1">Password <span class="text-xs text-[#9aabb8] normal-case mono">(account.1.sip.subscriber → password)</span></label>
             <div class="relative">
-              <input type="password" value="s3cr3t"
-                class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 outline-none pr-10">
-              <button type="button" class="absolute right-2 top-2 text-slate-500 hover:text-slate-300 text-xs">show</button>
+              <input type="password" id="f-pw" value="s3cr3t"
+                class="w-full bg-white border border-[#e0e4e8] rounded-lg px-3 py-2 text-sm mono text-[#1a2332] focus:ring-2 focus:ring-[#00679e]/20 focus:border-[#00679e] outline-none transition-colors pr-10">
+              <button type="button" onclick="togglePw('f-pw', this)" class="absolute right-2 top-2 text-[#9aabb8] hover:text-[#5a6a7a] text-xs transition-colors">show</button>
             </div>
           </div>
         </div>
-        <!-- Right: servers -->
         <div class="space-y-5">
           <div>
-            <label class="block text-xs text-slate-400 mb-1">SIP Server 1 <span class="text-xs text-slate-500 normal-case">(account.1.sip.server.1 → address)</span></label>
-            <input type="text" value="192.168.1.1"
-              class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 outline-none">
+            <label class="block text-xs text-[#5a6a7a] mb-1">SIP Server 1 <span class="text-xs text-[#9aabb8] normal-case mono" id="f-sip1-key">(account.1.sip.server.1 → address)</span></label>
+            <input type="text" id="f-sip1" value="192.168.1.1"
+              class="w-full bg-white border border-[#e0e4e8] rounded-lg px-3 py-2 text-sm mono text-[#1a2332] focus:ring-2 focus:ring-[#00679e]/20 focus:border-[#00679e] outline-none transition-colors">
           </div>
           <div>
-            <label class="block text-xs text-slate-400 mb-1">SIP Server 2 <span class="text-xs text-slate-500 normal-case">(account.1.sip.server.2 → address)</span></label>
-            <input type="text" value="pbx.example.com"
-              class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 outline-none">
+            <label class="block text-xs text-[#5a6a7a] mb-1">SIP Server 2 <span class="text-xs text-[#9aabb8] normal-case mono" id="f-sip2-key">(account.1.sip.server.2 → address)</span></label>
+            <input type="text" id="f-sip2" value="pbx.example.com"
+              class="w-full bg-white border border-[#e0e4e8] rounded-lg px-3 py-2 text-sm mono text-[#1a2332] focus:ring-2 focus:ring-[#00679e]/20 focus:border-[#00679e] outline-none transition-colors">
           </div>
           <div>
-            <label class="block text-xs text-slate-400 mb-1">Voicemail Number <span class="text-xs text-slate-500 normal-case">(account.1.sip.voicemail → number)</span></label>
-            <input type="text" value="*97"
-              class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 outline-none">
+            <label class="block text-xs text-[#5a6a7a] mb-1">Voicemail Number <span class="text-xs text-[#9aabb8] normal-case mono" id="f-vm-key">(account.1.sip.voicemail → number)</span></label>
+            <input type="text" id="f-vm" value="*97"
+              class="w-full bg-white border border-[#e0e4e8] rounded-lg px-3 py-2 text-sm mono text-[#1a2332] focus:ring-2 focus:ring-[#00679e]/20 focus:border-[#00679e] outline-none transition-colors">
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Save bar -->
-    <div class="mt-8 flex gap-3 pt-4 border-t border-slate-700">
-      <button type="button" class="px-5 py-2 bg-sky-700 rounded-lg text-sm font-medium">Save Configuration</button>
-      <a href="#" class="px-5 py-2 bg-slate-700 rounded-lg text-sm">Cancel</a>
+    <div class="mt-8 flex gap-3 pt-4 border-t border-[#e0e4e8]">
+      <button onclick="showToast('Configuration saved')" class="px-5 py-2 bg-[#00679e] hover:bg-[#005580] text-white rounded-lg text-sm font-medium transition-colors">Save Configuration</button>
+      <a href="01-phones.html" class="px-5 py-2 bg-white hover:bg-[#f4f6f8] border border-[#e0e4e8] text-[#1a2332] rounded-lg text-sm transition-colors">Cancel</a>
     </div>
 
   </main>
+
+  <div id="toast" class="hidden fixed bottom-6 right-6 bg-[#1a2332] text-white text-sm px-4 py-2.5 rounded-lg shadow-lg z-50 transition-all"></div>
+
+  <script>
+    const acctData = [
+      { name: 'Office', sub: 'Alice Chen', ext: '1001', sip1: '192.168.1.1', sip2: 'pbx.example.com', vm: '*97', enabled: true },
+      { name: '',       sub: '',           ext: '1002', sip1: '192.168.1.1', sip2: 'pbx.example.com', vm: '*97', enabled: false },
+      { name: '',       sub: '',           ext: '1003', sip1: '',            sip2: '',                vm: '',    enabled: false },
+      { name: '',       sub: '',           ext: '',     sip1: '',            sip2: '',                vm: '',    enabled: false },
+    ];
+
+    function switchAcct(n) {
+      document.querySelectorAll('.acct-tab').forEach((el, i) => el.setAttribute('data-active', i === n ? 'true' : 'false'));
+      const d = acctData[n];
+      const num = n + 1;
+      document.getElementById('acct-label').textContent = `Account ${num} Enabled`;
+      document.getElementById('acct-key').textContent   = `account.${num} → enable`;
+      document.getElementById('f-name').value  = d.name;
+      document.getElementById('f-sub').value   = d.sub;
+      document.getElementById('f-ext').value   = d.ext;
+      document.getElementById('f-sip1').value  = d.sip1;
+      document.getElementById('f-sip2').value  = d.sip2;
+      document.getElementById('f-vm').value    = d.vm;
+      document.getElementById('acct-enabled').checked = d.enabled;
+      ['name','sub','ext','sip1','sip2','vm'].forEach(k => {
+        const el = document.getElementById(`f-${k}-key`);
+        if (el) el.textContent = el.textContent.replace(/account\.\d/, `account.${num}`);
+      });
+    }
+
+    function togglePw(id, btn) {
+      const inp = document.getElementById(id);
+      if (inp.type === 'password') { inp.type = 'text';     btn.textContent = 'hide'; }
+      else                         { inp.type = 'password'; btn.textContent = 'show'; }
+    }
+
+    let toastTimer;
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.remove('hidden');
+      t.style.opacity = '1';
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.classList.add('hidden'), 300); }, 2500);
+    }
+  </script>
 </body>
 </html>

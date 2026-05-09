@@ -10,21 +10,17 @@
   <style>
     body { font-family: 'Inter', sans-serif; }
     .mono { font-family: 'JetBrains Mono', monospace; }
+    .row-deleting { transition: opacity 0.3s, transform 0.3s; opacity: 0; transform: translateX(16px); }
   </style>
-  <script>
-    tailwind.config = {
-      theme: { extend: { colors: { navy: { 900: '#0f172a', 800: '#1e293b', 700: '#334155' } } } }
-    }
-  </script>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-full">
+<body class="bg-[#f4f6f8] text-[#1a2332] min-h-full">
 
-  <nav class="bg-slate-800 border-b border-slate-700 px-6 py-3 flex items-center gap-8">
-    <a href="#" class="text-sky-400 font-semibold text-lg tracking-tight mono">GS Config Manager</a>
-    <div class="flex gap-6 text-sm text-slate-400">
-      <a href="#" class="text-white transition-colors">Phones</a>
-      <a href="#" class="hover:text-white transition-colors">Phone Book</a>
-      <a href="#" class="hover:text-white transition-colors">Settings</a>
+  <nav class="bg-[#00679e] px-6 py-3 flex items-center gap-8 shadow-sm">
+    <a href="01-phones.html" class="text-white font-semibold text-lg tracking-tight mono">GS Config Manager</a>
+    <div class="flex gap-6 text-sm text-white/80">
+      <a href="01-phones.html" class="text-white font-medium transition-colors">Phones</a>
+      <a href="03-phonebook.html" class="hover:text-white transition-colors">Phone Book</a>
+      <a href="04-settings.html" class="hover:text-white transition-colors">Settings</a>
     </div>
   </nav>
 
@@ -32,22 +28,25 @@
 
     <div class="flex items-center justify-between mb-6">
       <div>
-        <h1 class="text-xl font-semibold text-white">Phone Inventory</h1>
-        <p class="text-slate-400 text-sm mt-1">5 phones configured</p>
+        <h1 class="text-xl font-semibold text-[#1a2332]">Phone Inventory</h1>
+        <p class="text-[#5a6a7a] text-sm mt-1" id="phone-count">5 phones configured</p>
       </div>
       <div class="flex gap-3">
-        <button class="px-4 py-2 bg-slate-700 text-sm rounded-lg border border-slate-600">Import CSV</button>
-        <button class="px-4 py-2 bg-slate-700 text-sm rounded-lg border border-slate-600">Export CSV</button>
-        <button class="px-4 py-2 bg-slate-700 text-sm rounded-lg border border-slate-600">Import XML</button>
-        <button class="px-4 py-2 bg-emerald-700 text-sm rounded-lg border border-emerald-600 font-medium">Generate XML (2)</button>
+        <button class="px-4 py-2 bg-white hover:bg-[#f4f6f8] text-[#1a2332] text-sm rounded-lg border border-[#e0e4e8] transition-colors" onclick="showToast('CSV imported (demo)')">Import CSV</button>
+        <button class="px-4 py-2 bg-white hover:bg-[#f4f6f8] text-[#1a2332] text-sm rounded-lg border border-[#e0e4e8] transition-colors" onclick="showToast('CSV exported to ./output/')">Export CSV</button>
+        <button class="px-4 py-2 bg-white hover:bg-[#f4f6f8] text-[#1a2332] text-sm rounded-lg border border-[#e0e4e8] transition-colors" onclick="showToast('XML imported (demo)')">Import XML</button>
+        <button id="gen-sel-btn" disabled onclick="generateSelected()"
+          class="px-4 py-2 bg-[#1e7e4a] hover:bg-[#166038] text-white text-sm rounded-lg font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+          Generate XML
+        </button>
       </div>
     </div>
 
-    <div class="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden">
+    <div class="bg-white border border-[#e0e4e8] rounded-xl overflow-hidden">
       <table class="w-full text-sm">
-        <thead>
-          <tr class="border-b border-slate-700 text-slate-400 text-xs uppercase tracking-wider">
-            <th class="px-4 py-3 w-8"><input type="checkbox" class="rounded border-slate-600 bg-slate-700 cursor-pointer"></th>
+        <thead class="bg-[#f4f6f8]">
+          <tr class="border-b border-[#e0e4e8] text-[#5a6a7a] text-xs uppercase tracking-wider">
+            <th class="px-4 py-3 w-8"><input type="checkbox" id="select-all" onchange="toggleAll(this)" class="rounded border-[#e0e4e8] accent-[#00679e] cursor-pointer"></th>
             <th class="px-4 py-3 text-left">Extension</th>
             <th class="px-4 py-3 text-left">Display</th>
             <th class="px-4 py-3 text-left">Model</th>
@@ -58,104 +57,94 @@
             <th class="px-4 py-3 text-right">Actions</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-slate-700/50">
+        <tbody class="divide-y divide-[#e0e4e8]" id="phones-tbody">
 
-          <tr class="bg-slate-700/20">
-            <td class="px-4 py-3"><input type="checkbox" checked class="rounded border-slate-600 bg-slate-700 accent-sky-500"></td>
-            <td class="px-4 py-3 mono font-medium text-sky-300">1001</td>
-            <td class="px-4 py-3 text-slate-200">Alice Chen</td>
-            <td class="px-4 py-3">
-              <span class="px-2 py-0.5 bg-sky-900/50 border border-sky-700/50 text-sky-300 text-xs rounded-md font-medium mono">GRP2612W</span>
-            </td>
-            <td class="px-4 py-3 mono text-slate-400 text-xs">C0BADDCAFE01</td>
-            <td class="px-4 py-3 mono text-slate-400 text-xs">c0baddcafe01</td>
-            <td class="px-4 py-3 mono text-slate-400 text-xs">c0baddcafe02</td>
-            <td class="px-4 py-3"><button class="mono text-xs text-slate-500 tracking-wider">••••••••</button></td>
+          <tr id="row-1001" class="hover:bg-[#f4f6f8] transition-colors">
+            <td class="px-4 py-3"><input type="checkbox" value="1001" onchange="updateSelection()" class="phone-check rounded border-[#e0e4e8] accent-[#00679e] cursor-pointer"></td>
+            <td class="px-4 py-3 mono font-medium text-[#00679e]">1001</td>
+            <td class="px-4 py-3 text-[#1a2332]">Alice Chen</td>
+            <td class="px-4 py-3"><span class="px-2 py-0.5 bg-[#e8f4fb] border border-[#00679e]/30 text-[#00679e] text-xs rounded-md font-medium mono">GRP2612W</span></td>
+            <td class="px-4 py-3 mono text-[#5a6a7a] text-xs">C0BADDCAFE01</td>
+            <td class="px-4 py-3 mono text-[#5a6a7a] text-xs">c0baddcafe01</td>
+            <td class="px-4 py-3 mono text-[#5a6a7a] text-xs">c0baddcafe02</td>
+            <td class="px-4 py-3"><button onclick="revealPw('admin123', this)" class="mono text-xs text-[#9aabb8] hover:text-[#5a6a7a] transition-colors tracking-wider">••••••••</button></td>
             <td class="px-4 py-3">
               <div class="flex gap-2 justify-end">
-                <button class="px-3 py-1.5 bg-slate-700 rounded-md text-xs">Edit</button>
-                <button class="px-3 py-1.5 bg-slate-700 border border-slate-600/50 text-slate-300 rounded-md text-xs">Preview</button>
-                <button class="px-3 py-1.5 bg-red-900/40 border border-red-700/40 text-red-400 rounded-md text-xs">Delete</button>
+                <a href="02a-phone-edit-sip.html" class="px-3 py-1.5 bg-white hover:bg-[#f4f6f8] border border-[#e0e4e8] text-[#1a2332] rounded-md text-xs transition-colors">Edit</a>
+                <button onclick="previewPhone('1001', 'Alice Chen')" class="px-3 py-1.5 bg-white hover:bg-[#f4f6f8] border border-[#e0e4e8] text-[#1a2332] rounded-md text-xs transition-colors">Preview</button>
+                <button onclick="deletePhone('row-1001', '1001')" class="px-3 py-1.5 bg-[#fdf2f2] hover:bg-[#f8d7da] border border-[#f5c6cb] text-[#c0392b] rounded-md text-xs transition-colors">Delete</button>
               </div>
             </td>
           </tr>
 
-          <tr class="bg-slate-700/20">
-            <td class="px-4 py-3"><input type="checkbox" checked class="rounded border-slate-600 bg-slate-700 accent-sky-500"></td>
-            <td class="px-4 py-3 mono font-medium text-sky-300">1002</td>
-            <td class="px-4 py-3 text-slate-200">Bob Martinez</td>
-            <td class="px-4 py-3">
-              <span class="px-2 py-0.5 bg-sky-900/50 border border-sky-700/50 text-sky-300 text-xs rounded-md font-medium mono">GRP2612W</span>
-            </td>
-            <td class="px-4 py-3 mono text-slate-400 text-xs">C0BADDCAFE03</td>
-            <td class="px-4 py-3 mono text-slate-400 text-xs">c0baddcafe03</td>
-            <td class="px-4 py-3 mono text-slate-400 text-xs">c0baddcafe04</td>
-            <td class="px-4 py-3"><button class="mono text-xs text-slate-500 tracking-wider">••••••••</button></td>
+          <tr id="row-1002" class="hover:bg-[#f4f6f8] transition-colors">
+            <td class="px-4 py-3"><input type="checkbox" value="1002" onchange="updateSelection()" class="phone-check rounded border-[#e0e4e8] accent-[#00679e] cursor-pointer"></td>
+            <td class="px-4 py-3 mono font-medium text-[#00679e]">1002</td>
+            <td class="px-4 py-3 text-[#1a2332]">Bob Martinez</td>
+            <td class="px-4 py-3"><span class="px-2 py-0.5 bg-[#e8f4fb] border border-[#00679e]/30 text-[#00679e] text-xs rounded-md font-medium mono">GRP2612W</span></td>
+            <td class="px-4 py-3 mono text-[#5a6a7a] text-xs">C0BADDCAFE03</td>
+            <td class="px-4 py-3 mono text-[#5a6a7a] text-xs">c0baddcafe03</td>
+            <td class="px-4 py-3 mono text-[#5a6a7a] text-xs">c0baddcafe04</td>
+            <td class="px-4 py-3"><button onclick="revealPw('qwerty99', this)" class="mono text-xs text-[#9aabb8] hover:text-[#5a6a7a] transition-colors tracking-wider">••••••••</button></td>
             <td class="px-4 py-3">
               <div class="flex gap-2 justify-end">
-                <button class="px-3 py-1.5 bg-slate-700 rounded-md text-xs">Edit</button>
-                <button class="px-3 py-1.5 bg-slate-700 border border-slate-600/50 text-slate-300 rounded-md text-xs">Preview</button>
-                <button class="px-3 py-1.5 bg-red-900/40 border border-red-700/40 text-red-400 rounded-md text-xs">Delete</button>
+                <a href="02a-phone-edit-sip.html" class="px-3 py-1.5 bg-white hover:bg-[#f4f6f8] border border-[#e0e4e8] text-[#1a2332] rounded-md text-xs transition-colors">Edit</a>
+                <button onclick="previewPhone('1002', 'Bob Martinez')" class="px-3 py-1.5 bg-white hover:bg-[#f4f6f8] border border-[#e0e4e8] text-[#1a2332] rounded-md text-xs transition-colors">Preview</button>
+                <button onclick="deletePhone('row-1002', '1002')" class="px-3 py-1.5 bg-[#fdf2f2] hover:bg-[#f8d7da] border border-[#f5c6cb] text-[#c0392b] rounded-md text-xs transition-colors">Delete</button>
               </div>
             </td>
           </tr>
 
-          <tr class="hover:bg-slate-700/30">
-            <td class="px-4 py-3"><input type="checkbox" class="rounded border-slate-600 bg-slate-700"></td>
-            <td class="px-4 py-3 mono font-medium text-sky-300">1003</td>
-            <td class="px-4 py-3 text-slate-200">Carol Davis</td>
-            <td class="px-4 py-3">
-              <span class="px-2 py-0.5 bg-amber-900/50 border border-amber-700/50 text-amber-300 text-xs rounded-md font-medium mono">GRP2613</span>
-            </td>
-            <td class="px-4 py-3 mono text-slate-400 text-xs">C0BADDCAFE05</td>
-            <td class="px-4 py-3 mono text-slate-400 text-xs">c0baddcafe05</td>
-            <td class="px-4 py-3 mono text-slate-400 text-xs">—</td>
-            <td class="px-4 py-3"><button class="mono text-xs text-slate-500 tracking-wider">••••••••</button></td>
+          <tr id="row-1003" class="hover:bg-[#f4f6f8] transition-colors">
+            <td class="px-4 py-3"><input type="checkbox" value="1003" onchange="updateSelection()" class="phone-check rounded border-[#e0e4e8] accent-[#00679e] cursor-pointer"></td>
+            <td class="px-4 py-3 mono font-medium text-[#00679e]">1003</td>
+            <td class="px-4 py-3 text-[#1a2332]">Carol Davis</td>
+            <td class="px-4 py-3"><span class="px-2 py-0.5 bg-amber-50 border border-amber-200 text-amber-700 text-xs rounded-md font-medium mono">GRP2613</span></td>
+            <td class="px-4 py-3 mono text-[#5a6a7a] text-xs">C0BADDCAFE05</td>
+            <td class="px-4 py-3 mono text-[#5a6a7a] text-xs">c0baddcafe05</td>
+            <td class="px-4 py-3 mono text-[#5a6a7a] text-xs">—</td>
+            <td class="px-4 py-3"><button onclick="revealPw('pass1234', this)" class="mono text-xs text-[#9aabb8] hover:text-[#5a6a7a] transition-colors tracking-wider">••••••••</button></td>
             <td class="px-4 py-3">
               <div class="flex gap-2 justify-end">
-                <button class="px-3 py-1.5 bg-slate-700 rounded-md text-xs">Edit</button>
-                <button class="px-3 py-1.5 bg-slate-700 border border-slate-600/50 text-slate-300 rounded-md text-xs">Preview</button>
-                <button class="px-3 py-1.5 bg-red-900/40 border border-red-700/40 text-red-400 rounded-md text-xs">Delete</button>
+                <a href="02a-phone-edit-sip.html" class="px-3 py-1.5 bg-white hover:bg-[#f4f6f8] border border-[#e0e4e8] text-[#1a2332] rounded-md text-xs transition-colors">Edit</a>
+                <button onclick="previewPhone('1003', 'Carol Davis')" class="px-3 py-1.5 bg-white hover:bg-[#f4f6f8] border border-[#e0e4e8] text-[#1a2332] rounded-md text-xs transition-colors">Preview</button>
+                <button onclick="deletePhone('row-1003', '1003')" class="px-3 py-1.5 bg-[#fdf2f2] hover:bg-[#f8d7da] border border-[#f5c6cb] text-[#c0392b] rounded-md text-xs transition-colors">Delete</button>
               </div>
             </td>
           </tr>
 
-          <tr class="hover:bg-slate-700/30">
-            <td class="px-4 py-3"><input type="checkbox" class="rounded border-slate-600 bg-slate-700"></td>
-            <td class="px-4 py-3 mono font-medium text-sky-300">1004</td>
-            <td class="px-4 py-3 text-slate-200">Dan Nguyen</td>
-            <td class="px-4 py-3">
-              <span class="px-2 py-0.5 bg-sky-900/50 border border-sky-700/50 text-sky-300 text-xs rounded-md font-medium mono">GRP2612W</span>
-            </td>
-            <td class="px-4 py-3 mono text-slate-400 text-xs">C0BADDCAFE07</td>
-            <td class="px-4 py-3 mono text-slate-400 text-xs">c0baddcafe07</td>
-            <td class="px-4 py-3 mono text-slate-400 text-xs">c0baddcafe08</td>
-            <td class="px-4 py-3"><button class="mono text-xs text-slate-500 tracking-wider">••••••••</button></td>
+          <tr id="row-1004" class="hover:bg-[#f4f6f8] transition-colors">
+            <td class="px-4 py-3"><input type="checkbox" value="1004" onchange="updateSelection()" class="phone-check rounded border-[#e0e4e8] accent-[#00679e] cursor-pointer"></td>
+            <td class="px-4 py-3 mono font-medium text-[#00679e]">1004</td>
+            <td class="px-4 py-3 text-[#1a2332]">Dan Nguyen</td>
+            <td class="px-4 py-3"><span class="px-2 py-0.5 bg-[#e8f4fb] border border-[#00679e]/30 text-[#00679e] text-xs rounded-md font-medium mono">GRP2612W</span></td>
+            <td class="px-4 py-3 mono text-[#5a6a7a] text-xs">C0BADDCAFE07</td>
+            <td class="px-4 py-3 mono text-[#5a6a7a] text-xs">c0baddcafe07</td>
+            <td class="px-4 py-3 mono text-[#5a6a7a] text-xs">c0baddcafe08</td>
+            <td class="px-4 py-3"><button onclick="revealPw('letmein7', this)" class="mono text-xs text-[#9aabb8] hover:text-[#5a6a7a] transition-colors tracking-wider">••••••••</button></td>
             <td class="px-4 py-3">
               <div class="flex gap-2 justify-end">
-                <button class="px-3 py-1.5 bg-slate-700 rounded-md text-xs">Edit</button>
-                <button class="px-3 py-1.5 bg-slate-700 border border-slate-600/50 text-slate-300 rounded-md text-xs">Preview</button>
-                <button class="px-3 py-1.5 bg-red-900/40 border border-red-700/40 text-red-400 rounded-md text-xs">Delete</button>
+                <a href="02a-phone-edit-sip.html" class="px-3 py-1.5 bg-white hover:bg-[#f4f6f8] border border-[#e0e4e8] text-[#1a2332] rounded-md text-xs transition-colors">Edit</a>
+                <button onclick="previewPhone('1004', 'Dan Nguyen')" class="px-3 py-1.5 bg-white hover:bg-[#f4f6f8] border border-[#e0e4e8] text-[#1a2332] rounded-md text-xs transition-colors">Preview</button>
+                <button onclick="deletePhone('row-1004', '1004')" class="px-3 py-1.5 bg-[#fdf2f2] hover:bg-[#f8d7da] border border-[#f5c6cb] text-[#c0392b] rounded-md text-xs transition-colors">Delete</button>
               </div>
             </td>
           </tr>
 
-          <tr class="hover:bg-slate-700/30">
-            <td class="px-4 py-3"><input type="checkbox" class="rounded border-slate-600 bg-slate-700"></td>
-            <td class="px-4 py-3 mono font-medium text-sky-300">1005</td>
-            <td class="px-4 py-3 text-slate-200">Eve Okafor</td>
-            <td class="px-4 py-3">
-              <span class="px-2 py-0.5 bg-amber-900/50 border border-amber-700/50 text-amber-300 text-xs rounded-md font-medium mono">GRP2613</span>
-            </td>
-            <td class="px-4 py-3 mono text-slate-400 text-xs">C0BADDCAFE09</td>
-            <td class="px-4 py-3 mono text-slate-400 text-xs">c0baddcafe09</td>
-            <td class="px-4 py-3 mono text-slate-400 text-xs">—</td>
-            <td class="px-4 py-3"><button class="mono text-xs text-slate-500 tracking-wider">••••••••</button></td>
+          <tr id="row-1005" class="hover:bg-[#f4f6f8] transition-colors">
+            <td class="px-4 py-3"><input type="checkbox" value="1005" onchange="updateSelection()" class="phone-check rounded border-[#e0e4e8] accent-[#00679e] cursor-pointer"></td>
+            <td class="px-4 py-3 mono font-medium text-[#00679e]">1005</td>
+            <td class="px-4 py-3 text-[#1a2332]">Eve Okafor</td>
+            <td class="px-4 py-3"><span class="px-2 py-0.5 bg-amber-50 border border-amber-200 text-amber-700 text-xs rounded-md font-medium mono">GRP2613</span></td>
+            <td class="px-4 py-3 mono text-[#5a6a7a] text-xs">C0BADDCAFE09</td>
+            <td class="px-4 py-3 mono text-[#5a6a7a] text-xs">c0baddcafe09</td>
+            <td class="px-4 py-3 mono text-[#5a6a7a] text-xs">—</td>
+            <td class="px-4 py-3"><button onclick="revealPw('s3cur3pw', this)" class="mono text-xs text-[#9aabb8] hover:text-[#5a6a7a] transition-colors tracking-wider">••••••••</button></td>
             <td class="px-4 py-3">
               <div class="flex gap-2 justify-end">
-                <button class="px-3 py-1.5 bg-slate-700 rounded-md text-xs">Edit</button>
-                <button class="px-3 py-1.5 bg-slate-700 border border-slate-600/50 text-slate-300 rounded-md text-xs">Preview</button>
-                <button class="px-3 py-1.5 bg-red-900/40 border border-red-700/40 text-red-400 rounded-md text-xs">Delete</button>
+                <a href="02a-phone-edit-sip.html" class="px-3 py-1.5 bg-white hover:bg-[#f4f6f8] border border-[#e0e4e8] text-[#1a2332] rounded-md text-xs transition-colors">Edit</a>
+                <button onclick="previewPhone('1005', 'Eve Okafor')" class="px-3 py-1.5 bg-white hover:bg-[#f4f6f8] border border-[#e0e4e8] text-[#1a2332] rounded-md text-xs transition-colors">Preview</button>
+                <button onclick="deletePhone('row-1005', '1005')" class="px-3 py-1.5 bg-[#fdf2f2] hover:bg-[#f8d7da] border border-[#f5c6cb] text-[#c0392b] rounded-md text-xs transition-colors">Delete</button>
               </div>
             </td>
           </tr>
@@ -165,5 +154,133 @@
     </div>
 
   </main>
+
+  <!-- XML Preview Modal -->
+  <div id="xml-modal" class="hidden fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-6" onclick="if(event.target===this)closeModal()">
+    <div class="bg-white rounded-xl border border-[#e0e4e8] w-full max-w-2xl max-h-[80vh] flex flex-col shadow-xl">
+      <div class="flex items-center justify-between px-5 py-3 border-b border-[#e0e4e8]">
+        <span class="text-sm font-medium text-[#1a2332] mono" id="modal-title">Preview</span>
+        <button onclick="closeModal()" class="text-[#9aabb8] hover:text-[#1a2332] text-xl leading-none transition-colors">&times;</button>
+      </div>
+      <pre class="flex-1 overflow-auto px-5 py-4 text-xs mono text-[#1a2332] bg-[#f4f6f8] rounded-b-xl leading-relaxed" id="modal-content"></pre>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="hidden fixed bottom-6 right-6 bg-[#1a2332] text-white text-sm px-4 py-2.5 rounded-lg shadow-lg z-50 transition-all"></div>
+
+  <script>
+    function getChecked() {
+      return [...document.querySelectorAll('.phone-check:checked')].map(cb => cb.value);
+    }
+
+    function updateSelection() {
+      const checked = getChecked();
+      const total = document.querySelectorAll('.phone-check').length;
+      const btn = document.getElementById('gen-sel-btn');
+      const selectAll = document.getElementById('select-all');
+      btn.disabled = checked.length === 0;
+      btn.textContent = checked.length > 0 ? `Generate XML (${checked.length})` : 'Generate XML';
+      selectAll.indeterminate = checked.length > 0 && checked.length < total;
+      selectAll.checked = checked.length === total && total > 0;
+      // Highlight selected rows
+      document.querySelectorAll('.phone-check').forEach(cb => {
+        cb.closest('tr').style.background = cb.checked ? '#e8f4fb66' : '';
+      });
+    }
+
+    function toggleAll(cb) {
+      document.querySelectorAll('.phone-check').forEach(el => el.checked = cb.checked);
+      updateSelection();
+    }
+
+    function revealPw(pw, btn) {
+      navigator.clipboard?.writeText(pw).catch(() => {});
+      btn.textContent = pw;
+      btn.style.color = '#1a2332';
+      setTimeout(() => {
+        btn.textContent = '••••••••';
+        btn.style.color = '';
+      }, 2000);
+    }
+
+    function deletePhone(rowId, ext) {
+      if (!confirm(`Delete phone ${ext}? This cannot be undone.`)) return;
+      const row = document.getElementById(rowId);
+      if (!row) return;
+      row.classList.add('row-deleting');
+      setTimeout(() => {
+        row.remove();
+        updateSelection();
+        const count = document.querySelectorAll('.phone-check').length;
+        document.getElementById('phone-count').textContent = `${count} phone${count !== 1 ? 's' : ''} configured`;
+      }, 300);
+      showToast(`Deleted ${ext}`);
+    }
+
+    function generateSelected() {
+      const ids = getChecked();
+      if (!ids.length) return;
+      const btn = document.getElementById('gen-sel-btn');
+      btn.textContent = 'Generating…';
+      btn.disabled = true;
+      setTimeout(() => {
+        showToast(`Generated ${ids.length} XML file${ids.length !== 1 ? 's' : ''} → ./output/`);
+        updateSelection();
+      }, 800);
+    }
+
+    function previewPhone(ext, name) {
+      document.getElementById('modal-title').textContent = `cfg${ext}.xml — ${name}`;
+      document.getElementById('modal-content').textContent = `<gs_provision>
+  <config version="1">
+
+    <!-- Account 1 -->
+    <P271>1</P271>
+    <P270>${name}</P270>
+    <P35>${ext}</P35>
+    <P36>••••••</P36>
+    <P47>192.168.1.1</P47>
+    <P48>pbx.example.com</P48>
+    <P33>*97</P33>
+
+    <!-- WiFi -->
+    <P8901>1</P8901>
+    <P8902>Auto</P8902>
+
+    <!-- Network: wifi.0 -->
+    <P8930>OfficeWifi</P8930>
+    <P8931>WPA2_PSK</P8931>
+    <P8932>0</P8932>
+
+    <!-- Phonebook -->
+    <P330>192.168.1.1</P330>
+    <P331>1</P331>
+    <P332>720</P332>
+
+  </config>
+</gs_provision>`;
+      document.getElementById('xml-modal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+      document.getElementById('xml-modal').classList.add('hidden');
+    }
+
+    let toastTimer;
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.remove('hidden');
+      t.style.opacity = '1';
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        t.style.opacity = '0';
+        setTimeout(() => t.classList.add('hidden'), 300);
+      }, 2500);
+    }
+
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+  </script>
 </body>
 </html>
