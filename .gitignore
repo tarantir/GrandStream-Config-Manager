@@ -5,6 +5,8 @@
 
 # Generated XML output
 output/
+docs/
+data/
 
 # Python
 __pycache__/
@@ -24,3 +26,4 @@ Thumbs.db
 # Claude
 .claude
 .claude/
+CLAUDE.md

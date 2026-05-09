@@ -104,9 +104,9 @@ async def import_xml_files(files: list[UploadFile] = File(...), db: Session = De
     return response
 
 
-@app.post("/phones/{phone_id}/import-xml")
-async def import_xml_single(phone_id: int, file: UploadFile = File(...), db: Session = Depends(get_db)):
-    phone = db.query(Phone).filter(Phone.id == phone_id).first()
+@app.post("/phones/{endpoint_id}/import-xml")
+async def import_xml_single(endpoint_id: int, file: UploadFile = File(...), db: Session = Depends(get_db)):
+    phone = db.query(Phone).filter(Phone.id == endpoint_id).first()
     if not phone:
         return JSONResponse({"error": "Phone not found"}, status_code=404)
     content = await file.read()
@@ -119,9 +119,9 @@ async def import_xml_single(phone_id: int, file: UploadFile = File(...), db: Ses
 
 # ── Phone edit ────────────────────────────────────────────────────────────────
 
-@app.get("/phones/{phone_id}/edit", response_class=HTMLResponse)
-async def edit_phone(request: Request, phone_id: int, db: Session = Depends(get_db), flash=Depends(get_flash)):
-    phone = db.query(Phone).filter(Phone.id == phone_id).first()
+@app.get("/phones/{endpoint_id}/edit", response_class=HTMLResponse)
+async def edit_phone(request: Request, endpoint_id: int, db: Session = Depends(get_db), flash=Depends(get_flash)):
+    phone = db.query(Phone).filter(Phone.id == endpoint_id).first()
     if not phone:
         return RedirectResponse(url="/", status_code=302)
 
@@ -140,9 +140,9 @@ async def edit_phone(request: Request, phone_id: int, db: Session = Depends(get_
     return response
 
 
-@app.post("/phones/{phone_id}/config")
-async def save_phone_config(request: Request, phone_id: int, db: Session = Depends(get_db)):
-    phone = db.query(Phone).filter(Phone.id == phone_id).first()
+@app.post("/phones/{endpoint_id}/config")
+async def save_phone_config(request: Request, endpoint_id: int, db: Session = Depends(get_db)):
+    phone = db.query(Phone).filter(Phone.id == endpoint_id).first()
     if not phone:
         return RedirectResponse(url="/", status_code=302)
 
@@ -153,7 +153,7 @@ async def save_phone_config(request: Request, phone_id: int, db: Session = Depen
     for n in range(1, 5):
         acct = existing_accounts.get(n)
         if acct is None:
-            acct = SipAccount(phone_id=phone_id, account_num=n)
+            acct = SipAccount(endpoint_id=endpoint_id, account_num=n)
             db.add(acct)
         acct.enabled = f"acct_{n}_enabled" in form_data
         acct.display_name = form_data.get(f"acct_{n}_display_name", "")
@@ -173,7 +173,7 @@ async def save_phone_config(request: Request, phone_id: int, db: Session = Depen
     # ── Phone-level config ────────────────────────────────────────────────────
     cfg = phone.config
     if not cfg:
-        cfg = PhoneConfig(phone_id=phone_id)
+        cfg = PhoneConfig(endpoint_id=endpoint_id)
         db.add(cfg)
 
     cfg.phonebook_server = form_data.get("phonebook_server", "")
@@ -203,6 +203,18 @@ async def save_phone_config(request: Request, phone_id: int, db: Session = Depen
     cfg.datetime_date_format = form_data.get("datetime_date_format", "yyyy-mm-dd")
     cfg.datetime_time_format = form_data.get("datetime_time_format", "24Hour")
     cfg.datetime_show_on_statusbar = form_data.get("datetime_show_on_statusbar", "fullDate")
+    try:
+        cfg.webaccess_timeout = int(form_data.get("webaccess_timeout", 60))
+    except (ValueError, TypeError):
+        cfg.webaccess_timeout = 60
+    try:
+        cfg.webaccess_authtimeout = int(form_data.get("webaccess_authtimeout", 60))
+    except (ValueError, TypeError):
+        cfg.webaccess_authtimeout = 60
+    try:
+        cfg.webaccess_accesstimeout = int(form_data.get("webaccess_accesstimeout", 60))
+    except (ValueError, TypeError):
+        cfg.webaccess_accesstimeout = 60
 
     if phone.model == "GRP2613":
         cfg.wifi_enabled = False
@@ -216,7 +228,7 @@ async def save_phone_config(request: Request, phone_id: int, db: Session = Depen
     for n in range(0, 4):
         s = existing_ssids.get(n)
         if s is None:
-            s = WifiSsid(phone_id=phone_id, ssid_num=n)
+            s = WifiSsid(endpoint_id=endpoint_id, ssid_num=n)
             db.add(s)
         s.essid = form_data.get(f"ssid_{n}_essid", "")
         s.psk = form_data.get(f"ssid_{n}_psk", "")
@@ -241,7 +253,7 @@ async def save_phone_config(request: Request, phone_id: int, db: Session = Depen
             vpk.account = account
         else:
             vpk = VpkKey(
-                phone_id=phone_id,
+                endpoint_id=endpoint_id,
                 slot=slot,
                 keymode=keymode,
                 description=description,
@@ -252,16 +264,16 @@ async def save_phone_config(request: Request, phone_id: int, db: Session = Depen
 
     db.commit()
 
-    response = RedirectResponse(url=f"/phones/{phone_id}/edit", status_code=303)
+    response = RedirectResponse(url=f"/phones/{endpoint_id}/edit", status_code=303)
     set_flash(response, "Configuration saved.", "success")
     return response
 
 
 # ── Delete phone ──────────────────────────────────────────────────────────────
 
-@app.delete("/phones/{phone_id}")
-async def delete_phone(phone_id: int, db: Session = Depends(get_db)):
-    phone = db.query(Phone).filter(Phone.id == phone_id).first()
+@app.delete("/phones/{endpoint_id}")
+async def delete_phone(endpoint_id: int, db: Session = Depends(get_db)):
+    phone = db.query(Phone).filter(Phone.id == endpoint_id).first()
     if phone:
         db.delete(phone)
         db.commit()
@@ -270,9 +282,9 @@ async def delete_phone(phone_id: int, db: Session = Depends(get_db)):
 
 # ── XML generation ────────────────────────────────────────────────────────────
 
-@app.get("/phones/{phone_id}/preview")
-async def preview_phone_xml(phone_id: int, db: Session = Depends(get_db)):
-    phone = db.query(Phone).filter(Phone.id == phone_id).first()
+@app.get("/phones/{endpoint_id}/preview")
+async def preview_phone_xml(endpoint_id: int, db: Session = Depends(get_db)):
+    phone = db.query(Phone).filter(Phone.id == endpoint_id).first()
     if not phone or not phone.config:
         return JSONResponse({"error": "Phone not found"}, status_code=404)
     xml_content = generate_xml(phone)
@@ -280,9 +292,9 @@ async def preview_phone_xml(phone_id: int, db: Session = Depends(get_db)):
     return JSONResponse({"xml": xml_content, "filename": filename})
 
 
-@app.post("/phones/{phone_id}/generate")
-async def generate_phone_xml(phone_id: int, db: Session = Depends(get_db)):
-    phone = db.query(Phone).filter(Phone.id == phone_id).first()
+@app.post("/phones/{endpoint_id}/generate")
+async def generate_phone_xml(endpoint_id: int, db: Session = Depends(get_db)):
+    phone = db.query(Phone).filter(Phone.id == endpoint_id).first()
     if not phone or not phone.config:
         return JSONResponse({"error": "Phone not found"}, status_code=404)
 
@@ -296,8 +308,8 @@ async def generate_phone_xml(phone_id: int, db: Session = Depends(get_db)):
 @app.post("/generate-selected")
 async def generate_selected(request: Request, db: Session = Depends(get_db)):
     data = await request.json()
-    phone_ids = data.get("phone_ids", [])
-    phones = db.query(Phone).filter(Phone.id.in_(phone_ids)).all()
+    endpoint_ids = data.get("endpoint_ids", [])
+    phones = db.query(Phone).filter(Phone.id.in_(endpoint_ids)).all()
     output_dir = get_output_dir(db)
     generated = []
     errors = []
@@ -315,9 +327,9 @@ async def generate_selected(request: Request, db: Session = Depends(get_db)):
     return JSONResponse({"generated": generated, "errors": errors})
 
 
-@app.get("/phones/{phone_id}/xml")
-async def get_phone_xml(phone_id: int, db: Session = Depends(get_db)):
-    phone = db.query(Phone).filter(Phone.id == phone_id).first()
+@app.get("/phones/{endpoint_id}/xml")
+async def get_phone_xml(endpoint_id: int, db: Session = Depends(get_db)):
+    phone = db.query(Phone).filter(Phone.id == endpoint_id).first()
     if not phone or not phone.config:
         return Response("Not found", status_code=404, media_type="text/plain")
     xml_content = generate_xml(phone)

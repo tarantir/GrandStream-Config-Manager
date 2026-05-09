@@ -9,11 +9,11 @@ _deleted = dict(default=False)
 
 
 class Phone(Base):
-    __tablename__ = "phones"
+    # Renamed from "phones" — this table stores endpoint (phone) records.
+    __tablename__ = "endpoints"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    group_name = Column(Text)
-    title = Column(Text)
+    account = Column(Text)
     extension = Column(Text)
     model = Column(Text)
     serial = Column(Text, unique=True)
@@ -42,7 +42,8 @@ class SipAccount(Base):
     __tablename__ = "sip_accounts"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    phone_id = Column(Integer, ForeignKey("phones.id"), nullable=False)
+    # FK renamed from phone_id → endpoint_id to match parent table rename
+    endpoint_id = Column(Integer, ForeignKey("endpoints.id"), nullable=False)
     account_num = Column(Integer)
     enabled = Column(Boolean, default=False)
     display_name = Column(Text, default="")
@@ -51,8 +52,6 @@ class SipAccount(Base):
     extension = Column(Text, default="")
     sip_server_1 = Column(Text, default="192.168.1.1")
     sip_server_2 = Column(Text, default="pbx.example.com")
-    sip_server_1_port = Column(Integer, default=5060)
-    sip_server_2_port = Column(Integer, default=5060)
     voicemail_number = Column(Text, default="*97")
     created_at = Column(DateTime, **_ts)
     updated_at = Column(DateTime, **_ts_update)
@@ -65,14 +64,14 @@ class WifiSsid(Base):
     __tablename__ = "wifi_ssids"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    phone_id = Column(Integer, ForeignKey("phones.id"), nullable=False)
+    # FK renamed from phone_id → endpoint_id to match parent table rename
+    endpoint_id = Column(Integer, ForeignKey("endpoints.id"), nullable=False)
     ssid_num = Column(Integer)
     enabled = Column(Boolean, default=False)
     essid = Column(Text, default="")
     psk = Column(Text, default="")
     key_mgmt = Column(Text, default="WPA_PSK")
     hidden = Column(Boolean, default=False)
-    priority = Column(Integer, default=0)
     created_at = Column(DateTime, **_ts)
     updated_at = Column(DateTime, **_ts_update)
     deleted = Column(Boolean, **_deleted)
@@ -81,10 +80,12 @@ class WifiSsid(Base):
 
 
 class PhoneConfig(Base):
-    __tablename__ = "phone_configs"
+    # Renamed from "phone_configs" — stores per-endpoint provisioning configuration.
+    __tablename__ = "endpoint_config"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    phone_id = Column(Integer, ForeignKey("phones.id"), nullable=False)
+    # FK renamed from phone_id → endpoint_id to match parent table rename
+    endpoint_id = Column(Integer, ForeignKey("endpoints.id"), nullable=False)
     phonebook_server = Column(Text, default="192.168.1.1")
     phonebook_mode = Column(Text, default="EnabledUseTFTP")
     phonebook_interval = Column(Integer, default=720)
@@ -109,6 +110,9 @@ class PhoneConfig(Base):
     datetime_date_format = Column(Text, default="yyyy-mm-dd")
     datetime_time_format = Column(Text, default="24Hour")
     datetime_show_on_statusbar = Column(Text, default="fullDate")
+    webaccess_timeout = Column(Integer, default=60)
+    webaccess_authtimeout = Column(Integer, default=60)
+    webaccess_accesstimeout = Column(Integer, default=60)
     created_at = Column(DateTime, **_ts)
     updated_at = Column(DateTime, **_ts_update)
     deleted = Column(Boolean, **_deleted)
@@ -120,7 +124,8 @@ class VpkKey(Base):
     __tablename__ = "vpk_keys"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    phone_id = Column(Integer, ForeignKey("phones.id"), nullable=False)
+    # FK renamed from phone_id → endpoint_id to match parent table rename
+    endpoint_id = Column(Integer, ForeignKey("endpoints.id"), nullable=False)
     slot = Column(Integer)
     keymode = Column(Text, default="None")
     description = Column(Text, default="")

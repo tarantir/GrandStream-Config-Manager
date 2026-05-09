@@ -255,7 +255,7 @@ def apply_parsed(phone: Phone, parsed: dict, db: Session) -> None:
     # Phone-level config
     cfg = phone.config
     if cfg is None:
-        cfg = PhoneConfig(phone_id=phone.id)
+        cfg = PhoneConfig(endpoint_id=phone.id)
         db.add(cfg)
         db.flush()
 
@@ -273,7 +273,7 @@ def apply_parsed(phone: Phone, parsed: dict, db: Session) -> None:
             continue
         s = existing_ssids.get(n)
         if s is None:
-            s = WifiSsid(phone_id=phone.id, ssid_num=n)
+            s = WifiSsid(endpoint_id=phone.id, ssid_num=n)
             db.add(s)
         for field in WIFI_SSID_FIELDS:
             if field in data:
@@ -288,7 +288,7 @@ def apply_parsed(phone: Phone, parsed: dict, db: Session) -> None:
             continue
         acct = existing_accounts.get(n)
         if acct is None:
-            acct = SipAccount(phone_id=phone.id, account_num=n)
+            acct = SipAccount(endpoint_id=phone.id, account_num=n)
             db.add(acct)
         for field in ACCOUNT_FIELDS:
             if field in data:
@@ -315,13 +315,13 @@ def apply_parsed(phone: Phone, parsed: dict, db: Session) -> None:
                     vpk.account = data["account"]
                 else:
                     db.add(VpkKey(
-                        phone_id=phone.id, slot=slot,
+                        endpoint_id=phone.id, slot=slot,
                         keymode=data["keymode"], description=data["description"],
                         value=data["value"], account=data["account"],
                     ))
             elif slot not in existing:
                 db.add(VpkKey(
-                    phone_id=phone.id, slot=slot,
+                    endpoint_id=phone.id, slot=slot,
                     keymode="None", description="", value="", account="Account1",
                 ))
 

@@ -22,9 +22,9 @@ def import_csv(content: bytes, db: Session) -> dict:
 
     for row in reader:
         try:
-            account_name   = row.get("account", "").strip()       # → group_name + account.1.name
-            subscriber_name = row.get("subscriber_name", "").strip() # → display_name + subscriber.name
-            extension      = row.get("subscriber_id", "").strip()  # → extension / SIP userid
+            account_name   = row.get("account", "").strip()
+            subscriber_name = row.get("subscriber_name", "").strip()
+            extension      = row.get("subscriber_id", "").strip()
             model          = row.get("model", "").strip()
             serial         = row.get("serial", "").strip()
             password       = row.get("hw_passwd", "").strip()
@@ -38,8 +38,7 @@ def import_csv(content: bytes, db: Session) -> dict:
             existing = db.query(Phone).filter(Phone.serial == serial).first()
 
             if existing:
-                existing.group_name      = account_name
-                existing.title           = f"{extension} {model}"
+                existing.account         = account_name
                 existing.extension       = extension
                 existing.model           = model
                 existing.mac_eth0        = mac_eth0
@@ -57,8 +56,7 @@ def import_csv(content: bytes, db: Session) -> dict:
                     acct1.extension       = extension
             else:
                 phone = Phone(
-                    group_name=account_name,
-                    title=f"{extension} {model}",
+                    account=account_name,
                     extension=extension,
                     model=model,
                     serial=serial,
@@ -73,27 +71,27 @@ def import_csv(content: bytes, db: Session) -> dict:
             # PhoneConfig
             if not phone.config:
                 db.add(PhoneConfig(
-                    phone_id=phone.id,
+                    endpoint_id=phone.id,
                     wifi_enabled=(model != "GRP2613"),
                 ))
 
             # WiFi SSIDs
             if not phone.wifi_ssids:
-                db.add(WifiSsid(phone_id=phone.id, ssid_num=0, enabled=True))
+                db.add(WifiSsid(endpoint_id=phone.id, ssid_num=0, enabled=True))
                 for n in range(1, 4):
-                    db.add(WifiSsid(phone_id=phone.id, ssid_num=n, enabled=False))
+                    db.add(WifiSsid(endpoint_id=phone.id, ssid_num=n, enabled=False))
 
             # SIP accounts
             if not phone.sip_accounts:
                 db.add(SipAccount(
-                    phone_id=phone.id, account_num=1, enabled=True,
+                    endpoint_id=phone.id, account_num=1, enabled=True,
                     display_name=account_name,
                     subscriber_name=subscriber_name,
                     extension=extension,
                 ))
                 for n in range(2, 5):
                     db.add(SipAccount(
-                        phone_id=phone.id, account_num=n, enabled=False,
+                        endpoint_id=phone.id, account_num=n, enabled=False,
                     ))
 
             # VPK keys
@@ -101,7 +99,7 @@ def import_csv(content: bytes, db: Session) -> dict:
                 max_slots = 6 if model == "GRP2613" else 4
                 for slot in range(1, max_slots + 1):
                     db.add(VpkKey(
-                        phone_id=phone.id,
+                        endpoint_id=phone.id,
                         slot=slot,
                         keymode="Line" if slot == 1 else "None",
                         description=subscriber_name if slot == 1 else "",
@@ -133,7 +131,7 @@ def export_csv(phones: list[Phone]) -> bytes:
 
     for phone in phones:
         writer.writerow({
-            "account": phone.group_name or "",
+            "account": phone.account or "",
             "subscriber_name": phone.subscriber_name or phone.display_name or "",
             "subscriber_id": phone.extension or "",
             "model": phone.model or "",

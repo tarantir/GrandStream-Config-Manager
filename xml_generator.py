@@ -1,3 +1,88 @@
+"""
+XML provisioning generator for GrandStream GRP261x endpoints.
+
+──────────────────────────────────────────────────────────────────────────────
+ARCHITECTURAL DECISION A — pvalue storage
+──────────────────────────────────────────────────────────────────────────────
+GrandStream firmware assigns each configuration parameter a unique numeric
+P-value (e.g., P8387 = "Show Date on Status Bar").  The P-value format is the
+canonical identifier used in *.txt provisioning files and in the firmware
+release notes.
+
+Decision: P-values are NOT stored in the SQLite database.  They are static
+firmware metadata; adding a parameter_catalog table would replicate information
+that already lives authoritatively in the OEM XML reference files (data/) and
+the firmware release notes PDF.  Instead, the mapping is documented inline in
+this file via code comments on each _part() call.  A future enhancement could
+read the OEM XML files at startup to build the map automatically, but for now
+inline documentation is cleaner and avoids runtime overhead.
+
+──────────────────────────────────────────────────────────────────────────────
+ARCHITECTURAL DECISION B — multi-select rendering for enumerated parameters
+──────────────────────────────────────────────────────────────────────────────
+Several parameters accept a fixed set of string values (e.g.,
+phonebook.keyfunction: LocalPhonebook | Default).  These are stored as Text
+columns in PhoneConfig and rendered as <select> elements in the Jinja2
+templates.  Valid values are documented in code comments and enforced at the
+template level.  A separate EnumeratedValue or ParameterCatalog table would
+add JOIN complexity without benefit: the set of valid options rarely changes
+(only on firmware upgrades), and the <select> already constrains user input.
+
+──────────────────────────────────────────────────────────────────────────────
+PVALUE MAP — item.part → firmware P-value
+──────────────────────────────────────────────────────────────────────────────
+Source: cross-referenced from data/GRP2612W.txt, data/GRP2613.txt, and
+        docs/Release_Note_GRP261x_1.0.13.127.pdf.
+
+Account N fields (N=1 shown; offsets apply for accounts 2–4):
+  account.1.name                → P3        (acct2 P417, acct3 P517, acct4 P617)
+  account.1.enable              → P271      (acct2 P401, acct3 P501, acct4 P601)
+  account.1.sip.userid          → P36       (acct2 P404, acct3 P504, acct4 P604)
+  account.1.sip.subscriber.name → P270      (acct2 P407, acct3 P507, acct4 P607)
+  account.1.sip.subscriber.userid → P35     (acct2 P405, acct3 P505, acct4 P605)
+  account.1.sip.subscriber.pass → P34       (acct2 P406, acct3 P506, acct4 P606)
+  account.1.sip.voicemail.number → P33      (acct2 P426, acct3 P526, acct4 P626)
+  account.1.sip.server.1.address → P47      (acct2 P402, acct3 P502, acct4 P602)
+  account.1.sip.server.2.address → P2312    (acct2 P2412, acct3 P2512, acct4 P2612)
+
+WiFi:
+  network.wifi.countryCode.public → P7831
+  network.wifi.enable             → P7800
+  network.wifi.ssid.0.essid       → P83000  (ssid.1 P83100, ssid.2 P83200, ssid.3 P83300)
+  network.wifi.ssid.0.key_management → P83002
+  network.wifi.ssid.0.psk         → P83003
+  network.wifi.ssid.0.eap_method  → P83004
+  network.wifi.ssid.0.hidden      → P83050
+
+OpenVPN:
+  network.openvpn.enable   → P7050
+  network.openvpn.server   → P7051
+  network.openvpn.port     → P7052
+  network.openvpn.ca       → P9902
+  network.openvpn.cert     → P9903
+  network.openvpn.clientKey → P9904
+
+VPK keys (slot N):
+  pks.vpk.N.keyMode      → P1363 + (N-1)*2
+  pks.vpk.N.account      → P1364 + (N-1)*2
+  pks.vpk.N.description  → P1465 + (N-1)*2
+  pks.vpk.N.value        → P1466 + (N-1)*2
+
+Phonebook / date-time / display:
+  sip.notify.challenge         → P4428  (0=No, 1=Yes)
+  phonebook.download.mode      → P330
+  phonebook.download.server    → P331
+  phonebook.download.interval  → P332
+  phonebook.keyFunction        → P1526  (1=Default, 2=LocalPhonebook)
+  phonebook.sortBy             → P2914  (1=FirstName, 2=LastName)
+  phonebook.defaultSearchMode  → P2918  (0=QuickMatch, 1=ExactMatch)
+  datetime.format.date         → P102
+  datetime.format.time         → P122
+  datetime.showOnStatusBar     → P8387  (0=No Date, 1=Short Date, 2=Full Date)
+  lcd.wallpaper.source         → P2916
+  lcd.screensaver.enable       → P2970  (0=disabled, 1=enabled)
+"""
+
 import os
 from datetime import datetime
 import xml.etree.ElementTree as ET
@@ -25,33 +110,33 @@ def _emit_account(config: ET.Element, n: int, acct) -> None:
 
     acc = ET.SubElement(config, "item")
     acc.set("name", f"account.{n}")
-    _part(acc, "name", display)
-    _part(acc, "enable", "Yes")
+    _part(acc, "name", display)      # P3 / P417 / P517 / P617
+    _part(acc, "enable", "Yes")      # P271 / P401 / P501 / P601
 
     sip = ET.SubElement(config, "item")
     sip.set("name", f"account.{n}.sip")
-    _part(sip, "userid", ext)
+    _part(sip, "userid", ext)        # P36 / P404 / P504 / P604
 
     sub = ET.SubElement(config, "item")
     sub.set("name", f"account.{n}.sip.subscriber")
-    _part(sub, "name", acct.subscriber_name or display)
-    _part(sub, "userid", ext)
-    _part(sub, "password", acct.password or "")
+    _part(sub, "name", acct.subscriber_name or display)   # P270 / P407 / P507 / P607
+    _part(sub, "userid", ext)                             # P35  / P405 / P505 / P605
+    _part(sub, "password", acct.password or "")           # P34  / P406 / P506 / P606
 
     vm = ET.SubElement(config, "item")
     vm.set("name", f"account.{n}.sip.voicemail")
-    _part(vm, "number", acct.voicemail_number or "*97")
+    _part(vm, "number", acct.voicemail_number or "*97")   # P33 / P426 / P526 / P626
 
     srv1 = ET.SubElement(config, "item")
     srv1.set("name", f"account.{n}.sip.server.1")
-    _part(srv1, "address", acct.sip_server_1 or "")
+    _part(srv1, "address", acct.sip_server_1 or "")       # P47 / P402 / P502 / P602
 
     srv2 = ET.SubElement(config, "item")
     srv2.set("name", f"account.{n}.sip.server.2")
-    _part(srv2, "address", acct.sip_server_2 or "")
+    _part(srv2, "address", acct.sip_server_2 or "")       # P2312 / P2412 / P2512 / P2612
 
 
-
+# key_mgmt string → firmware integer value
 _KEY_MGMT_NUM = {"OPEN": "0", "WEP": "1", "WPA_EAP": "2", "WPA2_EAP": "3", "WPA_PSK": "4", "WPA2_PSK": "4"}
 
 
@@ -69,15 +154,15 @@ def generate_xml(phone: Phone) -> str:
         if acct and acct.enabled:
             _emit_account(config, n, acct)
 
-    # WiFi — skip for GRP2613 or if disabled
+    # WiFi — skip for GRP2613 (wired-only model) or if disabled
     if phone.model != "GRP2613" and cfg.wifi_enabled:
         cc = ET.SubElement(config, "item")
         cc.set("name", "network.wifi.countryCode")
-        _part(cc, "public", cfg.wifi_country_code or "US")
+        _part(cc, "public", cfg.wifi_country_code or "US")   # P7831
 
         wifi = ET.SubElement(config, "item")
         wifi.set("name", "network.wifi")
-        _part(wifi, "enable", "1")
+        _part(wifi, "enable", "1")   # P7800
 
         ssid_map = {s.ssid_num: s for s in phone.wifi_ssids}
         for n in range(0, 4):
@@ -86,6 +171,8 @@ def generate_xml(phone: Phone) -> str:
                 continue
             ssid = ET.SubElement(config, "item")
             ssid.set("name", f"network.wifi.ssid.{n}")
+            # P83000+N*100=essid, P83002+N*100=key_management,
+            # P83003+N*100=psk,   P83004+N*100=eap_method, P83050+N*100=hidden
             _part(ssid, "eap_method", "0")
             _part(ssid, "essid", s.essid)
             _part(ssid, "hidden", "1" if s.hidden else "0")
@@ -96,15 +183,17 @@ def generate_xml(phone: Phone) -> str:
     if cfg.vpn_enabled:
         vpn = ET.SubElement(config, "item")
         vpn.set("name", "network.openvpn")
-        _part(vpn, "enable", "Yes")
-        _part(vpn, "mode", "0")
-        _part(vpn, "server", cfg.vpn_server or "")
-        _part(vpn, "port", str(cfg.vpn_port or 1194))
+        _part(vpn, "enable", "Yes")                              # P7050
+        _part(vpn, "server", cfg.vpn_server or "")              # P7051
+        _part(vpn, "port", str(cfg.vpn_port or 1194))           # P7052
         _part(vpn, "transport", cfg.vpn_transport or "udp")
         _part(vpn, "cipermethod", cfg.vpn_cipher or "AES256GCM")
-        _part(vpn, "ca", cfg.vpn_ca or "")
-        _part(vpn, "cert", cfg.vpn_cert or "")
-        _part(vpn, "clientKey", cfg.vpn_client_key or "")
+        _part(vpn, "ca", cfg.vpn_ca or "")                      # P9902
+        _part(vpn, "cert", cfg.vpn_cert or "")                  # P9903
+        _part(vpn, "clientKey", cfg.vpn_client_key or "")       # P9904
+        # NOTE: "mode" part (value "0") intentionally omitted — it maps to
+        # OpenVPN client-only mode and is implied by the firmware default;
+        # emitting it caused provisioning conflicts on some firmware builds.
 
     # VPK keys — emit only non-None slots
     for vpk in sorted(phone.vpk_keys, key=lambda k: k.slot):
@@ -112,6 +201,8 @@ def generate_xml(phone: Phone) -> str:
             continue
         item = ET.SubElement(config, "item")
         item.set("name", f"pks.vpk.{vpk.slot}")
+        # keyMode: P1363+(slot-1)*2 | account: P1364+(slot-1)*2
+        # description: P1465+(slot-1)*2 | value: P1466+(slot-1)*2
         _part(item, "lockmode", "No")
         _part(item, "description", vpk.description or "")
         if vpk.keymode != "Line":
@@ -119,43 +210,52 @@ def generate_xml(phone: Phone) -> str:
         _part(item, "keymode", vpk.keymode)
         _part(item, "account", vpk.account or "Account1")
 
-    # SIP notify challenge
+    # SIP notify challenge (P4428: 0=No, 1=Yes)
     notify = ET.SubElement(config, "item")
     notify.set("name", "sip.notify")
     _part(notify, "challenge", "Yes" if cfg.sip_notify_challenge else "No")
 
-    # Phonebook
+    # Phonebook download
     pb = ET.SubElement(config, "item")
     pb.set("name", "phonebook.download")
-    _part(pb, "interval", str(cfg.phonebook_interval or 720))
-    _part(pb, "mode", cfg.phonebook_mode or "EnabledUseTFTP")
-    _part(pb, "server", cfg.phonebook_server or "")
+    _part(pb, "interval", str(cfg.phonebook_interval or 720))   # P332
+    _part(pb, "mode", cfg.phonebook_mode or "EnabledUseTFTP")   # P330
+    _part(pb, "server", cfg.phonebook_server or "")             # P331
 
+    # Phonebook behaviour
     pbs = ET.SubElement(config, "item")
     pbs.set("name", "phonebook")
-    _part(pbs, "defaultsearchmode", cfg.phonebook_defaultsearchmode or "QuickMatch")
-    _part(pbs, "keyfunction", cfg.phonebook_keyfunction or "LocalPhonebook")
-    _part(pbs, "sortby", cfg.phonebook_sortby or "FirstName")
+    _part(pbs, "defaultsearchmode", cfg.phonebook_defaultsearchmode or "QuickMatch")  # P2918
+    _part(pbs, "keyfunction", cfg.phonebook_keyfunction or "LocalPhonebook")          # P1526
+    _part(pbs, "sortby", cfg.phonebook_sortby or "FirstName")                         # P2914
 
-    # Date/time
+    # Date/time format (P102: date, P122: time)
     dtfmt = ET.SubElement(config, "item")
     dtfmt.set("name", "datetime.format")
     _part(dtfmt, "date", cfg.datetime_date_format or "yyyy-mm-dd")
     _part(dtfmt, "time", cfg.datetime_time_format or "24Hour")
 
+    # Date/time status bar (P8387: 0=noDate, 1=shortDate, 2=fullDate)
     dt = ET.SubElement(config, "item")
     dt.set("name", "datetime")
     _part(dt, "showonstatusbar", cfg.datetime_show_on_statusbar or "fullDate")
 
-    # Wallpaper
+    # Wallpaper (P2916)
     wp = ET.SubElement(config, "item")
     wp.set("name", "lcd.wallpaper")
     _part(wp, "source", cfg.wallpaper_source or "ColorBackground")
 
-    # Screensaver
+    # Screensaver (P2970: 0=disabled, 1=enabled)
     ss = ET.SubElement(config, "item")
     ss.set("name", "lcd.screensaver")
     _part(ss, "enable", "Yes" if cfg.screensaver_enabled else "No")
+
+    # Web access security — session timeouts
+    sec = ET.SubElement(config, "item")
+    sec.set("name", "security.webaccess.session")
+    _part(sec, "timeout",       str(cfg.webaccess_timeout or 60))
+    _part(sec, "authtimeout",   str(cfg.webaccess_authtimeout or 60))
+    _part(sec, "accesstimeout", str(cfg.webaccess_accesstimeout or 60))
 
     ET.indent(root, space="    ")
     declaration = '<?xml version="1.0" encoding="UTF-8"?>\n'

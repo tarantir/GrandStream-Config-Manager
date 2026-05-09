@@ -47,7 +47,7 @@
     <button type="button" class="tab-btn px-4 py-2 text-sm rounded-t-lg transition-colors" data-tab="keys">Keys</button>
     <button type="button" class="tab-btn px-4 py-2 text-sm rounded-t-lg transition-colors" data-tab="phonebook">Phonebook</button>
     <button type="button" class="tab-btn px-4 py-2 text-sm rounded-t-lg transition-colors" data-tab="personalize">Personalize</button>
-    <button type="button" class="tab-btn px-4 py-2 text-sm rounded-t-lg transition-colors" data-tab="provisioning">Provisioning</button>
+    <button type="button" class="tab-btn px-4 py-2 text-sm rounded-t-lg transition-colors" data-tab="security">Security</button>
     <button type="button" class="tab-btn px-4 py-2 text-sm rounded-t-lg transition-colors" data-tab="vpn">VPN</button>
   </div>
 
@@ -305,6 +305,10 @@
       </div>
       {{ field("Sync Interval (minutes)", "phonebook_interval", cfg.phonebook_interval, "number", "phonebook.download → interval") }}
       <div>
+        <label class="block text-xs text-[#5a6a7a] mb-1">Protocol <span class="text-xs text-[#9aabb8] normal-case mono">(phonebook_protocol)</span></label>
+        <div class="w-full bg-[#f4f6f8] border border-[#e0e4e8] rounded-lg px-3 py-2 text-sm mono text-[#5a6a7a]">{{ cfg.phonebook_protocol or 'TFTP' }}</div>
+      </div>
+      <div>
         <label class="block text-xs text-[#5a6a7a] mb-1">Sort By <span class="text-xs text-[#9aabb8] normal-case mono">(phonebook → sortby)</span></label>
         <select name="phonebook_sortby" class="w-full bg-white border border-[#e0e4e8] rounded-lg px-3 py-2 text-sm text-[#1a2332] focus:outline-none focus:border-[#00679e]">
           {% for opt in ['FirstName', 'LastName'] %}
@@ -396,8 +400,8 @@
 
   </div>
 
-  <!-- Provisioning Tab -->
-  <div class="tab-pane hidden" id="tab-provisioning">
+  <!-- Security Tab -->
+  <div class="tab-pane hidden" id="tab-security">
     <div class="max-w-lg">
       <h3 class="text-xs text-[#5a6a7a] uppercase tracking-wider mb-4">SIP</h3>
       <div class="space-y-4">
@@ -414,6 +418,30 @@
               after:content-[''] after:absolute after:top-0.5 after:left-[2px]
               after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
           </label>
+        </div>
+      </div>
+
+      <div class="pt-5 mt-5 border-t border-[#e0e4e8]">
+        <h3 class="text-xs text-[#5a6a7a] uppercase tracking-wider mb-4">Web Access</h3>
+        <div class="grid grid-cols-3 gap-4">
+          <div>
+            <label class="block text-xs text-[#5a6a7a] mb-1">Session Timeout <span class="text-xs text-[#9aabb8] normal-case mono">(security.webaccess.session → timeout)</span></label>
+            <input type="number" name="webaccess_timeout" min="0"
+              value="{{ config.webaccess_timeout if config.webaccess_timeout is not none else 60 }}"
+              class="w-full bg-white border border-[#e0e4e8] rounded-lg px-3 py-2 text-sm mono text-[#1a2332] focus:ring-2 focus:ring-[#00679e]/20 focus:border-[#00679e] outline-none transition-colors">
+          </div>
+          <div>
+            <label class="block text-xs text-[#5a6a7a] mb-1">Auth Timeout <span class="text-xs text-[#9aabb8] normal-case mono">(security.webaccess.session → authtimeout)</span></label>
+            <input type="number" name="webaccess_authtimeout" min="0"
+              value="{{ config.webaccess_authtimeout if config.webaccess_authtimeout is not none else 60 }}"
+              class="w-full bg-white border border-[#e0e4e8] rounded-lg px-3 py-2 text-sm mono text-[#1a2332] focus:ring-2 focus:ring-[#00679e]/20 focus:border-[#00679e] outline-none transition-colors">
+          </div>
+          <div>
+            <label class="block text-xs text-[#5a6a7a] mb-1">Access Timeout <span class="text-xs text-[#9aabb8] normal-case mono">(security.webaccess.session → accesstimeout)</span></label>
+            <input type="number" name="webaccess_accesstimeout" min="0"
+              value="{{ config.webaccess_accesstimeout if config.webaccess_accesstimeout is not none else 60 }}"
+              class="w-full bg-white border border-[#e0e4e8] rounded-lg px-3 py-2 text-sm mono text-[#1a2332] focus:ring-2 focus:ring-[#00679e]/20 focus:border-[#00679e] outline-none transition-colors">
+          </div>
         </div>
       </div>
     </div>
