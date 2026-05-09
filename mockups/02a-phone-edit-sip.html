@@ -11,11 +11,6 @@
     body { font-family: 'Inter', sans-serif; }
     .mono { font-family: 'JetBrains Mono', monospace; }
   </style>
-  <script>
-    tailwind.config = {
-      theme: { extend: { colors: { navy: { 900: '#0f172a', 800: '#1e293b', 700: '#334155' } } } }
-    }
-  </script>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-full">
 
@@ -58,28 +53,31 @@
       <button class="px-4 py-2 text-sm rounded-t-lg text-slate-400">WiFi</button>
       <button class="px-4 py-2 text-sm rounded-t-lg text-slate-400">Keys</button>
       <button class="px-4 py-2 text-sm rounded-t-lg text-slate-400">Phonebook</button>
-      <button class="px-4 py-2 text-sm rounded-t-lg text-slate-400">Display</button>
+      <button class="px-4 py-2 text-sm rounded-t-lg text-slate-400">Personalize</button>
       <button class="px-4 py-2 text-sm rounded-t-lg text-slate-400">Provisioning</button>
       <button class="px-4 py-2 text-sm rounded-t-lg text-slate-400">VPN</button>
     </div>
 
     <!-- Account sub-tabs -->
     <div class="flex gap-1 mb-5">
-      <button class="px-3 py-1.5 text-xs rounded-lg bg-sky-700 text-white">Acct 1 <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 ml-1 mb-0.5"></span></button>
-      <button class="px-3 py-1.5 text-xs rounded-lg bg-slate-700 text-slate-300">Acct 2</button>
-      <button class="px-3 py-1.5 text-xs rounded-lg bg-slate-700 text-slate-300">Acct 3</button>
-      <button class="px-3 py-1.5 text-xs rounded-lg bg-slate-700 text-slate-300">Acct 4</button>
+      <button class="px-3 py-1.5 text-xs rounded-lg bg-slate-700 text-white">Acct 1 <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 ml-1 mb-0.5"></span></button>
+      <button class="px-3 py-1.5 text-xs rounded-lg text-slate-400">Acct 2</button>
+      <button class="px-3 py-1.5 text-xs rounded-lg text-slate-400">Acct 3</button>
+      <button class="px-3 py-1.5 text-xs rounded-lg text-slate-400">Acct 4</button>
     </div>
 
     <!-- Account 1 pane -->
     <div>
       <!-- Enabled toggle -->
-      <div class="flex items-center gap-3 pb-3 mb-5 border-b border-slate-700">
+      <div class="flex items-center justify-between pb-3 mb-5 border-b border-slate-700">
+        <div>
+          <p class="text-sm text-slate-300">Account 1 Enabled</p>
+          <p class="text-xs text-slate-500 mt-0.5">account.1 → enable</p>
+        </div>
         <label class="relative inline-flex items-center cursor-pointer">
           <input type="checkbox" checked class="sr-only peer">
           <div class="w-11 h-6 bg-sky-600 rounded-full peer after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:translate-x-full"></div>
         </label>
-        <span class="text-sm text-slate-300">Account 1 Enabled</span>
       </div>
 
       <!-- Two-column layout -->
@@ -87,22 +85,22 @@
         <!-- Left: identity -->
         <div class="space-y-5">
           <div>
-            <label class="block text-xs text-slate-400 mb-1">Account <span class="text-slate-600 normal-case">(account.1.name)</span></label>
+            <label class="block text-xs text-slate-400 mb-1">Account Name <span class="text-xs text-slate-500 normal-case">(account.1 → name)</span></label>
             <input type="text" value="Office"
               class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:ring-1 focus:ring-sky-500 outline-none">
           </div>
           <div>
-            <label class="block text-xs text-slate-400 mb-1">Subscriber Name <span class="text-slate-600 normal-case">(subscriber.name)</span></label>
+            <label class="block text-xs text-slate-400 mb-1">Subscriber Name <span class="text-xs text-slate-500 normal-case">(account.1.sip.subscriber → name)</span></label>
             <input type="text" value="Alice Chen"
               class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:ring-1 focus:ring-sky-500 outline-none">
           </div>
           <div>
-            <label class="block text-xs text-slate-400 mb-1">Extension <span class="text-slate-600 normal-case">(sip/subscriber userid)</span></label>
+            <label class="block text-xs text-slate-400 mb-1">Extension <span class="text-xs text-slate-500 normal-case">(account.1.sip → userid)</span></label>
             <input type="text" value="1001"
               class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 outline-none">
           </div>
           <div>
-            <label class="block text-xs text-slate-400 mb-1">Password <span class="text-slate-600 normal-case">(subscriber.password)</span></label>
+            <label class="block text-xs text-slate-400 mb-1">Password <span class="text-xs text-slate-500 normal-case">(account.1.sip.subscriber → password)</span></label>
             <div class="relative">
               <input type="password" value="s3cr3t"
                 class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 outline-none pr-10">
@@ -113,17 +111,17 @@
         <!-- Right: servers -->
         <div class="space-y-5">
           <div>
-            <label class="block text-xs text-slate-400 mb-1">SIP Server 1</label>
+            <label class="block text-xs text-slate-400 mb-1">SIP Server 1 <span class="text-xs text-slate-500 normal-case">(account.1.sip.server.1 → address)</span></label>
             <input type="text" value="192.168.1.1"
               class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 outline-none">
           </div>
           <div>
-            <label class="block text-xs text-slate-400 mb-1">SIP Server 2</label>
+            <label class="block text-xs text-slate-400 mb-1">SIP Server 2 <span class="text-xs text-slate-500 normal-case">(account.1.sip.server.2 → address)</span></label>
             <input type="text" value="pbx.example.com"
               class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 outline-none">
           </div>
-<div>
-            <label class="block text-xs text-slate-400 mb-1">Voicemail Number</label>
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Voicemail Number <span class="text-xs text-slate-500 normal-case">(account.1.sip.voicemail → number)</span></label>
             <input type="text" value="*97"
               class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 outline-none">
           </div>

@@ -13,10 +13,12 @@ Static HTML mockups are in the [mockups/](mockups/) folder:
 | File | Screen |
 |---|---|
 | [01-phones.html](mockups/01-phones.html) | Phone Inventory |
-| [02-phone-edit.html](mockups/02-phone-edit.html) | Phone Edit — Display tab |
+| [02-phone-edit.html](mockups/02-phone-edit.html) | Phone Edit |
 | [02a-phone-edit-sip.html](mockups/02a-phone-edit-sip.html) | Phone Edit — SIP tab |
 | [02b-phone-edit-wifi.html](mockups/02b-phone-edit-wifi.html) | Phone Edit — WiFi tab |
 | [02c-phone-edit-vpn.html](mockups/02c-phone-edit-vpn.html) | Phone Edit — VPN tab |
+| [02d-phone-edit-phonebook.html](mockups/02d-phone-edit-phonebook.html) | Phone Edit — Phonebook tab |
+| [02e-phone-edit-personalize.html](mockups/02e-phone-edit-personalize.html) | Phone Edit — Personalize tab |
 | [03-phonebook.html](mockups/03-phonebook.html) | Phone Book |
 | [04-settings.html](mockups/04-settings.html) | Settings |
 
@@ -27,9 +29,11 @@ This tool **generates XML configuration files only**. It does not include a TFTP
 ## Features
 
 - **Phone inventory** — import phones via CSV or existing XML config files
-- **Per-phone configuration** — SIP accounts (up to 4), WiFi SSIDs (up to 4), virtual programmable keys, phonebook, display/screensaver/date-time, provisioning settings, and OpenVPN
+- **Per-phone configuration** — SIP accounts (up to 4), WiFi SSIDs (up to 4), virtual programmable keys, phonebook, date/time, screensaver, wallpaper, provisioning settings, and OpenVPN
 - **SIP account passwords** — per-account SIP password stored and emitted in the provisioning XML
-- **OpenVPN** — per-phone VPN configuration (server, port, transport, cipher, CA, cert, client key)
+- **WiFi** — enable/disable, country code (`network.wifi.countryCode`), and up to 4 SSIDs (ESSID, PSK, key management, hidden); key management stored as text (`WPA_PSK`, `OPEN`, etc.) and converted to GrandStream numeric values on XML output
+- **OpenVPN** — per-phone VPN configuration (server, port, transport, cipher, CA cert, client cert, client key)
+- **XML element hints** — every form field shows the exact GrandStream XML item and part it maps to
 - **CSV export** — download the current phone inventory in the same import-compatible CSV format
 - **XML generation** — generate delta provisioning XML per phone, selectable from the inventory, with files named `{SIP_ID}.xml`, `cfg{ETH0_MAC}.xml`, and `cfg{WLAN_MAC}.xml` (where applicable), plus archived copies under `archive/<timestamp>/`
 - **Phone Book** — auto-generated from the phone inventory, with support for additional custom entries, with `phonebook.xml` archived under `archive/<timestamp>/`
@@ -82,6 +86,22 @@ Archived copies are also written to `archive/<timestamp>/` on each generation ru
 ### Serving via TFTP
 
 Grandstream phones fetch their config by MAC address — they request `cfg<mac>.xml` (lowercase, no separators). Because the tool already generates files with those exact names, no symlinks are needed. Copy the contents of the output directory to your TFTP server root and phones will find their configs automatically.
+
+## XML Values: Stored vs Hard-coded
+
+Most XML output values come from the database and are editable in the UI. A few are fixed at generation time:
+
+| XML element / part | Value | Source |
+|---|---|---|
+| `account.N → enable` | always `Yes` | Hard-coded — account is only emitted when enabled in DB; the part value is always `Yes` |
+| `account.N.sip.subscriber → userid` | same as extension | Hard-coded — always set equal to the SIP user ID |
+| `network.wifi → enable` | `1` / omitted | DB (`wifi_enabled`) — account is only emitted when enabled |
+| `network.wifi.ssid.N → eap_method` | always `0` | Hard-coded — EAP not configurable |
+| `network.openvpn → mode` | always `0` | Hard-coded — client mode only |
+| `pks.vpk.N → lockmode` | always `No` | Hard-coded |
+| WiFi key management | numeric (`0`–`4`) | Converted from text stored in DB (`OPEN`→`0`, `WPA_PSK`→`4`, etc.) |
+
+`wifi_band` is stored in the database and shown in the WiFi tab but is not currently emitted in the XML output.
 
 ## Phone Models
 

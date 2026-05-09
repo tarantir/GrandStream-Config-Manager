@@ -69,7 +69,11 @@
     {% set acct = sip_accounts.get(n) %}
     <div class="acct-pane hidden" id="acct-pane-{{ n }}">
       <!-- Enabled toggle -->
-      <div class="flex items-center gap-3 pb-3 mb-5 border-b border-slate-700">
+      <div class="flex items-center justify-between pb-3 mb-5 border-b border-slate-700">
+        <div>
+          <p class="text-sm text-slate-300">Account {{ n }} Enabled</p>
+          <p class="text-xs text-slate-500 mt-0.5">account.{{ n }} → enable</p>
+        </div>
         <label class="relative inline-flex items-center cursor-pointer">
           <input type="checkbox" name="acct_{{ n }}_enabled" value="on"
             class="sr-only peer" {% if acct and acct.enabled %}checked{% endif %}>
@@ -78,30 +82,29 @@
             after:content-[''] after:absolute after:top-0.5 after:left-[2px]
             after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
         </label>
-        <span class="text-sm text-slate-300">Account {{ n }} Enabled</span>
       </div>
       <!-- Two-column layout -->
       <div class="grid grid-cols-2 gap-x-8 gap-y-5">
         <!-- Left: identity -->
         <div class="space-y-5">
           <div>
-            <label class="block text-xs text-slate-400 mb-1">Account <span class="text-slate-600 normal-case">(account.{{ n }}.name)</span></label>
+            <label class="block text-xs text-slate-400 mb-1">Account Name <span class="text-xs text-slate-500 normal-case">(account.{{ n }} → name)</span></label>
             <input type="text" name="acct_{{ n }}_display_name" value="{{ acct.display_name if acct else '' }}"
               placeholder="e.g. Office"
               class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none">
           </div>
           <div>
-            <label class="block text-xs text-slate-400 mb-1">Subscriber Name <span class="text-slate-600 normal-case">(subscriber.name)</span></label>
+            <label class="block text-xs text-slate-400 mb-1">Subscriber Name <span class="text-xs text-slate-500 normal-case">(account.{{ n }}.sip.subscriber → name)</span></label>
             <input type="text" name="acct_{{ n }}_subscriber_name" value="{{ acct.subscriber_name if acct else '' }}"
               class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none">
           </div>
           <div>
-            <label class="block text-xs text-slate-400 mb-1">Extension <span class="text-slate-600 normal-case">(sip/subscriber userid)</span></label>
+            <label class="block text-xs text-slate-400 mb-1">Extension <span class="text-xs text-slate-500 normal-case">(account.{{ n }}.sip → userid)</span></label>
             <input type="text" name="acct_{{ n }}_extension" value="{{ acct.extension if acct else '' }}"
               class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none">
           </div>
           <div>
-            <label class="block text-xs text-slate-400 mb-1">Password <span class="text-slate-600 normal-case">(subscriber.password)</span></label>
+            <label class="block text-xs text-slate-400 mb-1">Password <span class="text-xs text-slate-500 normal-case">(account.{{ n }}.sip.subscriber → password)</span></label>
             <div class="relative">
               <input type="password" name="acct_{{ n }}_password" value="{{ acct.password if acct else '' }}"
                 id="acct-password-{{ n }}"
@@ -114,17 +117,17 @@
         <!-- Right: servers -->
         <div class="space-y-5">
           <div>
-            <label class="block text-xs text-slate-400 mb-1">SIP Server 1</label>
+            <label class="block text-xs text-slate-400 mb-1">SIP Server 1 <span class="text-xs text-slate-500 normal-case">(account.{{ n }}.sip.server.1 → address)</span></label>
             <input type="text" name="acct_{{ n }}_sip_server_1" value="{{ acct.sip_server_1 if acct else '192.168.1.1' }}"
               class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none">
           </div>
           <div>
-            <label class="block text-xs text-slate-400 mb-1">SIP Server 2</label>
+            <label class="block text-xs text-slate-400 mb-1">SIP Server 2 <span class="text-xs text-slate-500 normal-case">(account.{{ n }}.sip.server.2 → address)</span></label>
             <input type="text" name="acct_{{ n }}_sip_server_2" value="{{ acct.sip_server_2 if acct else 'pbx.example.com' }}"
               class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none">
           </div>
-<div>
-            <label class="block text-xs text-slate-400 mb-1">Voicemail Number</label>
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Voicemail Number <span class="text-xs text-slate-500 normal-case">(account.{{ n }}.sip.voicemail → number)</span></label>
             <input type="text" name="acct_{{ n }}_voicemail_number" value="{{ acct.voicemail_number if acct else '*97' }}"
               class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none">
           </div>
@@ -237,11 +240,11 @@
       <table class="w-full text-sm">
         <thead>
           <tr class="border-b border-slate-700 text-slate-400 text-xs uppercase tracking-wider">
-            <th class="px-4 py-3 text-left w-12">Slot</th>
-            <th class="px-4 py-3 text-left w-40">Mode</th>
-            <th class="px-4 py-3 text-left">Description</th>
-            <th class="px-4 py-3 text-left">Value / Ext</th>
-            <th class="px-4 py-3 text-left w-36">Account</th>
+            <th class="px-4 py-3 text-left w-12">Slot <span class="normal-case font-normal text-slate-600">(pks.vpk.N)</span></th>
+            <th class="px-4 py-3 text-left w-40">Mode <span class="normal-case font-normal text-slate-600">(keymode)</span></th>
+            <th class="px-4 py-3 text-left">Description <span class="normal-case font-normal text-slate-600">(description)</span></th>
+            <th class="px-4 py-3 text-left">Value / Ext <span class="normal-case font-normal text-slate-600">(value)</span></th>
+            <th class="px-4 py-3 text-left w-36">Account <span class="normal-case font-normal text-slate-600">(account)</span></th>
           </tr>
         </thead>
         <tbody class="divide-y divide-slate-700/50">
@@ -291,26 +294,18 @@
       The phonebook file on your TFTP server must be named <span class="mono text-slate-200 mx-1">phonebook.xml</span>
     </div>
     <div class="grid grid-cols-2 gap-5">
-      {{ field("Phonebook Server", "phonebook_server", cfg.phonebook_server) }}
+      {{ field("Server", "phonebook_server", cfg.phonebook_server, "text", "phonebook.download → server") }}
       <div>
-        <label class="block text-xs text-slate-400 mb-1">Mode</label>
+        <label class="block text-xs text-slate-400 mb-1">Mode <span class="text-xs text-slate-500 normal-case">(phonebook.download → mode)</span></label>
         <select name="phonebook_mode" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200">
           {% for opt in ['EnabledUseTFTP', 'EnabledUseHTTP', 'EnabledUseHTTPS', 'Disabled'] %}
           <option value="{{ opt }}" {% if cfg.phonebook_mode == opt %}selected{% endif %}>{{ opt }}</option>
           {% endfor %}
         </select>
       </div>
-      {{ field("Sync Interval (minutes)", "phonebook_interval", cfg.phonebook_interval, "number") }}
+      {{ field("Sync Interval (minutes)", "phonebook_interval", cfg.phonebook_interval, "number", "phonebook.download → interval") }}
       <div>
-        <label class="block text-xs text-slate-400 mb-1">Protocol</label>
-        <select name="phonebook_protocol" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200">
-          {% for opt in ['TFTP', 'HTTP', 'HTTPS'] %}
-          <option value="{{ opt }}" {% if cfg.phonebook_protocol == opt %}selected{% endif %}>{{ opt }}</option>
-          {% endfor %}
-        </select>
-      </div>
-      <div>
-        <label class="block text-xs text-slate-400 mb-1">Sort By <span class="text-slate-600 normal-case">(phonebook → sortby)</span></label>
+        <label class="block text-xs text-slate-400 mb-1">Sort By <span class="text-xs text-slate-500 normal-case">(phonebook → sortby)</span></label>
         <select name="phonebook_sortby" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200">
           {% for opt in ['FirstName', 'LastName'] %}
           <option value="{{ opt }}" {% if cfg.phonebook_sortby == opt %}selected{% endif %}>{{ opt }}</option>
@@ -318,7 +313,7 @@
         </select>
       </div>
       <div>
-        <label class="block text-xs text-slate-400 mb-1">Key Function <span class="text-slate-600 normal-case">(phonebook → keyfunction)</span></label>
+        <label class="block text-xs text-slate-400 mb-1">Key Function <span class="text-xs text-slate-500 normal-case">(phonebook → keyfunction)</span></label>
         <select name="phonebook_keyfunction" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200">
           {% for opt in ['LocalPhonebook', 'Default'] %}
           <option value="{{ opt }}" {% if cfg.phonebook_keyfunction == opt %}selected{% endif %}>{{ opt }}</option>
@@ -326,7 +321,7 @@
         </select>
       </div>
       <div>
-        <label class="block text-xs text-slate-400 mb-1">Default Search Mode <span class="text-slate-600 normal-case">(phonebook → defaultsearchmode)</span></label>
+        <label class="block text-xs text-slate-400 mb-1">Default Search Mode <span class="text-xs text-slate-500 normal-case">(phonebook → defaultsearchmode)</span></label>
         <select name="phonebook_defaultsearchmode" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200">
           {% for opt in ['QuickMatch', 'ExactMatch'] %}
           <option value="{{ opt }}" {% if cfg.phonebook_defaultsearchmode == opt %}selected{% endif %}>{{ opt }}</option>
@@ -343,7 +338,7 @@
       <h3 class="text-xs text-slate-400 uppercase tracking-wider mb-4">Date &amp; Time</h3>
       <div class="grid grid-cols-2 gap-5 max-w-lg">
         <div>
-          <label class="block text-xs text-slate-400 mb-1">Date Format <span class="text-slate-600 normal-case">(datetime.format → date)</span></label>
+          <label class="block text-xs text-slate-400 mb-1">Date Format <span class="text-xs text-slate-500 normal-case">(datetime.format → date)</span></label>
           <select name="datetime_date_format" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200">
             {% for opt in ['yyyy-mm-dd', 'mm-dd-yyyy', 'dd-mm-yyyy', 'dddd, MMMM dd', 'MMMM dd, dddd'] %}
             <option value="{{ opt }}" {% if cfg.datetime_date_format == opt %}selected{% endif %}>{{ opt }}</option>
@@ -351,7 +346,7 @@
           </select>
         </div>
         <div>
-          <label class="block text-xs text-slate-400 mb-1">Time Format <span class="text-slate-600 normal-case">(datetime.format → time)</span></label>
+          <label class="block text-xs text-slate-400 mb-1">Time Format <span class="text-xs text-slate-500 normal-case">(datetime.format → time)</span></label>
           <select name="datetime_time_format" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200">
             {% for opt in ['24Hour', '12Hour'] %}
             <option value="{{ opt }}" {% if cfg.datetime_time_format == opt %}selected{% endif %}>{{ opt }}</option>
@@ -359,7 +354,7 @@
           </select>
         </div>
         <div>
-          <label class="block text-xs text-slate-400 mb-1">Show on Status Bar <span class="text-slate-600 normal-case">(datetime → showonstatusbar)</span></label>
+          <label class="block text-xs text-slate-400 mb-1">Show on Status Bar <span class="text-xs text-slate-500 normal-case">(datetime → showonstatusbar)</span></label>
           <select name="datetime_show_on_statusbar" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200">
             {% for val, label in [('noDate', 'No Date'), ('shortDate', 'Short Date'), ('fullDate', 'Full Date')] %}
             <option value="{{ val }}" {% if cfg.datetime_show_on_statusbar == val %}selected{% endif %}>{{ label }}</option>
@@ -390,7 +385,7 @@
     <div class="mt-6 pt-5 border-t border-slate-700">
       <h3 class="text-xs text-slate-400 uppercase tracking-wider mb-4">Wallpaper</h3>
       <div class="max-w-xs">
-        <label class="block text-xs text-slate-400 mb-1">Source <span class="text-slate-600 normal-case">(lcd.wallpaper → source)</span></label>
+        <label class="block text-xs text-slate-400 mb-1">Source <span class="text-xs text-slate-500 normal-case">(lcd.wallpaper → source)</span></label>
         <select name="wallpaper_source" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200">
           {% for opt in ['ColorBackground', 'DefaultBackground', 'DownloadFromServer'] %}
           <option value="{{ opt }}" {% if cfg.wallpaper_source == opt %}selected{% endif %}>{{ opt }}</option>
@@ -409,7 +404,7 @@
         <div class="flex items-center justify-between py-3 border-b border-slate-700">
           <div>
             <p class="text-sm text-slate-200">Notify Challenge</p>
-            <p class="text-xs text-slate-500 mono mt-0.5">sip.notify → challenge</p>
+            <p class="text-xs text-slate-500 mt-0.5">sip.notify → challenge</p>
           </div>
           <label class="relative inline-flex items-center cursor-pointer">
             <input type="checkbox" name="sip_notify_challenge" value="on"
@@ -430,7 +425,7 @@
       <div class="flex items-center justify-between py-3 border-b border-slate-700">
         <div>
           <p class="text-sm text-slate-200">OpenVPN Enabled</p>
-          <p class="text-xs text-slate-500 mono mt-0.5">network.openvpn → enable</p>
+          <p class="text-xs text-slate-500 mt-0.5">network.openvpn → enable</p>
         </div>
         <label class="relative inline-flex items-center cursor-pointer">
           <input type="checkbox" name="vpn_enabled" value="on"
@@ -443,17 +438,17 @@
       </div>
       <div class="grid grid-cols-2 gap-5">
         <div>
-          <label class="block text-xs text-slate-400 mb-1">Server <span class="text-slate-600 normal-case">(server)</span></label>
+          <label class="block text-xs text-slate-400 mb-1">Server <span class="text-xs text-slate-500 normal-case">(network.openvpn → server)</span></label>
           <input type="text" name="vpn_server" value="{{ config.vpn_server or '' }}"
             class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none">
         </div>
         <div>
-          <label class="block text-xs text-slate-400 mb-1">Port <span class="text-slate-600 normal-case">(port)</span></label>
+          <label class="block text-xs text-slate-400 mb-1">Port <span class="text-xs text-slate-500 normal-case">(network.openvpn → port)</span></label>
           <input type="number" name="vpn_port" value="{{ config.vpn_port or 1194 }}"
             class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none">
         </div>
         <div>
-          <label class="block text-xs text-slate-400 mb-1">Transport <span class="text-slate-600 normal-case">(transport)</span></label>
+          <label class="block text-xs text-slate-400 mb-1">Transport <span class="text-xs text-slate-500 normal-case">(network.openvpn → transport)</span></label>
           <select name="vpn_transport" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200">
             {% for opt in ['udp', 'tcp'] %}
             <option value="{{ opt }}" {% if config.vpn_transport == opt %}selected{% endif %}>{{ opt }}</option>
@@ -461,7 +456,7 @@
           </select>
         </div>
         <div>
-          <label class="block text-xs text-slate-400 mb-1">Cipher <span class="text-slate-600 normal-case">(cipermethod)</span></label>
+          <label class="block text-xs text-slate-400 mb-1">Cipher <span class="text-xs text-slate-500 normal-case">(network.openvpn → cipermethod)</span></label>
           <select name="vpn_cipher" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200">
             {% for opt in ['AES256GCM', 'AES128GCM', 'AES256CBC', 'AES128CBC'] %}
             <option value="{{ opt }}" {% if config.vpn_cipher == opt %}selected{% endif %}>{{ opt }}</option>
@@ -471,17 +466,17 @@
       </div>
       <div class="space-y-4 pt-2">
         <div>
-          <label class="block text-xs text-slate-400 mb-1">CA Certificate <span class="text-slate-600 normal-case">(ca)</span></label>
+          <label class="block text-xs text-slate-400 mb-1">CA Certificate <span class="text-xs text-slate-500 normal-case">(network.openvpn → ca)</span></label>
           <textarea name="vpn_ca" rows="3"
             class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none resize-none">{{ config.vpn_ca or '' }}</textarea>
         </div>
         <div>
-          <label class="block text-xs text-slate-400 mb-1">Certificate <span class="text-slate-600 normal-case">(cert)</span></label>
+          <label class="block text-xs text-slate-400 mb-1">Certificate <span class="text-xs text-slate-500 normal-case">(network.openvpn → cert)</span></label>
           <textarea name="vpn_cert" rows="3"
             class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none resize-none">{{ config.vpn_cert or '' }}</textarea>
         </div>
         <div>
-          <label class="block text-xs text-slate-400 mb-1">Client Key <span class="text-slate-600 normal-case">(clientKey)</span></label>
+          <label class="block text-xs text-slate-400 mb-1">Client Key <span class="text-xs text-slate-500 normal-case">(network.openvpn → clientKey)</span></label>
           <textarea name="vpn_client_key" rows="3"
             class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm mono text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none resize-none">{{ config.vpn_client_key or '' }}</textarea>
         </div>
@@ -499,9 +494,9 @@
 </form>
 {% endblock %}
 
-{% macro field(label, name, value, type="text") %}
+{% macro field(label, name, value, type="text", hint="") %}
 <div>
-  <label class="block text-xs text-slate-400 mb-1">{{ label }}</label>
+  <label class="block text-xs text-slate-400 mb-1">{{ label }}{% if hint %} <span class="text-xs text-slate-500 normal-case">({{ hint }})</span>{% endif %}</label>
   <input type="{{ type }}" name="{{ name }}" value="{{ value }}"
     class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:ring-1 focus:ring-sky-500 focus:border-sky-500 outline-none transition-colors">
 </div>
