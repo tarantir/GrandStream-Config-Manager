@@ -213,7 +213,7 @@ async def save_phone_config(request: Request, phone_id: int, db: Session = Depen
 
     # ── WiFi SSIDs ────────────────────────────────────────────────────────────
     existing_ssids = {s.ssid_num: s for s in phone.wifi_ssids}
-    for n in range(1, 5):
+    for n in range(0, 4):
         s = existing_ssids.get(n)
         if s is None:
             s = WifiSsid(phone_id=phone_id, ssid_num=n)

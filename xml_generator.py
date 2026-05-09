@@ -80,7 +80,7 @@ def generate_xml(phone: Phone) -> str:
         _part(wifi, "enable", "1")
 
         ssid_map = {s.ssid_num: s for s in phone.wifi_ssids}
-        for n in range(1, 5):
+        for n in range(0, 4):
             s = ssid_map.get(n)
             if not s or not s.essid:
                 continue

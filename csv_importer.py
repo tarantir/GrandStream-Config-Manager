@@ -79,8 +79,8 @@ def import_csv(content: bytes, db: Session) -> dict:
 
             # WiFi SSIDs
             if not phone.wifi_ssids:
-                db.add(WifiSsid(phone_id=phone.id, ssid_num=1, enabled=True))
-                for n in range(2, 5):
+                db.add(WifiSsid(phone_id=phone.id, ssid_num=0, enabled=True))
+                for n in range(1, 4):
                     db.add(WifiSsid(phone_id=phone.id, ssid_num=n, enabled=False))
 
             # SIP accounts

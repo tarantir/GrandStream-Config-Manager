@@ -79,12 +79,12 @@ def init_db():
                 {"pid": phone.id}
             ).fetchone()
             db.add(WifiSsid(
-                phone_id=phone.id, ssid_num=1, enabled=True,
+                phone_id=phone.id, ssid_num=0, enabled=True,
                 essid=row[0] if row and row[0] else "",
                 psk=row[1] if row and row[1] else "",
                 key_mgmt=row[2] if row and row[2] else "WPA_PSK",
             ))
-            for n in range(2, 5):
+            for n in range(1, 4):
                 db.add(WifiSsid(phone_id=phone.id, ssid_num=n, enabled=False))
         db.commit()
     finally:
