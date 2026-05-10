@@ -30,7 +30,7 @@ This tool **generates XML configuration files only**. It does not include a TFTP
 ## Features
 
 - **Phone inventory** — import phones via CSV or existing XML config files
-- **Per-phone configuration** — SIP accounts (up to 4), WiFi SSIDs (up to 4), virtual programmable keys, idle/dialing softkey layout customization, phonebook, date/time, screensaver enable, wallpaper source, web access security, and OpenVPN
+- **Per-phone configuration** — SIP accounts (up to 4), WiFi SSIDs (up to 4), virtual programmable keys, custom softkey slots (N ≥ 2), idle/dialing softkey layout customization, phonebook, date/time, screensaver enable, wallpaper source, web access security, and OpenVPN
 - **SIP account passwords** — per-account SIP password stored and emitted in the provisioning XML
 - **WiFi** — enable/disable, country code (`network.wifi.countryCode`), and up to 4 SSIDs (ESSID, PSK, key management, hidden); key management stored as text (`WPA_PSK`, `OPEN`, etc.) and converted to GrandStream numeric values on XML output
 - **OpenVPN** — per-phone VPN configuration (server, port, transport, cipher, CA cert, client cert, client key)
@@ -115,6 +115,7 @@ Most XML output values come from the database and are editable in the UI. A few 
 | `sip_accounts` | `account_num`, `enabled`, `extension`, `subscriber_name`, `display_name`, `password`, `sip_server_1`, `sip_server_2`, `voicemail_number` | SIP accounts (up to 4 per endpoint) |
 | `wifi_ssids` | `ssid_num`, `enabled`, `essid`, `psk`, `key_mgmt`, `hidden` | WiFi SSID entries (up to 4 per endpoint; GRP2612W only) |
 | `vpk_keys` | `slot`, `keymode`, `description`, `value`, `account` | Virtual programmable key assignments |
+| `softkey_slots` | `slot`, `mode`, `description`, `value`, `account` | Custom softkey slot definitions (N ≥ 2); each row emits both `pks.scsoftkey.N` and `pks.softkey.N` items in the provisioning XML |
 | `phonebook_entries` | `first_name`, `phone_number`, `account_index` | Global phone book entries |
 | `app_settings` | `key`, `value` | Application-level settings (output dir, defaults) |
 
@@ -160,6 +161,10 @@ This tool uses the XML provisioning format (`gs_provision` / `config` / `item` /
 | Dialing custom softkeys enable | unknown | Yes/No |
 | Dialing softkey 1 mode | unknown | text (Default, Phonebook, …) |
 | Dialing layout state | unknown | comma-separated token list |
+| Custom softkey slot N → mode | unknown | text (e.g. Intercom) |
+| Custom softkey slot N → description | unknown | string (e.g. Wakeup) |
+| Custom softkey slot N → value | unknown | string (e.g. *68) |
+| Custom softkey slot N → account | unknown | string (e.g. Account1) |
 
 ## Phone Models
 

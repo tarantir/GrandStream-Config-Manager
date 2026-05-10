@@ -27,6 +27,7 @@ class Phone(Base):
 
     config = relationship("PhoneConfig", back_populates="phone", uselist=False, cascade="all, delete-orphan")
     vpk_keys = relationship("VpkKey", back_populates="phone", cascade="all, delete-orphan", order_by="VpkKey.slot")
+    softkey_slots = relationship("SoftkeySlot", back_populates="phone", cascade="all, delete-orphan", order_by="SoftkeySlot.slot")
     sip_accounts = relationship("SipAccount", back_populates="phone", cascade="all, delete-orphan", order_by="SipAccount.account_num")
     wifi_ssids = relationship("WifiSsid", back_populates="phone", cascade="all, delete-orphan", order_by="WifiSsid.ssid_num")
 
@@ -144,6 +145,30 @@ class VpkKey(Base):
     deleted = Column(Boolean, **_deleted)
 
     phone = relationship("Phone", back_populates="vpk_keys")
+
+
+class SoftkeySlot(Base):
+    """Custom softkey slot definitions (pks.scsoftkey.N / pks.softkey.N, N ≥ 2).
+
+    Each row defines one custom softkey button that appears on the phone screen.
+    The same `mode`, `description`, and `value` are emitted for both the idle-screen
+    scsoftkey item and the dialing-screen softkey item; `account` is only emitted
+    in the pks.softkey.N item.
+    """
+    __tablename__ = "softkey_slots"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    endpoint_id = Column(Integer, ForeignKey("endpoints.id"), nullable=False)
+    slot = Column(Integer)                       # 2, 3, 4, 5
+    mode = Column(Text, default="")              # pks.scsoftkey.N → mode  /  pks.softkey.N → keymode
+    description = Column(Text, default="")       # pks.scsoftkey.N → description  /  pks.softkey.N → description
+    value = Column(Text, default="")             # pks.scsoftkey.N → value  /  pks.softkey.N → value
+    account = Column(Text, default="Account1")   # pks.softkey.N → account only
+    created_at = Column(DateTime, **_ts)
+    updated_at = Column(DateTime, **_ts_update)
+    deleted = Column(Boolean, **_deleted)
+
+    phone = relationship("Phone", back_populates="softkey_slots")
 
 
 class PhonebookEntry(Base):

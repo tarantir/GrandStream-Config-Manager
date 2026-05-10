@@ -88,12 +88,21 @@ Idle/Dialing softkey layout (Keys tab — pre-date pvalue docs, not in release n
   softkeys.layout → enable          → pvalue unknown (Yes/No)
   softkeys.layout.state → indialing → pvalue unknown (comma-separated token list)
   pks.softkey.1 → keymode           → pvalue unknown (text: Default, Phonebook, …)
+
+Custom softkey slots (N ≥ 2, softkey_slots table):
+  pks.scsoftkey.N → mode        → pvalue unknown (e.g. Intercom)
+  pks.scsoftkey.N → description → pvalue unknown (display label)
+  pks.scsoftkey.N → value       → pvalue unknown (dial string, e.g. *68)
+  pks.softkey.N → keymode       → pvalue unknown (same as scsoftkey.N → mode)
+  pks.softkey.N → account       → pvalue unknown (e.g. Account1)
+  pks.softkey.N → description   → pvalue unknown
+  pks.softkey.N → value         → pvalue unknown
 """
 
 import os
 from datetime import datetime
 import xml.etree.ElementTree as ET
-from models import Phone, PhoneConfig, VpkKey
+from models import Phone, PhoneConfig, SoftkeySlot, VpkKey
 
 
 def _sub(parent: ET.Element, tag: str, text: str = "") -> ET.Element:
@@ -289,6 +298,27 @@ def generate_xml(phone: Phone) -> str:
         dial_layout = ET.SubElement(config, "item")
         dial_layout.set("name", "softkeys.layout.state")
         _part(dial_layout, "indialing", cfg.dialing_layout_state or "Custom1,EndCall,ReConf,ConfRoom,Redial,Dial,Backspace")  # pvalue unknown
+
+    # Custom softkey slots (pks.scsoftkey.N / pks.softkey.N, N ≥ 2; pvalues unknown)
+    for sk in sorted(phone.softkey_slots, key=lambda k: k.slot):
+        if not sk.mode:
+            continue
+        scskey = ET.SubElement(config, "item")
+        scskey.set("name", f"pks.scsoftkey.{sk.slot}")
+        _part(scskey, "mode", sk.mode)
+        if sk.description:
+            _part(scskey, "description", sk.description)
+        if sk.value:
+            _part(scskey, "value", sk.value)
+
+        softkey = ET.SubElement(config, "item")
+        softkey.set("name", f"pks.softkey.{sk.slot}")
+        _part(softkey, "keymode", sk.mode)
+        _part(softkey, "account", sk.account or "Account1")
+        if sk.description:
+            _part(softkey, "description", sk.description)
+        if sk.value:
+            _part(softkey, "value", sk.value)
 
     ET.indent(root, space="    ")
     declaration = '<?xml version="1.0" encoding="UTF-8"?>\n'

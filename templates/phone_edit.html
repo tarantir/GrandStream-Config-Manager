@@ -286,6 +286,60 @@
       </table>
     </div>
 
+    <!-- Custom Softkey Slots -->
+    <div class="mt-5 bg-white border border-[#e0e4e8] rounded-xl overflow-hidden">
+      <div class="px-4 py-3 bg-[#f4f6f8] border-b border-[#e0e4e8]">
+        <h3 class="text-sm font-semibold text-[#1a2332]">Custom Softkey Slots <span class="text-xs font-normal text-[#9aabb8] mono">(pks.scsoftkey.N / pks.softkey.N, N ≥ 2)</span></h3>
+      </div>
+      <table class="w-full text-sm">
+        <thead class="bg-[#f4f6f8]">
+          <tr class="border-b border-[#e0e4e8] text-[#5a6a7a] text-xs uppercase tracking-wider">
+            <th class="px-4 py-3 text-left w-12">Slot</th>
+            <th class="px-4 py-3 text-left w-36">Mode <span class="normal-case font-normal text-[#9aabb8] mono">(mode / keymode)</span></th>
+            <th class="px-4 py-3 text-left">Description <span class="normal-case font-normal text-[#9aabb8] mono">(description)</span></th>
+            <th class="px-4 py-3 text-left">Value <span class="normal-case font-normal text-[#9aabb8] mono">(value)</span></th>
+            <th class="px-4 py-3 text-left w-36">Account <span class="normal-case font-normal text-[#9aabb8] mono">(account)</span></th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-[#e0e4e8]">
+          {% for slot in range(2, 6) %}
+          {% set sk = softkey_slots.get(slot) %}
+          <tr class="hover:bg-[#f4f6f8] transition-colors">
+            <td class="px-4 py-2 text-[#5a6a7a] mono text-xs font-medium">{{ slot }}</td>
+            <td class="px-4 py-2">
+              <select name="sk_{{ slot }}_mode"
+                class="w-full bg-white border border-[#e0e4e8] rounded px-2 py-1.5 text-xs text-[#1a2332] focus:outline-none focus:border-[#00679e]">
+                {% for opt in ['', 'Intercom', 'Default', 'Phonebook', 'History', 'ForwardAll', 'Redial', 'SpeedDial', 'BLF', 'None'] %}
+                <option value="{{ opt }}" {% if sk and sk.mode == opt %}selected{% elif not sk and opt == '' %}selected{% endif %}>{{ opt if opt else '— unset —' }}</option>
+                {% endfor %}
+              </select>
+            </td>
+            <td class="px-4 py-2">
+              <input type="text" name="sk_{{ slot }}_description"
+                value="{{ sk.description if sk else '' }}"
+                placeholder="e.g. Wakeup"
+                class="w-full bg-white border border-[#e0e4e8] rounded px-2 py-1.5 text-xs text-[#1a2332] focus:outline-none focus:border-[#00679e]">
+            </td>
+            <td class="px-4 py-2">
+              <input type="text" name="sk_{{ slot }}_value"
+                value="{{ sk.value if sk else '' }}"
+                placeholder="e.g. *68"
+                class="w-full bg-white border border-[#e0e4e8] rounded px-2 py-1.5 text-xs mono text-[#1a2332] focus:outline-none focus:border-[#00679e]">
+            </td>
+            <td class="px-4 py-2">
+              <select name="sk_{{ slot }}_account"
+                class="w-full bg-white border border-[#e0e4e8] rounded px-2 py-1.5 text-xs text-[#1a2332] focus:outline-none focus:border-[#00679e]">
+                {% for acc in ['Account1', 'Account2', 'Account3', 'Account4'] %}
+                <option value="{{ acc }}" {% if sk and sk.account == acc %}selected{% elif not sk and acc == 'Account1' %}selected{% endif %}>{{ acc }}</option>
+                {% endfor %}
+              </select>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
     <!-- Idle Screen Customizations -->
     <div class="mt-5 bg-white border border-[#e0e4e8] rounded-xl p-5">
       <h3 class="text-sm font-semibold text-[#1a2332] mb-4">Idle Screen Customizations</h3>

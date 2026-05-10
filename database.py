@@ -92,7 +92,7 @@ def init_db():
         _add_column_if_missing(conn, "endpoint_config", "dialing_softkey_mode",          "TEXT DEFAULT 'Default'")
 
         for table in ("endpoints", "sip_accounts", "wifi_ssids", "endpoint_config",
-                      "vpk_keys", "phonebook_entries", "app_settings"):
+                      "vpk_keys", "softkey_slots", "phonebook_entries", "app_settings"):
             _add_column_if_missing(conn, table, "created_at", "DATETIME")
             _add_column_if_missing(conn, table, "updated_at", "DATETIME")
             _add_column_if_missing(conn, table, "deleted",    "BOOLEAN DEFAULT 0")
@@ -204,6 +204,10 @@ def init_db():
         conn.execute(text(
             "CREATE INDEX IF NOT EXISTS idx_vpk_keys_endpoint_id "
             "ON vpk_keys(endpoint_id)"
+        ))
+        conn.execute(text(
+            "CREATE INDEX IF NOT EXISTS idx_softkey_slots_endpoint_id "
+            "ON softkey_slots(endpoint_id)"
         ))
         conn.execute(text(
             "CREATE INDEX IF NOT EXISTS idx_endpoint_config_endpoint_id "

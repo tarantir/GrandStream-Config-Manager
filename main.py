@@ -10,7 +10,7 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 
 from database import get_db, init_db
-from models import AppSetting, Phone, PhoneConfig, PhonebookEntry, SipAccount, VpkKey, WifiSsid
+from models import AppSetting, Phone, PhoneConfig, PhonebookEntry, SipAccount, SoftkeySlot, VpkKey, WifiSsid
 from xml_generator import generate_xml, write_xml
 from csv_importer import import_csv, export_csv
 from xml_importer import import_xml_bulk, import_xml_for_phone, parse_xml
@@ -127,6 +127,7 @@ async def edit_phone(request: Request, endpoint_id: int, db: Session = Depends(g
 
     sip_accounts = {a.account_num: a for a in phone.sip_accounts}
     wifi_ssids = {s.ssid_num: s for s in phone.wifi_ssids}
+    softkey_slots = {sk.slot: sk for sk in phone.softkey_slots}
     response = templates.TemplateResponse("phone_edit.html", {
         "request": request,
         "phone": phone,
@@ -134,6 +135,7 @@ async def edit_phone(request: Request, endpoint_id: int, db: Session = Depends(g
         "vpk_keys": phone.vpk_keys,
         "sip_accounts": sip_accounts,
         "wifi_ssids": wifi_ssids,
+        "softkey_slots": softkey_slots,
         "flash": flash,
     })
     response.delete_cookie("flash_msg")
@@ -268,6 +270,31 @@ async def save_phone_config(request: Request, endpoint_id: int, db: Session = De
                 account=account,
             )
             db.add(vpk)
+
+    # ── Softkey slots ─────────────────────────────────────────────────────────
+    existing_sks = {sk.slot: sk for sk in phone.softkey_slots}
+    for slot in range(2, 6):  # slots 2–5
+        mode        = form_data.get(f"sk_{slot}_mode", "")
+        description = form_data.get(f"sk_{slot}_description", "")
+        value       = form_data.get(f"sk_{slot}_value", "")
+        account     = form_data.get(f"sk_{slot}_account", "Account1")
+
+        if slot in existing_sks:
+            sk = existing_sks[slot]
+            sk.mode        = mode
+            sk.description = description
+            sk.value       = value
+            sk.account     = account
+        else:
+            sk = SoftkeySlot(
+                endpoint_id=endpoint_id,
+                slot=slot,
+                mode=mode,
+                description=description,
+                value=value,
+                account=account,
+            )
+            db.add(sk)
 
     db.commit()
 
