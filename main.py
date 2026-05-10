@@ -128,6 +128,17 @@ async def edit_phone(request: Request, endpoint_id: int, db: Session = Depends(g
     sip_accounts = {a.account_num: a for a in phone.sip_accounts}
     wifi_ssids = {s.ssid_num: s for s in phone.wifi_ssids}
     softkey_slots = {sk.slot: sk for sk in phone.softkey_slots}
+    if 1 not in softkey_slots and phone.config and (
+            phone.config.idle_sc_softkey_mode or phone.config.dialing_softkey_mode):
+        softkey_slots[1] = SoftkeySlot(
+            endpoint_id=phone.id,
+            slot=1,
+            idle_mode=phone.config.idle_sc_softkey_mode or "",
+            dialing_mode=phone.config.dialing_softkey_mode or "",
+            description="",
+            value="",
+            account="Account1",
+        )
     response = templates.TemplateResponse("phone_edit.html", {
         "request": request,
         "phone": phone,
@@ -218,12 +229,10 @@ async def save_phone_config(request: Request, endpoint_id: int, db: Session = De
     except (ValueError, TypeError):
         cfg.webaccess_accesstimeout = 60
 
-    cfg.idle_sc_softkey_mode       = form_data.get("idle_sc_softkey_mode", "Default")
     cfg.idle_softkey_layout_enable = form_data.get("idle_softkey_layout_enable", "Yes")
-    cfg.idle_layout_state          = form_data.get("idle_layout_state", "Next,Custom1,History,ForwardAll,Redial")
+    cfg.idle_layout_state          = form_data.get("idle_layout_state", "Next,Custom1,Custom2,Custom3,History,ForwardAll,Redial")
     cfg.dialing_softkeys_enable = form_data.get("dialing_softkeys_enable", "Yes")
-    cfg.dialing_layout_state  = form_data.get("dialing_layout_state", "Custom1,EndCall,ReConf,ConfRoom,Redial,Dial,Backspace")
-    cfg.dialing_softkey_mode  = form_data.get("dialing_softkey_mode", "Default")
+    cfg.dialing_layout_state  = form_data.get("dialing_layout_state", "Custom1,Custom2,Custom3,EndCall,ReConf,ConfRoom,Redial,Dial,Backspace")
 
     if phone.model == "GRP2613":
         cfg.wifi_enabled = False
@@ -273,23 +282,41 @@ async def save_phone_config(request: Request, endpoint_id: int, db: Session = De
 
     # ── Softkey slots ─────────────────────────────────────────────────────────
     existing_sks = {sk.slot: sk for sk in phone.softkey_slots}
-    for slot in range(2, 6):  # slots 2–5
-        mode        = form_data.get(f"sk_{slot}_mode", "")
-        description = form_data.get(f"sk_{slot}_description", "")
-        value       = form_data.get(f"sk_{slot}_value", "")
-        account     = form_data.get(f"sk_{slot}_account", "Account1")
+    if 1 not in existing_sks and phone.config and (
+            (phone.config.idle_sc_softkey_mode and phone.config.idle_sc_softkey_mode != "Default")
+            or (phone.config.dialing_softkey_mode and phone.config.dialing_softkey_mode != "Default")):
+        sk = SoftkeySlot(
+            endpoint_id=endpoint_id,
+            slot=1,
+            idle_mode=phone.config.idle_sc_softkey_mode or "",
+            dialing_mode=phone.config.dialing_softkey_mode or "",
+            description="",
+            value="",
+            account="Account1",
+        )
+        db.add(sk)
+        existing_sks[1] = sk
+
+    for slot in range(1, 4):  # slots 1–3
+        idle_mode    = form_data.get(f"sk_{slot}_idle_mode", "")
+        dialing_mode = form_data.get(f"sk_{slot}_dialing_mode", "")
+        description  = form_data.get(f"sk_{slot}_description", "")
+        value        = form_data.get(f"sk_{slot}_value", "")
+        account      = form_data.get(f"sk_{slot}_account", "Account1")
 
         if slot in existing_sks:
             sk = existing_sks[slot]
-            sk.mode        = mode
+            sk.idle_mode = idle_mode
+            sk.dialing_mode = dialing_mode
             sk.description = description
-            sk.value       = value
-            sk.account     = account
+            sk.value = value
+            sk.account = account
         else:
             sk = SoftkeySlot(
                 endpoint_id=endpoint_id,
                 slot=slot,
-                mode=mode,
+                idle_mode=idle_mode,
+                dialing_mode=dialing_mode,
                 description=description,
                 value=value,
                 account=account,

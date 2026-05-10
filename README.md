@@ -115,7 +115,7 @@ Most XML output values come from the database and are editable in the UI. A few 
 | `sip_accounts` | `account_num`, `enabled`, `extension`, `subscriber_name`, `display_name`, `password`, `sip_server_1`, `sip_server_2`, `voicemail_number` | SIP accounts (up to 4 per endpoint) |
 | `wifi_ssids` | `ssid_num`, `enabled`, `essid`, `psk`, `key_mgmt`, `hidden` | WiFi SSID entries (up to 4 per endpoint; GRP2612W only) |
 | `vpk_keys` | `slot`, `keymode`, `description`, `value`, `account` | Virtual programmable key assignments |
-| `softkey_slots` | `slot`, `mode`, `description`, `value`, `account` | Custom softkey slot definitions (N ≥ 2); each row emits both `pks.scsoftkey.N` and `pks.softkey.N` items in the provisioning XML |
+| `softkey_slots` | `slot`, `idle_mode`, `dialing_mode`, `mode`, `description`, `value`, `account` | Custom softkey slot definitions (N = 1–3); each row emits both `pks.scsoftkey.N` and `pks.softkey.N` items in the provisioning XML |
 | `phonebook_entries` | `first_name`, `phone_number`, `account_index` | Global phone book entries |
 | `app_settings` | `key`, `value` | Application-level settings (output dir, defaults) |
 
@@ -156,12 +156,14 @@ This tool uses the XML provisioning format (`gs_provision` / `config` / `item` /
 | OpenVPN server | P7051 | string |
 | OpenVPN port | P7052 | integer |
 | Idle layout enable | unknown | Yes/No |
-| Idle SC softkey mode | unknown | text (Default, Phonebook, …) |
+| Idle SC softkey mode | unknown | text (Default, Phonebook, …) — legacy field migrated into `softkey_slots` |
 | Idle layout state | unknown | comma-separated token list |
 | Dialing custom softkeys enable | unknown | Yes/No |
-| Dialing softkey 1 mode | unknown | text (Default, Phonebook, …) |
+| Dialing softkey 1 mode | unknown | text (Default, Phonebook, …) — legacy field migrated into `softkey_slots` |
 | Dialing layout state | unknown | comma-separated token list |
-| Custom softkey slot N → mode | unknown | text (e.g. Intercom) |
+| Custom softkey slot N idle mode | unknown | text (Default, Phonebook, …) |
+| Custom softkey slot N dialing mode | unknown | text (Default, Phonebook, …) |
+| Custom softkey slot N → mode | unknown | text (shared fallback if screen-specific mode is unset) |
 | Custom softkey slot N → description | unknown | string (e.g. Wakeup) |
 | Custom softkey slot N → value | unknown | string (e.g. *68) |
 | Custom softkey slot N → account | unknown | string (e.g. Account1) |

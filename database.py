@@ -88,8 +88,11 @@ def init_db():
         _add_column_if_missing(conn, "endpoint_config", "idle_softkey_layout_enable",    "TEXT DEFAULT 'Yes'")
         _add_column_if_missing(conn, "endpoint_config", "idle_layout_state",             "TEXT DEFAULT 'Next,Custom1,History,ForwardAll,Redial'")
         _add_column_if_missing(conn, "endpoint_config", "dialing_softkeys_enable",       "TEXT DEFAULT 'Yes'")
-        _add_column_if_missing(conn, "endpoint_config", "dialing_layout_state",          "TEXT DEFAULT 'Custom1,EndCall,ReConf,ConfRoom,Redial,Dial,Backspace'")
+        _add_column_if_missing(conn, "endpoint_config", "dialing_layout_state",          "TEXT DEFAULT 'Custom1,Custom2,Custom3,EndCall,ReConf,ConfRoom,Redial,Dial,Backspace'")
         _add_column_if_missing(conn, "endpoint_config", "dialing_softkey_mode",          "TEXT DEFAULT 'Default'")
+        _add_column_if_missing(conn, "softkey_slots",      "idle_mode",                  "TEXT DEFAULT ''")
+        _add_column_if_missing(conn, "softkey_slots",      "dialing_mode",               "TEXT DEFAULT ''")
+        _add_column_if_missing(conn, "softkey_slots",      "screen_assignment",         "TEXT DEFAULT ''")
 
         for table in ("endpoints", "sip_accounts", "wifi_ssids", "endpoint_config",
                       "vpk_keys", "softkey_slots", "phonebook_entries", "app_settings"):

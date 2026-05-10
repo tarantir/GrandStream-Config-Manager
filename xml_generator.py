@@ -279,12 +279,9 @@ def generate_xml(phone: Phone) -> str:
     idl.set("name", "softkey.idlelayout")
     _part(idl, "enable", idle_layout_enable)                       # pvalue unknown
     if idle_layout_enable == "Yes":
-        sc_sk = ET.SubElement(config, "item")
-        sc_sk.set("name", "pks.scsoftkey.1")
-        _part(sc_sk, "mode", cfg.idle_sc_softkey_mode or "Default")  # pvalue unknown
         idle_layout = ET.SubElement(config, "item")
         idle_layout.set("name", "softkey.idlelayout.state")
-        _part(idle_layout, "inidle", cfg.idle_layout_state or "Next,Custom1,History,ForwardAll,Redial")  # pvalue unknown
+        _part(idle_layout, "inidle", cfg.idle_layout_state or "Next,Custom1,Custom2,Custom3,History,ForwardAll,Redial")  # pvalue unknown
 
     # Dialing Screen Customizations (pvalues unknown — older params predating pvalue docs)
     dialing_enable = cfg.dialing_softkeys_enable or "Yes"
@@ -292,28 +289,29 @@ def generate_xml(phone: Phone) -> str:
     sk_layout.set("name", "softkeys.layout")
     _part(sk_layout, "enable", dialing_enable)                     # pvalue unknown
     if dialing_enable == "Yes":
-        sk1 = ET.SubElement(config, "item")
-        sk1.set("name", "pks.softkey.1")
-        _part(sk1, "keymode", cfg.dialing_softkey_mode or "Default")  # pvalue unknown
         dial_layout = ET.SubElement(config, "item")
         dial_layout.set("name", "softkeys.layout.state")
-        _part(dial_layout, "indialing", cfg.dialing_layout_state or "Custom1,EndCall,ReConf,ConfRoom,Redial,Dial,Backspace")  # pvalue unknown
+        _part(dial_layout, "indialing", cfg.dialing_layout_state or "Custom1,Custom2,Custom3,EndCall,ReConf,ConfRoom,Redial,Dial,Backspace")  # pvalue unknown
 
-    # Custom softkey slots (pks.scsoftkey.N / pks.softkey.N, N ≥ 2; pvalues unknown)
+    # Custom softkey slots (pks.scsoftkey.N / pks.softkey.N, N ≥ 1; pvalues unknown)
     for sk in sorted(phone.softkey_slots, key=lambda k: k.slot):
-        if not sk.mode:
+        if sk.slot < 1 or sk.slot > 3:
             continue
-        scskey = ET.SubElement(config, "item")
-        scskey.set("name", f"pks.scsoftkey.{sk.slot}")
-        _part(scskey, "mode", sk.mode)
-        if sk.description:
-            _part(scskey, "description", sk.description)
-        if sk.value:
-            _part(scskey, "value", sk.value)
+        if not (sk.idle_mode or sk.dialing_mode or sk.mode or sk.description or sk.value):
+            continue
+
+        if sk.idle_mode or sk.mode:
+            scskey = ET.SubElement(config, "item")
+            scskey.set("name", f"pks.scsoftkey.{sk.slot}")
+            _part(scskey, "mode", sk.idle_mode or sk.mode or "Default")
+            if sk.description:
+                _part(scskey, "description", sk.description)
+            if sk.value:
+                _part(scskey, "value", sk.value)
 
         softkey = ET.SubElement(config, "item")
         softkey.set("name", f"pks.softkey.{sk.slot}")
-        _part(softkey, "keymode", sk.mode)
+        _part(softkey, "keymode", sk.dialing_mode or sk.mode or "Default")
         _part(softkey, "account", sk.account or "Account1")
         if sk.description:
             _part(softkey, "description", sk.description)

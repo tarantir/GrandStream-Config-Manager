@@ -115,13 +115,13 @@ class PhoneConfig(Base):
     webaccess_authtimeout = Column(Integer, default=60)
     webaccess_accesstimeout = Column(Integer, default=60)
     # Idle Screen Customizations (Keys tab)
-    idle_sc_softkey_mode  = Column(Text, default="Default")                               # pks.scsoftkey.1 → mode
+    idle_sc_softkey_mode  = Column(Text, default="Default")                               # legacy pks.scsoftkey.1 → mode (now migrated into softkey_slots slot 1)
     idle_softkey_layout_enable = Column(Text, default="Yes")                              # softkey.idlelayout → enable
-    idle_layout_state     = Column(Text, default="Next,Custom1,History,ForwardAll,Redial")  # softkey.idlelayout.state → inidle (only when enable=Yes)
+    idle_layout_state     = Column(Text, default="Next,Custom1,Custom2,Custom3,History,ForwardAll,Redial")  # softkey.idlelayout.state → inidle (only when enable=Yes)
     # Dialing Screen Customizations (Keys tab)
     dialing_softkeys_enable = Column(Text, default="Yes")                               # softkeys.layout → enable
-    dialing_layout_state    = Column(Text, default="Custom1,EndCall,ReConf,ConfRoom,Redial,Dial,Backspace")  # softkeys.layout.state → indialing
-    dialing_softkey_mode    = Column(Text, default="Default")                           # pks.softkey.1 → keymode
+    dialing_layout_state    = Column(Text, default="Custom1,Custom2,Custom3,EndCall,ReConf,ConfRoom,Redial,Dial,Backspace")  # softkeys.layout.state → indialing
+    dialing_softkey_mode    = Column(Text, default="Default")                           # legacy pks.softkey.1 → keymode (now migrated into softkey_slots slot 1)
     created_at = Column(DateTime, **_ts)
     updated_at = Column(DateTime, **_ts_update)
     deleted = Column(Boolean, **_deleted)
@@ -148,19 +148,20 @@ class VpkKey(Base):
 
 
 class SoftkeySlot(Base):
-    """Custom softkey slot definitions (pks.scsoftkey.N / pks.softkey.N, N ≥ 2).
+    """Custom softkey slot definitions (pks.scsoftkey.N / pks.softkey.N, N ≥ 1).
 
-    Each row defines one custom softkey button that appears on the phone screen.
-    The same `mode`, `description`, and `value` are emitted for both the idle-screen
-    scsoftkey item and the dialing-screen softkey item; `account` is only emitted
-    in the pks.softkey.N item.
+    Each row defines one custom softkey button that appears on both the idle and
+    dialing screens. Idle and dialing modes can differ for the same slot, while
+    description, value, and account are shared.
     """
     __tablename__ = "softkey_slots"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     endpoint_id = Column(Integer, ForeignKey("endpoints.id"), nullable=False)
-    slot = Column(Integer)                       # 2, 3, 4, 5
-    mode = Column(Text, default="")              # pks.scsoftkey.N → mode  /  pks.softkey.N → keymode
+    slot = Column(Integer)                       # 1, 2, 3
+    mode = Column(Text, default="")              # shared fallback if screen-specific modes are not set
+    idle_mode = Column(Text, default="")         # pks.scsoftkey.N → mode
+    dialing_mode = Column(Text, default="")      # pks.softkey.N → keymode
     description = Column(Text, default="")       # pks.scsoftkey.N → description  /  pks.softkey.N → description
     value = Column(Text, default="")             # pks.scsoftkey.N → value  /  pks.softkey.N → value
     account = Column(Text, default="Account1")   # pks.softkey.N → account only
