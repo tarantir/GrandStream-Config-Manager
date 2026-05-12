@@ -269,9 +269,9 @@ def generate_xml(phone: Phone) -> str:
     # Web access security — session timeouts
     sec = ET.SubElement(config, "item")
     sec.set("name", "security.webaccess.session")
-    _part(sec, "timeout",       str(cfg.webaccess_timeout or 60))
-    _part(sec, "authtimeout",   str(cfg.webaccess_authtimeout or 60))
-    _part(sec, "accesstimeout", str(cfg.webaccess_accesstimeout or 60))
+    _part(sec, "timeout",       str(cfg.webaccess_timeout       if cfg.webaccess_timeout       is not None else 60))
+    _part(sec, "authtimeout",   str(cfg.webaccess_authtimeout   if cfg.webaccess_authtimeout   is not None else 60))
+    _part(sec, "accesstimeout", str(cfg.webaccess_accesstimeout if cfg.webaccess_accesstimeout is not None else 60))
 
     # Idle Screen Customizations (pvalues unknown — older params predating pvalue docs)
     idle_layout_enable = cfg.idle_softkey_layout_enable or "Yes"
