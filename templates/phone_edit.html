@@ -133,6 +133,36 @@
           </div>
         </div>
       </div>
+      <!-- Transport / URI scheme / SRTP -->
+      <div class="grid grid-cols-2 gap-x-8 gap-y-5 mt-5">
+        <div>
+          <label class="block text-xs text-[#5a6a7a] mb-1">Transport <span class="text-xs text-[#9aabb8] normal-case mono">(account.{{ n }}.sip → transport)</span></label>
+          <select name="acct_{{ n }}_transport"
+            class="w-full bg-white border border-[#d1dbe6] rounded-lg px-3 py-2 text-sm text-[#1a2332] focus:ring-1 focus:ring-[#00679e] focus:border-[#00679e] outline-none transition-colors">
+            {% for opt in ["UDP", "TLS Or Tcp"] %}
+            <option value="{{ opt }}" {% if (acct.transport if acct else 'UDP') == opt %}selected{% endif %}>{{ opt }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs text-[#5a6a7a] mb-1">URI Scheme When Using TLS <span class="text-xs text-[#9aabb8] normal-case mono">(account.{{ n }}.sip → urischemewhenusingtls)</span></label>
+          <select name="acct_{{ n }}_uri_scheme_when_using_tls"
+            class="w-full bg-white border border-[#d1dbe6] rounded-lg px-3 py-2 text-sm text-[#1a2332] focus:ring-1 focus:ring-[#00679e] focus:border-[#00679e] outline-none transition-colors">
+            {% for opt in ["sips", "sip"] %}
+            <option value="{{ opt }}" {% if (acct.uri_scheme_when_using_tls if acct else 'sips') == opt %}selected{% endif %}>{{ opt }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-span-2">
+          <label class="block text-xs text-[#5a6a7a] mb-1">SRTP Mode <span class="text-xs text-[#9aabb8] normal-case mono">(account.{{ n }}.audio → srtpmode)</span></label>
+          <select name="acct_{{ n }}_srtp_mode"
+            class="w-full bg-white border border-[#d1dbe6] rounded-lg px-3 py-2 text-sm text-[#1a2332] focus:ring-1 focus:ring-[#00679e] focus:border-[#00679e] outline-none transition-colors">
+            {% for opt in ["Disabled", "Enabled", "EnabledAndForced"] %}
+            <option value="{{ opt }}" {% if (acct.srtp_mode if acct else 'Disabled') == opt %}selected{% endif %}>{{ opt }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
     </div>
     {% endfor %}
 

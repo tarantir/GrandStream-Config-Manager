@@ -44,6 +44,9 @@ Account N fields (N=1 shown; offsets apply for accounts 2–4):
   account.1.sip.voicemail.number → P33      (acct2 P426, acct3 P526, acct4 P626)
   account.1.sip.server.1.address → P47      (acct2 P402, acct3 P502, acct4 P602)
   account.1.sip.server.2.address → P2312    (acct2 P2412, acct3 P2512, acct4 P2612)
+  account.1.sip.transport           → P? — UDP | TLS Or Tcp
+  account.1.sip.urischemewhenusingtls → P? — sips | sip
+  account.1.audio.srtpmode          → P? — Disabled | Enabled | EnabledAndForced
 
 WiFi:
   network.wifi.countryCode.public → P7831
@@ -131,7 +134,9 @@ def _emit_account(config: ET.Element, n: int, acct) -> None:
 
     sip = ET.SubElement(config, "item")
     sip.set("name", f"account.{n}.sip")
-    _part(sip, "userid", ext)        # P36 / P404 / P504 / P604
+    _part(sip, "userid", ext)                                                  # P36 / P404 / P504 / P604
+    _part(sip, "transport", acct.transport or "UDP")                           # P?
+    _part(sip, "urischemewhenusingtls", acct.uri_scheme_when_using_tls or "sips")  # P?
 
     sub = ET.SubElement(config, "item")
     sub.set("name", f"account.{n}.sip.subscriber")
@@ -150,6 +155,10 @@ def _emit_account(config: ET.Element, n: int, acct) -> None:
     srv2 = ET.SubElement(config, "item")
     srv2.set("name", f"account.{n}.sip.server.2")
     _part(srv2, "address", acct.sip_server_2 or "")       # P2312 / P2412 / P2512 / P2612
+
+    audio = ET.SubElement(config, "item")
+    audio.set("name", f"account.{n}.audio")
+    _part(audio, "srtpmode", acct.srtp_mode or "Disabled")  # P?
 
 
 # key_mgmt string → firmware integer value
