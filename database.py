@@ -64,6 +64,9 @@ def init_db():
         _add_column_if_missing(conn, "endpoint_config", "screensaver_enabled",            "BOOLEAN DEFAULT 0")
         _add_column_if_missing(conn, "sip_accounts",    "subscriber_name",                "TEXT DEFAULT ''")
         _add_column_if_missing(conn, "sip_accounts",    "password",                       "TEXT DEFAULT ''")
+        _add_column_if_missing(conn, "sip_accounts",    "transport",                      "TEXT DEFAULT 'UDP'")
+        _add_column_if_missing(conn, "sip_accounts",    "uri_scheme_when_using_tls",      "TEXT DEFAULT 'sips'")
+        _add_column_if_missing(conn, "sip_accounts",    "srtp_mode",                      "TEXT DEFAULT 'Disabled'")
 
         _add_column_if_missing(conn, "endpoint_config", "phonebook_sortby",               "TEXT DEFAULT 'FirstName'")
         _add_column_if_missing(conn, "endpoint_config", "phonebook_keyfunction",          "TEXT DEFAULT 'LocalPhonebook'")
