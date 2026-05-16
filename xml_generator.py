@@ -44,7 +44,7 @@ Account N fields (N=1 shown; offsets apply for accounts 2–4):
   account.1.sip.voicemail.number → P33      (acct2 P426, acct3 P526, acct4 P626)
   account.1.sip.server.1.address → P47      (acct2 P402, acct3 P502, acct4 P602)
   account.1.sip.server.2.address → P2312    (acct2 P2412, acct3 P2512, acct4 P2612)
-  account.1.sip.transport           → P? — UDP | TLS Or Tcp
+  account.1.sip.transport           → P? — 0=UDP | 1=TCP | 2=TLS/TCP
   account.1.sip.urischemewhenusingtls → P? — sips | sip
   account.1.audio.srtpmode          → P? — Disabled | Enabled | EnabledAndForced
 
@@ -135,7 +135,7 @@ def _emit_account(config: ET.Element, n: int, acct) -> None:
     sip = ET.SubElement(config, "item")
     sip.set("name", f"account.{n}.sip")
     _part(sip, "userid", ext)                                                  # P36 / P404 / P504 / P604
-    _part(sip, "transport", acct.transport or "UDP")                           # P?
+    _part(sip, "transport", acct.transport or "0")                             # P? 0=UDP 1=TCP 2=TLS/TCP
     _part(sip, "urischemewhenusingtls", acct.uri_scheme_when_using_tls or "sips")  # P?
 
     sub = ET.SubElement(config, "item")

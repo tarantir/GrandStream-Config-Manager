@@ -74,8 +74,21 @@ def parse_xml(content: bytes) -> dict:
         m = re.fullmatch(r"account\.(\d+)\.sip", name)
         if m:
             n = int(m.group(1))
-            if 1 <= n <= 4 and "userid" in parts:
-                _acct(n)["extension"] = parts["userid"]
+            if 1 <= n <= 4:
+                if "userid" in parts:
+                    _acct(n)["extension"] = parts["userid"]
+                if "transport" in parts:
+                    _acct(n)["transport"] = parts["transport"]
+                if "urischemewhenusingtls" in parts:
+                    _acct(n)["uri_scheme_when_using_tls"] = parts["urischemewhenusingtls"]
+            continue
+
+        # ── Audio settings: account.N.audio ──────────────────────────────────
+        m = re.fullmatch(r"account\.(\d+)\.audio", name)
+        if m:
+            n = int(m.group(1))
+            if 1 <= n <= 4 and "srtpmode" in parts:
+                _acct(n)["srtp_mode"] = parts["srtpmode"]
             continue
 
         # ── SIP subscriber: account.N.sip.subscriber ─────────────────────────
@@ -246,6 +259,7 @@ ACCOUNT_FIELDS = [
     "display_name", "subscriber_name", "password", "extension", "enabled",
     "sip_server_1", "sip_server_2",
     "voicemail_number",
+    "transport", "uri_scheme_when_using_tls", "srtp_mode",
 ]
 
 

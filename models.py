@@ -54,7 +54,7 @@ class SipAccount(Base):
     sip_server_1 = Column(Text, default="192.168.1.1")
     sip_server_2 = Column(Text, default="pbx.example.com")
     voicemail_number = Column(Text, default="*97")
-    transport = Column(Text, default="UDP")
+    transport = Column(Text, default="0")
     uri_scheme_when_using_tls = Column(Text, default="sips")
     srtp_mode = Column(Text, default="Disabled")
     created_at = Column(DateTime, **_ts)

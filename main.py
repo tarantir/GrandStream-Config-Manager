@@ -177,7 +177,7 @@ async def save_phone_config(request: Request, endpoint_id: int, db: Session = De
         acct.sip_server_2 = form_data.get(f"acct_{n}_sip_server_2", "pbx.example.com")
 
         acct.voicemail_number             = form_data.get(f"acct_{n}_voicemail_number", "*97")
-        acct.transport                    = form_data.get(f"acct_{n}_transport", "UDP")
+        acct.transport                    = form_data.get(f"acct_{n}_transport", "0")
         acct.uri_scheme_when_using_tls    = form_data.get(f"acct_{n}_uri_scheme_when_using_tls", "sips")
         acct.srtp_mode                    = form_data.get(f"acct_{n}_srtp_mode", "Disabled")
 

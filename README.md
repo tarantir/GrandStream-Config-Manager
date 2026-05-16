@@ -147,6 +147,7 @@ This tool uses the XML provisioning format (`gs_provision` / `config` / `item` /
 | Phonebook download mode | P330 | 0=Off, 1=HTTP, 2=TFTP, 3=HTTPS |
 | Phonebook download server | P331 | string |
 | Phonebook sync interval (min) | P332 | integer |
+| SIP transport | P? | 0=UDP, 1=TCP, 2=TLS/TCP |
 | SIP notify challenge | P4428 | 0=No, 1=Yes |
 | WiFi enable | P7800 | 0/1 |
 | WiFi country code | P7831 | string (e.g. `US`) |

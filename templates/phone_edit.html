@@ -139,8 +139,8 @@
           <label class="block text-xs text-[#5a6a7a] mb-1">Transport <span class="text-xs text-[#9aabb8] normal-case mono">(account.{{ n }}.sip → transport)</span></label>
           <select name="acct_{{ n }}_transport"
             class="w-full bg-white border border-[#d1dbe6] rounded-lg px-3 py-2 text-sm text-[#1a2332] focus:ring-1 focus:ring-[#00679e] focus:border-[#00679e] outline-none transition-colors">
-            {% for opt in ["UDP", "TLS Or Tcp"] %}
-            <option value="{{ opt }}" {% if (acct.transport if acct else 'UDP') == opt %}selected{% endif %}>{{ opt }}</option>
+            {% for val, label in [("0", "UDP"), ("1", "TCP"), ("2", "TLS/TCP")] %}
+            <option value="{{ val }}" {% if (acct.transport if acct else '0') == val %}selected{% endif %}>{{ label }}</option>
             {% endfor %}
           </select>
         </div>
